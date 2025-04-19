@@ -1,0 +1,59 @@
+@import 'variables';
+
+// Custom styles for dashboard component
+.drawer-content {
+  background-color: var(--b2);
+  min-height: 100vh;
+}
+
+.navbar {
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (min-width: 1024px) {
+  .drawer-content {
+    margin-left: 20rem;
+  }
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+}
+
+.dashboard-nav {
+  width: 200px;
+  background-color: $light;
+  padding: map-get($spacers, 3);
+  border-right: 1px solid $border-color;
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  li {
+    margin-bottom: map-get($spacers, 2);
+  }
+  
+  a {
+    display: block;
+    padding: map-get($spacers, 2);
+    color: $secondary;
+    text-decoration: none;
+    border-radius: $border-radius;
+    
+    &:hover, &.active {
+      background-color: darken($light, 5%);
+      color: $dark;
+    }
+  }
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: map-get($spacers, 3);
+  overflow-y: auto;
+} 
