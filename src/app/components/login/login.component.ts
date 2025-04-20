@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -27,31 +27,32 @@ export class LoginComponent {
   onLogin(): void {
     if (this.loginForm.valid) {
       const { usernameOrEmail, password, rememberMe } = this.loginForm.value;
-      
-      // Send login request
-      this.http.post(`${this.apiUrl}/auth/login`, { usernameOrEmail, password })
-        .subscribe({
-          next: (response: any) => {
-            // Store user data and token
-            const userData = {
-              user: response.user,
-              token: response.access_token
-            };
-            
-            if (rememberMe) {
-              localStorage.setItem('user', JSON.stringify(userData));
-            } else {
-              sessionStorage.setItem('user', JSON.stringify(userData));
-            }
-            
-            // Navigate to dashboard
-            this.router.navigate(['/dashboard']);
-          },
-          error: (error) => {
-            console.error('Login failed:', error);
-            // Handle error (show error message to user)
+
+      // ส่งแค่ Content-Type header เท่านั้น
+      const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+      this.http.post<any>(
+        `${this.apiUrl}/auth/login`, 
+        { usernameOrEmail, password },
+        { headers }
+      ).subscribe({
+        next: (response) => {
+          console.log('Login successful:', response);
+          
+          if (rememberMe) {
+            localStorage.setItem('user', JSON.stringify(response.user));
+            localStorage.setItem('token', response.access_token);
+          } else {
+            sessionStorage.setItem('user', JSON.stringify(response.user));
+            sessionStorage.setItem('token', response.access_token);
           }
-        });
+          
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          console.error('Login failed:', error);
+        }
+      });
     }
   }
-} 
+}
