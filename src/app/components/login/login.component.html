@@ -43,10 +43,8 @@
       <div class="form-actions">
         <div class="remember-forgot">
           <label class="remember-me">
-            <input type="checkbox" formControlName="rememberMe">
-            <span>Remember me</span>
           </label>
-          <a href="#" class="forgot-password">Forgot Password?</a>
+          <a [routerLink]="['/change-password']" [queryParams]="{mode: 'forgot'}" class="forgot-password">Forgot Password?</a>
         </div>
       </div>
 
