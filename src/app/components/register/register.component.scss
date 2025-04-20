@@ -1,36 +1,19 @@
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
 
-// Custom styles for login component
-.card {
-  backdrop-filter: blur(10px);
-  transition: $transition-base;
-
-  &:hover {
-    transform: translateY(-5px);
-  }
-}
-
-.form-control {
-  input {
-    &:focus {
-      box-shadow: 0 0 0 2px rgba($primary-color, 0.2);
-    }
-  }
-}
-
-.login-container {
+.register-container {
   @include flex-column;
   @include flex-center;
   min-height: 100vh;
   padding: $spacing-xl;
   background-color: $background-secondary;
 
-  .login-box {
+  .register-box {
     width: 100%;
     max-width: 400px;
     padding: $spacing-xl;
     @include card-shadow;
+    animation: slide-up 0.5s ease-out;
 
     .logo-container {
       margin-bottom: $spacing-xl;
@@ -79,38 +62,7 @@
         }
       }
 
-      .form-actions {
-        margin-bottom: $spacing-md;
-
-        .remember-forgot {
-          @include flex-between;
-
-          .remember-me {
-            display: flex;
-            align-items: center;
-            gap: $spacing-xs;
-            color: $text-secondary;
-            font-size: 0.9rem;
-
-            input[type="checkbox"] {
-              width: 16px;
-              height: 16px;
-            }
-          }
-
-          .forgot-password {
-            color: $primary-color;
-            text-decoration: none;
-            font-size: 0.9rem;
-
-            &:hover {
-              text-decoration: underline;
-            }
-          }
-        }
-      }
-
-      .login-btn {
+      .register-btn {
         @include button-primary;
         width: 100%;
         padding: $spacing-sm $spacing-md;
@@ -118,24 +70,32 @@
       }
     }
 
-    .signup-container {
+    .login-container {
       margin-top: $spacing-lg;
       text-align: center;
       color: $text-secondary;
       font-size: 0.9rem;
 
-      .signup-link {
+      .login-link {
         color: $primary-color;
         text-decoration: none;
         font-weight: $font-weight-medium;
-        cursor: pointer;
-        transition: $transition-base;
 
         &:hover {
           text-decoration: underline;
-          color: $primary-dark;
         }
       }
     }
   }
-} 
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
