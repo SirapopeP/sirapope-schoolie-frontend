@@ -1,99 +1,101 @@
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
+
 .register-container {
-  max-width: 400px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  @include flex-column;
+  @include flex-center;
+  min-height: 100vh;
+  padding: $spacing-xl;
+  background-color: $background-secondary;
 
-  .register-header {
-    text-align: center;
-    margin-bottom: 2rem;
+  .register-box {
+    width: 100%;
+    max-width: 400px;
+    padding: $spacing-xl;
+    @include card-shadow;
+    animation: slide-up 0.5s ease-out;
 
-    h1 {
-      color: #333;
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
+    .logo-container {
+      margin-bottom: $spacing-xl;
+      text-align: center;
+
+      img {
+        max-width: 250px;
+        height: auto;
+      }
     }
 
-    p {
-      color: #666;
-      font-size: 1rem;
+    h2 {
+      margin-bottom: $spacing-xs;
+      color: $text-primary;
+      @include heading-2;
     }
-  }
 
-  .register-form {
-    .form-group {
-      margin-bottom: 1.5rem;
+    .subtitle {
+      margin-bottom: $spacing-xl;
+      color: $text-secondary;
+      @include body-text;
+    }
 
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #333;
-        font-weight: 500;
+    form {
+      @include flex-column;
+      gap: $spacing-lg;
+
+      .form-group {
+        @include flex-column;
+        gap: $spacing-xs;
+
+        label {
+          color: $text-secondary;
+          font-size: 0.9rem;
+          font-weight: $font-weight-medium;
+        }
+
+        input {
+          @include form-input;
+        }
+
+        .error-message {
+          color: $danger-color;
+          font-size: 0.8rem;
+          margin-top: $spacing-xs;
+        }
       }
 
-      input {
+      .register-btn {
+        @include button-primary;
         width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1rem;
-        transition: border-color 0.3s ease;
-
-        &:focus {
-          outline: none;
-          border-color: #4a90e2;
-        }
-
-        &.invalid {
-          border-color: #dc3545;
-        }
-      }
-
-      .error-message {
-        color: #dc3545;
-        font-size: 0.875rem;
-        margin-top: 0.5rem;
+        padding: $spacing-sm $spacing-md;
+        font-size: $font-size-base;
       }
     }
 
-    .register-button {
-      width: 100%;
-      padding: 0.75rem;
-      background-color: #4a90e2;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+    .login-container {
+      margin-top: $spacing-lg;
+      text-align: center;
+      color: $text-secondary;
+      font-size: 0.9rem;
 
-      &:hover {
-        background-color: #357abd;
-      }
+      .login-link {
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: $font-weight-medium;
 
-      &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
+}
 
-  .login-link {
-    text-align: center;
-    margin-top: 1.5rem;
-    color: #666;
-
-    a {
-      color: #4a90e2;
-      text-decoration: none;
-      font-weight: 500;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-} 
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

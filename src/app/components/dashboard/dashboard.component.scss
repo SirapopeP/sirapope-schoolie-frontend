@@ -1,50 +1,50 @@
-@import 'variables';
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
 
 // Custom styles for dashboard component
 .drawer-content {
-  background-color: var(--b2);
+  background-color: $background-secondary;
   min-height: 100vh;
 }
 
 .navbar {
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid $border-color;
+  box-shadow: $box-shadow;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: $breakpoint-lg) {
   .drawer-content {
     margin-left: 20rem;
   }
 }
 
 .dashboard-container {
-  display: flex;
+  @include flex-column;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: $background-secondary;
 
   .dashboard-content {
     flex: 1;
     margin-left: 250px; // Same as sidebar width
-    padding: 2rem;
+    padding: $spacing-xl;
     
     h1 {
-      margin-bottom: 1rem;
-      color: #333;
-      font-size: 2rem;
-      font-weight: 600;
+      margin-bottom: $spacing-md;
+      color: $text-primary;
+      @include heading-2;
     }
 
     p {
-      color: #666;
-      line-height: 1.6;
+      color: $text-secondary;
+      line-height: $line-height-base;
     }
   }
 }
 
 .dashboard-nav {
   width: 200px;
-  background-color: $light;
-  padding: map-get($spacers, 3);
+  background-color: $background-primary;
+  padding: $spacing-md;
   border-right: 1px solid $border-color;
   
   ul {
@@ -54,25 +54,26 @@
   }
   
   li {
-    margin-bottom: map-get($spacers, 2);
+    margin-bottom: $spacing-sm;
   }
   
   a {
     display: block;
-    padding: map-get($spacers, 2);
-    color: $secondary;
+    padding: $spacing-sm;
+    color: $secondary-color;
     text-decoration: none;
-    border-radius: $border-radius;
+    border-radius: $border-radius-sm;
+    transition: $transition-base;
     
     &:hover, &.active {
-      background-color: darken($light, 5%);
-      color: $dark;
+      background-color: $background-secondary;
+      color: $text-primary;
     }
   }
 }
 
 .dashboard-content {
   flex: 1;
-  padding: map-get($spacers, 3);
+  padding: $spacing-md;
   overflow-y: auto;
 } 

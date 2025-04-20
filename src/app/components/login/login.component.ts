@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AlertService } from '../../services/alert.service';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { AlertComponent } from '../alert/alert.component';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, AlertComponent]
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, AlertComponent]
 })
 export class LoginComponent {
   loginForm: FormGroup;
