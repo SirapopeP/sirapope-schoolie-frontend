@@ -1,30 +1,96 @@
-// Custom styles for sidebar component
-.drawer-side {
-  .menu {
-    li {
-      margin-bottom: 0.5rem;
+@import 'src/styles/variables';
+@import 'src/styles/mixins';
 
+.drawer-side {
+  background-color: $background-primary;
+  box-shadow: $box-shadow;
+  height: 100vh;
+  width: 250px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: $z-index-fixed;
+  @include flex-column;
+
+  .brand {
+    padding: $spacing-md;
+    @include flex-center;
+    gap: $spacing-sm;
+    border-bottom: 1px solid $border-color;
+    background-color: $background-tertiary;
+
+    .brand-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: $border-radius-md;
+    }
+
+    .brand-name {
+      font-size: 1.5rem;
+      font-weight: $font-weight-bold;
+      color: $text-primary;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .menu {
+    @include flex-column;
+    flex: 1;
+    padding: $spacing-lg;
+    gap: $spacing-xs;
+
+    li {
       a {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        transition: all 0.3s ease;
+        @include flex-center;
+        justify-content: flex-start;
+        gap: $spacing-sm;
+        padding: $spacing-sm;
+        color: $text-secondary;
+        border-radius: $border-radius-sm;
+        transition: $transition-base;
+        cursor: pointer;
+
+        svg {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
 
         &:hover {
-          background-color: var(--primary-focus);
+          background-color: $background-secondary;
+          color: $text-primary;
         }
 
         &.active {
-          background-color: var(--primary);
-          color: var(--primary-content);
-        }
+          background-color: $primary-color;
+          color: $background-primary;
 
-        svg {
-          min-width: 1.25rem;
+          svg {
+            color: $background-primary;
+          }
+        }
+      }
+
+      &:last-child {
+        margin-top: auto;
+        border-top: 1px solid $border-color;
+        padding-top: $spacing-md;
+        
+        a {
+          color: $danger-color;
+          
+          &:hover {
+            background-color: rgba($danger-color, 0.1);
+            color: $danger-color;
+          }
+
+          svg {
+            color: $danger-color;
+          }
         }
       }
     }
   }
-} 
+}

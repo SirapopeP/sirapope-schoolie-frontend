@@ -1,20 +1,27 @@
 <div class="login-container">
   <div class="login-box">
-    <h2>Welcome Back</h2>
+    <div class="logo-container">
+      <!-- Add your app logo here -->
+      <img src="https://i.imgur.com/ok86mwF.png">
+    </div>
+    
+    <h3>Welcome Back</h3>
     <p class="subtitle">Please login to your account</p>
+    
+    <app-alert></app-alert>
     
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="form-group">
-        <label for="username">Username</label>
+        <label for="usernameOrEmail">Username or Email</label>
         <input 
           type="text" 
-          id="username" 
-          formControlName="username" 
-          placeholder="Enter your username"
-          [class.error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+          id="usernameOrEmail" 
+          formControlName="usernameOrEmail" 
+          placeholder="Enter your username or email"
+          [class.error]="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched"
         >
-        <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-          Username is required
+        <div class="error-message" *ngIf="loginForm.get('usernameOrEmail')?.invalid && loginForm.get('usernameOrEmail')?.touched">
+          Username or email is required
         </div>
       </div>
 
@@ -33,9 +40,23 @@
         </div>
       </div>
 
+      <div class="form-actions">
+        <div class="remember-forgot">
+          <label class="remember-me">
+            <input type="checkbox" formControlName="rememberMe">
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+      </div>
+
       <div class="form-group">
-        <button type="submit" [disabled]="loginForm.invalid">Login</button>
+        <button type="submit" [disabled]="loginForm.invalid" class="login-btn">Login</button>
       </div>
     </form>
+
+    <div class="signup-container">
+      <p>Don't have an account? <a routerLink="/register" class="signup-link">Sign up</a></p>
+    </div>
   </div>
 </div> 
