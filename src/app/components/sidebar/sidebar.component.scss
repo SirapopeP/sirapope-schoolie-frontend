@@ -1,28 +1,72 @@
 // Custom styles for sidebar component
 .drawer-side {
-  .menu {
-    li {
-      margin-bottom: 0.5rem;
+  background-color: white;
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+  width: 250px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
 
+  .menu {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1.5rem;
+    gap: 0.5rem;
+
+    li {
       a {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        padding: 0.75rem 1rem;
-        border-radius: 0.5rem;
-        transition: all 0.3s ease;
+        padding: 0.75rem;
+        color: #555;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+
+        svg {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
 
         &:hover {
-          background-color: var(--primary-focus);
+          background-color: #f5f5f5;
+          color: #333;
         }
 
         &.active {
-          background-color: var(--primary);
-          color: var(--primary-content);
+          background-color: #007bff;
+          color: white;
         }
+      }
 
-        svg {
-          min-width: 1.25rem;
+      &:first-child {
+        margin-bottom: 2rem;
+        
+        a {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #333;
+          padding: 0;
+          
+          &:hover {
+            background-color: transparent;
+          }
+        }
+      }
+
+      &:last-child {
+        margin-top: auto;
+        
+        a {
+          color: #dc3545;
+          
+          &:hover {
+            background-color: #fff5f5;
+            color: #dc3545;
+          }
         }
       }
     }

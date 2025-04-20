@@ -8,6 +8,8 @@
     <h2>Welcome Back</h2>
     <p class="subtitle">Please login to your account</p>
     
+    <app-alert></app-alert>
+    
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="form-group">
         <label for="usernameOrEmail">Username or Email</label>
