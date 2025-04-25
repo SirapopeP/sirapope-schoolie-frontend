@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -13,7 +13,10 @@ import { AlertComponent } from '../alert/alert.component';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, AlertComponent]
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('particleCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
+  private ctx!: CanvasRenderingContext2D;
+  private animationFrameId: number = 0;
   loginForm: FormGroup;
   private apiUrl = 'http://localhost:3000';
 
@@ -30,213 +33,141 @@ export class LoginComponent {
     });
   }
 
-  ngAfterViewInit(): void {
-    const canvasEl = document.getElementById('canvas') as HTMLCanvasElement; // Cast as HTMLCanvasElement
-    if (canvasEl) {
-      const canvas = canvasEl;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return; // Make sure ctx is not null
+  private initCanvas() {
+    const canvas = this.canvasRef.nativeElement;
+    this.ctx = canvas.getContext('2d')!;
 
-      const mintColor = "#1DD8B2";
-      ctx.fillStyle = mintColor;
+    // Set initial canvas size
+    const updateCanvasSize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    updateCanvasSize();
 
-      let prevWidth = window.innerWidth;
-      let prevHeight = window.innerHeight;
+    // Handle window resizing
+    window.addEventListener('resize', updateCanvasSize);
 
-      // Handle window resizing
-      window.addEventListener('resize', () => {
-        const newWidth = window.innerWidth;
-        const newHeight = window.innerHeight;
+    const mintColor = "#1DD8B2";
+    let particles: Particle[] = [];
+    const maxDistance = 150;
+    let mouse = { x: null as number | null, y: null as number | null };
 
-        // Update particle positions when the window is resized
-        particles.forEach(p => {
-          p.x = (p.x / prevWidth) * newWidth;
-          p.y = (p.y / prevHeight) * newHeight;
-        });
+    class Particle {
+      x: number;
+      y: number;
+      radius: number;
+      dx: number;
+      dy: number;
 
-        // Update canvas size
-        canvas.width = newWidth;
-        canvas.height = newHeight;
+      constructor() {
+        const maxW = window.innerWidth * 0.9;
+        const maxH = window.innerHeight * 0.9;
+        this.x = Math.random() * maxW;
+        this.y = Math.random() * maxH;
+        this.radius = Math.random() * 4 + 2;
+        this.dx = (Math.random() - 0.5) * 1;
+        this.dy = (Math.random() - 0.5) * 1;
+      }
 
-        prevWidth = newWidth;
-        prevHeight = newHeight;
-      });
+      draw(ctx: CanvasRenderingContext2D) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = mintColor;
+        ctx.shadowColor = mintColor;
+        ctx.shadowBlur = 10;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
 
-      let particles: Particle[] = []; // Declare particles array
-      let mouse = { x: null as number | null, y: null as number | null }; // Mouse position
+      update(ctx: CanvasRenderingContext2D) {
+        this.x += this.dx;
+        this.y += this.dy;
 
-      class Particle {
-        x: number;
-        y: number;
-        radius: number;
-        dx: number;
-        dy: number;
-        isAnchor: boolean;
+        // Bounce off edges
+        if (this.x < 0 || this.x > canvas.width) {
+          this.dx *= -1;
+          this.x = Math.max(0, Math.min(this.x, canvas.width));
+        }
+        if (this.y < 0 || this.y > canvas.height) {
+          this.dy *= -1;
+          this.y = Math.max(0, Math.min(this.y, canvas.height));
+        }
 
-        constructor(isAnchor = false) {
-          this.isAnchor = isAnchor;
-          const centerX = window.innerWidth / 2;
-          const centerY = window.innerHeight / 2;
+        // Mouse interaction
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - this.x;
+          const dy = mouse.y - this.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (isAnchor) {
-            // จุดแม่อยู่ตรงกลางและมองไม่เห็น
-            this.x = centerX;
-            this.y = centerY;
-            this.radius = 0;
-            this.dx = 0;
-            this.dy = 0;
-          } else {
-            // กระจายอนุภาครอบจุดกลาง
-            const angle = Math.random() * Math.PI * 2;
-            const minDistance = 80; // เพิ่มระยะขั้นต่ำ
-            const maxDistance = 350; // เพิ่มระยะการกระจายตัว
-            const distance = minDistance + Math.random() * (maxDistance - minDistance);
-            
-            this.x = centerX + Math.cos(angle) * distance;
-            this.y = centerY + Math.sin(angle) * distance;
-            
-            // เพิ่มขนาดอนุภาค
-            this.radius = Math.random() * 2.5 + 1;
-            
-            this.dx = (Math.random() - 0.5) * 0.8;
-            this.dy = (Math.random() - 0.5) * 0.8;
+          if (dist < 120) {
+            this.x += dx * 0.01;
+            this.y += dy * 0.01;
           }
         }
 
-        draw() {
-          if (!this.isAnchor) {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-            ctx.fillStyle = mintColor;
-            ctx.shadowColor = mintColor;
-            ctx.shadowBlur = 8;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-          }
-        }
-
-        update() {
-          if (!this.isAnchor) {
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            const dx = this.x - centerX;
-            const dy = this.y - centerY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            // ลดแรงดึงให้อ่อนลง
-            if (dist > 250) {
-              this.dx -= dx * 0.0008;
-              this.dy -= dy * 0.0008;
-            }
-
-            // ลดความเร็วการหมุนลง
-            const rotationSpeed = 0.00004;
-            const rotationForceX = -dy * rotationSpeed;
-            const rotationForceY = dx * rotationSpeed;
-            this.dx += rotationForceX;
-            this.dy += rotationForceY;
-
-            // จำกัดความเร็วสูงสุด
-            const maxSpeed = 0.15;
-            const currentSpeed = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
-            if (currentSpeed > maxSpeed) {
-              this.dx = (this.dx / currentSpeed) * maxSpeed;
-              this.dy = (this.dy / currentSpeed) * maxSpeed;
-            }
-
-            this.x += this.dx;
-            this.y += this.dy;
-
-            // ชนขอบให้สะท้อนกลับ
-            if (this.x < 0 || this.x > canvas.width) {
-              this.dx *= -1;
-            }
-            if (this.y < 0 || this.y > canvas.height) {
-              this.dy *= -1;
-            }
-          }
-
-          this.draw();
-        }
+        this.draw(ctx);
       }
-
-      // สร้างจุดแม่ตรงกลาง
-      particles.push(new Particle(true));
-
-      // สร้างอนุภาคจำนวนมาก
-      for (let i = 0; i < 180; i++) {
-        particles.push(new Particle(false));
-      }
-
-      // ปรับระยะการเชื่อมเส้น
-      const maxDistance = 150;
-
-      // Connect particles with lines
-      function connectLines() {
-        ctx.lineWidth = 0.5;
-        for (let i = 0; i < particles.length; i++) {
-          for (let j = i + 1; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < maxDistance) {
-              ctx.beginPath();
-              ctx.moveTo(particles[i].x, particles[i].y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.strokeStyle = `rgba(152, 209, 197, ${1 - dist / maxDistance})`;
-              ctx.stroke();
-            }
-          }
-        }
-      }
-
-      // Particle repulsion logic
-      function handleRepulsion() {
-        for (let i = 0; i < particles.length; i++) {
-          const thisParticle = particles[i];
-          for (let j = 0; j < particles.length; j++) {
-            if (i === j) continue;
-
-            const other = particles[j];
-            const dx = thisParticle.x - other.x;
-            const dy = thisParticle.y - other.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-
-            if (dist < thisParticle.radius + other.radius + 10) {
-              // Simple repulsion force
-              const force = 1 / dist;
-              thisParticle.x += dx * force * 0.05;
-              thisParticle.y += dy * force * 0.05;
-            }
-          }
-        }
-      }
-
-      // Animation loop
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        particles.forEach(p => p.update());
-        connectLines();
-        handleRepulsion();
-
-        requestAnimationFrame(animate);
-      }
-
-      animate();
-
-      // Listen for mouse movement
-      window.addEventListener('mousemove', (e) => {
-        mouse.x = e.clientX;
-        mouse.y = e.clientY;
-      });
     }
+
+    // Connect particles with lines
+    const connectLines = () => {
+      this.ctx.lineWidth = 0.5;
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < maxDistance) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(particles[i].x, particles[i].y);
+            this.ctx.lineTo(particles[j].x, particles[j].y);
+            this.ctx.strokeStyle = `rgba(152, 209, 197, ${1 - dist / maxDistance})`;
+            this.ctx.stroke();
+          }
+        }
+      }
+    };
+
+    // Animation loop
+    const animate = () => {
+      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+      this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => p.update(this.ctx));
+      connectLines();
+
+      this.animationFrameId = requestAnimationFrame(animate);
+    };
+
+    // Initialize particles
+    for (let i = 0; i < 70; i++) {
+      particles.push(new Particle());
+    }
+
+    // Mouse movement listener
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    // Start animation
+    animate();
   }
 
+  ngAfterViewInit() {
+    // Initialize canvas after view is ready
+    setTimeout(() => {
+      this.initCanvas();
+    }, 100);
+  }
+
+  ngOnDestroy() {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
+  }
 
   onLogin(): void {
     if (this.loginForm.valid) {
