@@ -1,6 +1,62 @@
 @import 'src/styles/variables';
 @import 'src/styles/mixins';
 
+
+//animation
+:host {
+  display: block;
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background: #111;
+}
+
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ทำให้ canvas อยู่ข้างหลัง */
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  // z-index: -1; /* ทำให้ canvas อยู่ด้านหลัง */
+  background-color: transparent; /* แค่เพิ่มสีพื้นหลังให้ canvas เห็น */
+}
+
+/* Login Box */
+.login-box {
+  position: relative;
+  z-index: 1; /* ทำให้ login box อยู่ด้านหน้าของ canvas */
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  text-align: center;
+}
+
+/* ให้ container ของ login อยู่บนสุด */
+.login-container {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* ใช้ให้เต็มหน้าจอ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+
+
+
 // Custom styles for login component
 .card {
   backdrop-filter: blur(10px);
