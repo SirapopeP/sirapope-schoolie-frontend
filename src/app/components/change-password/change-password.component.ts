@@ -6,13 +6,14 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AlertComponent } from '../alert/alert.component';
 import { AlertService } from '../../services/alert.service';
+import { ParticlesComponent } from '../particles/particles.component';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, AlertComponent]
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, AlertComponent, ParticlesComponent]
 })
 export class ChangePasswordComponent implements OnInit {
   passwordForm: FormGroup;

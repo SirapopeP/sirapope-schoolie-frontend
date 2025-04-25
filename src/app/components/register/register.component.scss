@@ -2,17 +2,24 @@
 @import 'src/styles/mixins';
 
 .register-container {
-  @include flex-column;
-  @include flex-center;
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
-  padding: $spacing-xl;
-  background-color: $background-secondary;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: transparent;
 
   .register-box {
+    position: relative;
+    z-index: 2;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 400px;
-    padding: $spacing-xl;
-    @include card-shadow;
     animation: slide-up 0.5s ease-out;
 
     .logo-container {
