@@ -49,7 +49,6 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
     const mintColor = "#1DD8B2";
     let particles: Particle[] = [];
-    const maxDistance = 150;
     let mouse = { x: null as number | null, y: null as number | null };
 
     class Particle {
@@ -58,15 +57,26 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
       radius: number;
       dx: number;
       dy: number;
+      angle: number;
+      orbitRadius: number;
+      orbitSpeed: number;
+      baseAngle: number;
 
       constructor() {
-        const maxW = window.innerWidth * 0.9;
-        const maxH = window.innerHeight * 0.9;
-        this.x = Math.random() * maxW;
-        this.y = Math.random() * maxH;
-        this.radius = Math.random() * 4 + 2;
-        this.dx = (Math.random() - 0.5) * 1;
-        this.dy = (Math.random() - 0.5) * 1;
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        this.baseAngle = Math.random() * Math.PI * 2;
+        this.angle = this.baseAngle;
+        this.orbitRadius = Math.random() * 100 + 200;
+        this.orbitSpeed = (Math.random() * 0.0002 + 0.0001) * (Math.random() < 0.5 ? 1 : -1);
+        
+        this.x = centerX + Math.cos(this.angle) * this.orbitRadius;
+        this.y = centerY + Math.sin(this.angle) * this.orbitRadius;
+        
+        this.radius = Math.random() * 2 + 1;
+        this.dx = Math.cos(this.angle) * 0.1;
+        this.dy = Math.sin(this.angle) * 0.1;
       }
 
       draw(ctx: CanvasRenderingContext2D) {
@@ -79,29 +89,51 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
         ctx.shadowBlur = 0;
       }
 
-      update(ctx: CanvasRenderingContext2D) {
+      update(ctx: CanvasRenderingContext2D, globalAngle: number) {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+
+        // อัพเดทมุมการหมุนส่วนตัว
+        this.angle = this.baseAngle + globalAngle;
+
+        // คำนวณตำแหน่งเป้าหมายบนวงโคจร
+        const targetX = centerX + Math.cos(this.angle) * this.orbitRadius;
+        const targetY = centerY + Math.sin(this.angle) * this.orbitRadius;
+
+        const dx = targetX - this.x;
+        const dy = targetY - this.y;
+        
+        // เพิ่มความเร็วในการตอบสนองเมื่อห่างจากตำแหน่งเป้าหมายมาก
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const response = Math.min(0.1, dist / 1000); // ปรับความเร็วตามระยะห่าง
+
+        this.dx += dx * response;
+        this.dy += dy * response;
+
+        const maxSpeed = dist > 100 ? 5 : 0.8; // เพิ่มความเร็วสูงสุดเมื่ออยู่ห่างมาก
+        const speed = Math.sqrt(this.dx * this.dx + this.dy * this.dy);
+        if (speed > maxSpeed) {
+          this.dx = (this.dx / speed) * maxSpeed;
+          this.dy = (this.dy / speed) * maxSpeed;
+        }
+
         this.x += this.dx;
         this.y += this.dy;
 
-        // Bounce off edges
-        if (this.x < 0 || this.x > canvas.width) {
-          this.dx *= -1;
-          this.x = Math.max(0, Math.min(this.x, canvas.width));
-        }
-        if (this.y < 0 || this.y > canvas.height) {
-          this.dy *= -1;
-          this.y = Math.max(0, Math.min(this.y, canvas.height));
-        }
+        // ปรับ friction ตามระยะห่าง
+        const friction = dist > 100 ? 0.95 : 0.98;
+        this.dx *= friction;
+        this.dy *= friction;
 
         // Mouse interaction
         if (mouse.x !== null && mouse.y !== null) {
-          const dx = mouse.x - this.x;
-          const dy = mouse.y - this.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+          const mdx = mouse.x - this.x;
+          const mdy = mouse.y - this.y;
+          const mouseDist = Math.sqrt(mdx * mdx + mdy * mdy);
 
-          if (dist < 120) {
-            this.x += dx * 0.01;
-            this.y += dy * 0.01;
+          if (mouseDist < 100) {
+            this.dx -= mdx * 0.01;
+            this.dy -= mdy * 0.01;
           }
         }
 
@@ -111,23 +143,26 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
     // Connect particles with lines
     const connectLines = () => {
-      this.ctx.lineWidth = 0.5;
+      this.ctx.lineWidth = 0.3; // ลดความหนาของเส้น
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < maxDistance) {
+          if (dist < 100) {
             this.ctx.beginPath();
             this.ctx.moveTo(particles[i].x, particles[i].y);
             this.ctx.lineTo(particles[j].x, particles[j].y);
-            this.ctx.strokeStyle = `rgba(152, 209, 197, ${1 - dist / maxDistance})`;
+            this.ctx.strokeStyle = `rgba(152, 209, 197, ${1 - dist / 100})`;
             this.ctx.stroke();
           }
         }
       }
     };
+
+    // เพิ่มตัวแปรสำหรับการหมุนรวม
+    let globalRotation = 0;
 
     // Animation loop
     const animate = () => {
@@ -135,14 +170,17 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
       this.ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
       this.ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach(p => p.update(this.ctx));
+      // อัพเดทมุมการหมุนรวม
+      globalRotation += 0.0005;
+
+      particles.forEach(p => p.update(this.ctx, globalRotation));
       connectLines();
 
       this.animationFrameId = requestAnimationFrame(animate);
     };
 
     // Initialize particles
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < 100; i++) {
       particles.push(new Particle());
     }
 
@@ -154,6 +192,27 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
     // Start animation
     animate();
+
+    // Handle window resizing
+    window.addEventListener('resize', () => {
+      const oldWidth = canvas.width;
+      const oldHeight = canvas.height;
+      
+      updateCanvasSize();
+
+      // ปรับตำแหน่งอนุภาคตามอัตราส่วนของหน้าจอที่เปลี่ยนไป
+      const scaleX = canvas.width / oldWidth;
+      const scaleY = canvas.height / oldHeight;
+      
+      particles.forEach(p => {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        // คำนวณตำแหน่งใหม่ทันที
+        p.x = centerX + Math.cos(p.angle) * p.orbitRadius;
+        p.y = centerY + Math.sin(p.angle) * p.orbitRadius;
+      });
+    });
   }
 
   ngAfterViewInit() {
