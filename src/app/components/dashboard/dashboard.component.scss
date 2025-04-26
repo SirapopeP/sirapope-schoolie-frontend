@@ -19,25 +19,24 @@
 }
 
 .dashboard-container {
-  @include flex-column;
-  min-height: 100vh;
-  background-color: $background-secondary;
+  display: flex;
+  height: 100vh;
+}
 
-  .dashboard-content {
-    flex: 1;
-    margin-left: 250px; // Same as sidebar width
-    padding: $spacing-xl;
-    
-    h1 {
-      margin-bottom: $spacing-md;
-      color: $text-primary;
-      @include heading-2;
-    }
+.dashboard-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  margin-left: 250px;
+}
 
-    p {
-      color: $text-secondary;
-      line-height: $line-height-base;
-    }
+.test-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  
+  button {
+    margin-right: 10px;
   }
 }
 
@@ -70,10 +69,4 @@
       color: $text-primary;
     }
   }
-}
-
-.dashboard-content {
-  flex: 1;
-  padding: $spacing-md;
-  overflow-y: auto;
 } 

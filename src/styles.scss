@@ -2,6 +2,9 @@
 @import 'styles/variables';
 @import 'styles/mixins';
 
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
 /* Global styles */
 * {
   box-sizing: border-box;
@@ -14,7 +17,11 @@ body {
   line-height: $line-height-base;
   color: $text-primary;
   background-color: $background-primary;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+html, body { height: 100%; }
 
 a {
   color: $primary-color;

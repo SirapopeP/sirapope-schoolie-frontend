@@ -10,8 +10,16 @@ import { TeacherComponent } from './components/teacher/teacher.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  { 
+    path: 'login', 
+    component: LoginComponent,
+    data: { animation: 'login' }
+  },
+  { 
+    path: 'register', 
+    component: RegisterComponent,
+    data: { animation: 'register' } 
+  },
   { 
     path: 'dashboard', 
     component: DashboardComponent,
@@ -23,5 +31,9 @@ export const routes: Routes = [
       { path: 'teacher', component: TeacherComponent }
     ]
   },
-  { path: 'change-password', component: ChangePasswordComponent }
+  { 
+    path: 'change-password', 
+    component: ChangePasswordComponent,
+    data: { animation: 'change-password' }
+  }
 ]; 

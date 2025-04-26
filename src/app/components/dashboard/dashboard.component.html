@@ -1,6 +1,13 @@
 <div class="dashboard-container">
   <app-sidebar></app-sidebar>
   <main class="dashboard-content">
+    <ng-container *ngIf="isDashboardRoute">
+      <div class="test-buttons">
+        <button mat-raised-button color="primary" (click)="openAlertModal()">Test Alert Modal</button>
+        <button mat-raised-button color="accent" (click)="openCreateAcademyModal()">Test Create Academy Modal</button>
+        <button mat-raised-button color="warn" (click)="openRolePickerModal()">Test Role Picker Modal</button>
+      </div>
+    </ng-container>
     <router-outlet></router-outlet>
   </main>
 </div> 

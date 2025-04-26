@@ -1,0 +1,32 @@
+<div class="create-academy-modal">
+  <h2 mat-dialog-title>Create Your Academy</h2>
+  <mat-dialog-content>
+    <form (ngSubmit)="onSubmit()" class="form-content">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Academy Name</mat-label>
+        <input matInput [(ngModel)]="academyData.name" name="name" required>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Bio (Optional)</mat-label>
+        <textarea matInput [(ngModel)]="academyData.bio" name="bio" 
+                  placeholder="Tell us about your academy..."></textarea>
+      </mat-form-field>
+      
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Logo URL (Optional)</mat-label>
+        <input matInput [(ngModel)]="academyData.logoUrl" name="logoUrl" 
+               placeholder="https://example.com/logo.png">
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-raised-button color="primary" 
+            [disabled]="!academyData.name"
+            (click)="onSubmit()">
+      Create Academy
+    </button>
+  </mat-dialog-actions>
+</div> 

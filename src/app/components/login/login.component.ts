@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AlertService } from '../../services/alert.service';
 import { CommonModule } from '@angular/common';
 import { AlertComponent } from '../alert/alert.component';
 import { ParticlesComponent } from '../particles/particles.component';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -14,13 +15,15 @@ import { ParticlesComponent } from '../particles/particles.component';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, AlertComponent, ParticlesComponent]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   private apiUrl = 'http://localhost:3000';
+  animationType = 'slide-up'; // Default animation
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private http: HttpClient,
     private alertService: AlertService
   ) {
@@ -28,6 +31,27 @@ export class LoginComponent {
       usernameOrEmail: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       rememberMe: [false]
+    });
+  }
+
+  ngOnInit(): void {
+    // Check query params first
+    this.route.queryParams.subscribe(params => {
+      if (params['animation'] === 'down') {
+        this.animationType = 'slide-down';
+      }
+    });
+
+    // Check previous route to determine animation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      const fromRegister = this.router.getCurrentNavigation()?.previousNavigation?.finalUrl?.toString().includes('register');
+      const fromChangePassword = this.router.getCurrentNavigation()?.previousNavigation?.finalUrl?.toString().includes('change-password');
+      
+      if (fromRegister || fromChangePassword) {
+        this.animationType = 'slide-down';
+      }
     });
   }
 

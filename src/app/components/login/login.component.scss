@@ -27,7 +27,6 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  // z-index: -1; /* ทำให้ canvas อยู่ด้านหลัง */
   background-color: transparent; /* แค่เพิ่มสีพื้นหลังให้ canvas เห็น */
 }
 
@@ -41,6 +40,15 @@ canvas {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 400px;
   text-align: center;
+
+  // Add conditional animations
+  &.slide-up {
+    animation: slide-up 0.5s ease forwards;
+  }
+
+  &.slide-down {
+    animation: slide-down 0.5s ease forwards;
+  }
 }
 
 /* ให้ container ของ login อยู่บนสุด */
@@ -193,5 +201,27 @@ canvas {
         }
       }
     }
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 } 
