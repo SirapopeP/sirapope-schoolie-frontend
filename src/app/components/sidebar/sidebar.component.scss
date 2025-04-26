@@ -2,20 +2,20 @@
 @import 'src/styles/mixins';
 
 .drawer-side {
-  background-color: rgba($background-primary, 0.95);
-  backdrop-filter: blur(10px);
+  background-color: $background-primary;
   box-shadow: $box-shadow;
   height: 100vh;
   width: 250px;
   display: flex;
   flex-direction: column;
+  z-index: 10; /* Ensure it's above other elements */
 
   .brand {
     padding: $spacing-md;
     @include flex-center;
     gap: $spacing-sm;
     border-bottom: 1px solid $border-color;
-    background-color: rgba($background-tertiary, 0.8);
+    background-color: $background-tertiary;
 
     .brand-logo {
       width: 48px;
@@ -54,6 +54,8 @@
         cursor: pointer;
         text-decoration: none;
         font-weight: $font-weight-medium;
+        position: relative; /* For proper event handling */
+        z-index: 1; /* Ensure click events work */
 
         svg {
           width: 1.25rem;
@@ -61,7 +63,7 @@
         }
 
         &:hover {
-          background-color: rgba($background-secondary, 0.6);
+          background-color: $background-secondary;
           color: $primary-color;
           transform: translateX(5px);
         }
@@ -77,7 +79,7 @@
         }
       }
 
-      &:last-child {
+      &.logout-item {
         margin-top: auto;
         border-top: 1px solid $border-color;
         padding-top: $spacing-md;

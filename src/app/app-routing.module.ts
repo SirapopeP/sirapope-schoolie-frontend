@@ -28,6 +28,10 @@ export const routes: Routes = [
       {
         path: 'teacher',
         loadChildren: () => import('./components/teacher/teacher.module').then(m => m.TeacherModule)
+      },
+      {
+        path: 'options',
+        loadComponent: () => import('./components/options/options.component').then(m => m.OptionsComponent)
       }
     ]
   }

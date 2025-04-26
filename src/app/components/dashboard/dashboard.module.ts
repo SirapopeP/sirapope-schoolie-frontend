@@ -29,6 +29,10 @@ const routes: Routes = [
       {
         path: 'workshop',
         loadComponent: () => import('../workshop/workshop.component').then(m => m.WorkshopComponent)
+      },
+      {
+        path: 'options',
+        loadComponent: () => import('../options/options.component').then(m => m.OptionsComponent)
       }
     ]
   }

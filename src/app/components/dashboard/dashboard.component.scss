@@ -28,8 +28,7 @@
   left: 0;
   width: 100%;
   height: 60px;
-  background-color: rgba($background-primary, 0.95);
-  backdrop-filter: blur(10px);
+  background-color: $background-primary;
   box-shadow: $box-shadow;
   z-index: $z-index-fixed;
   padding: 0 $spacing-md;
@@ -102,7 +101,6 @@
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: $z-index-modal-backdrop;
-    backdrop-filter: blur(3px);
   }
 }
 
@@ -118,8 +116,7 @@
   
   // Add card styling like login page
   .card {
-    background-color: rgba($background-primary, 0.95);
-    backdrop-filter: blur(10px);
+    background-color: $background-primary;
     border-radius: $border-radius-md;
     box-shadow: $box-shadow;
     padding: $spacing-lg;

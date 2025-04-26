@@ -7,6 +7,7 @@ import { HomeComponent } from './components/home/home.component';
 import { WorkshopComponent } from './components/workshop/workshop.component';
 import { StudentComponent } from './components/student/student.component';
 import { TeacherComponent } from './components/teacher/teacher.component';
+import { OptionsComponent } from './components/options/options.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -28,7 +29,8 @@ export const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'workshop', component: WorkshopComponent },
       { path: 'student', component: StudentComponent },
-      { path: 'teacher', component: TeacherComponent }
+      { path: 'teacher', component: TeacherComponent },
+      { path: 'options', component: OptionsComponent }
     ]
   },
   { 
