@@ -1,31 +1,44 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard.component';
-import { SidebarModule } from '../sidebar/sidebar.module';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatCardModule } from '@angular/material/card';
-import { FormsModule } from '@angular/forms';
-import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component';
-import { CreateAcademyModalComponent } from '../shared/create-academy-modal/create-academy-modal.component';
-import { RolePickerModalComponent } from '../shared/role-picker-modal/role-picker-modal.component';
+import { CommonModule } from '@angular/common';
+
+// Define routes for child components
+const routes: Routes = [
+  {
+    path: '',
+    component: DashboardComponent,
+    children: [
+      {
+        path: '',
+        redirectTo: 'home',
+        pathMatch: 'full'
+      },
+      {
+        path: 'home',
+        loadComponent: () => import('../home/home.component').then(m => m.HomeComponent)
+      },
+      {
+        path: 'teacher',
+        loadComponent: () => import('../teacher/teacher.component').then(m => m.TeacherComponent)
+      },
+      {
+        path: 'student',
+        loadComponent: () => import('../student/student.component').then(m => m.StudentComponent)
+      },
+      {
+        path: 'workshop',
+        loadComponent: () => import('../workshop/workshop.component').then(m => m.WorkshopComponent)
+      }
+    ]
+  }
+];
 
 @NgModule({
-  declarations: [DashboardComponent],
   imports: [
     CommonModule,
-    RouterModule,
-    SidebarModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatCardModule,
-    FormsModule
+    RouterModule.forChild(routes)
   ],
-  exports: [DashboardComponent]
+  exports: [RouterModule]
 })
 export class DashboardModule { } 

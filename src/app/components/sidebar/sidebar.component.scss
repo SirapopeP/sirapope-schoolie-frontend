@@ -2,22 +2,20 @@
 @import 'src/styles/mixins';
 
 .drawer-side {
-  background-color: $background-primary;
+  background-color: rgba($background-primary, 0.95);
+  backdrop-filter: blur(10px);
   box-shadow: $box-shadow;
   height: 100vh;
   width: 250px;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: $z-index-fixed;
-  @include flex-column;
+  display: flex;
+  flex-direction: column;
 
   .brand {
     padding: $spacing-md;
     @include flex-center;
     gap: $spacing-sm;
     border-bottom: 1px solid $border-color;
-    background-color: $background-tertiary;
+    background-color: rgba($background-tertiary, 0.8);
 
     .brand-logo {
       width: 48px;
@@ -40,18 +38,22 @@
     @include flex-column;
     flex: 1;
     padding: $spacing-lg;
-    gap: $spacing-xs;
+    gap: $spacing-md;
+    list-style-type: none;
+    margin: 0;
 
     li {
       a {
         @include flex-center;
         justify-content: flex-start;
         gap: $spacing-sm;
-        padding: $spacing-sm;
+        padding: $spacing-md;
         color: $text-secondary;
         border-radius: $border-radius-sm;
         transition: $transition-base;
         cursor: pointer;
+        text-decoration: none;
+        font-weight: $font-weight-medium;
 
         svg {
           width: 1.25rem;
@@ -59,16 +61,18 @@
         }
 
         &:hover {
-          background-color: $background-secondary;
-          color: $text-primary;
+          background-color: rgba($background-secondary, 0.6);
+          color: $primary-color;
+          transform: translateX(5px);
         }
 
         &.active {
           background-color: $primary-color;
-          color: $background-primary;
+          color: white;
+          box-shadow: 0 4px 10px rgba($primary-color, 0.3);
 
           svg {
-            color: $background-primary;
+            color: white;
           }
         }
       }
@@ -84,6 +88,7 @@
           &:hover {
             background-color: rgba($danger-color, 0.1);
             color: $danger-color;
+            transform: translateX(5px);
           }
 
           svg {
@@ -92,5 +97,12 @@
         }
       }
     }
+  }
+}
+
+// Media query for mobile
+@media (max-width: 768px) {
+  .drawer-side {
+    width: 250px;
   }
 }

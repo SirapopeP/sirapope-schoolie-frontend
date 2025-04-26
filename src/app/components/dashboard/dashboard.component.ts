@@ -1,12 +1,8 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../sidebar/sidebar.component';
-import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component';
-import { CreateAcademyModalComponent } from '../shared/create-academy-modal/create-academy-modal.component';
-import { RolePickerModalComponent } from '../shared/role-picker-modal/role-picker-modal.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
+import { ParticlesComponent } from '../particles/particles.component';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -20,58 +16,56 @@ import { filter } from 'rxjs/operators';
     RouterLink, 
     RouterLinkActive, 
     SidebarComponent,
-    AlertModalComponent,
-    CreateAcademyModalComponent,
-    RolePickerModalComponent,
-    MatDialogModule,
-    MatButtonModule
+    ParticlesComponent
   ]
 })
 export class DashboardComponent implements OnInit {
-  isDashboardRoute: boolean = true; // Set default to true
+  isSidebarOpen: boolean = false;
+  isMobile: boolean = false;
 
   constructor(
-    @Inject(MatDialog) private dialog: MatDialog,
     private router: Router
-  ) {}
+  ) {
+    this.checkScreenSize();
+  }
 
   ngOnInit() {
-    // Check initial route
-    this.checkRoute(this.router.url);
+    // Check screen size on init
+    this.checkScreenSize();
     
-    // Subscribe to route changes
+    // Subscribe to route changes to close sidebar when navigating on mobile
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      this.checkRoute(event.url);
-    });
-  }
-
-  private checkRoute(url: string) {
-    // Show buttons on main dashboard page and its child routes
-    this.isDashboardRoute = url.startsWith('/dashboard') || url === '/';
-  }
-
-  openAlertModal() {
-    this.dialog.open(AlertModalComponent, {
-      width: '400px',
-      data: {
-        title: 'Test Alert',
-        message: 'This is a test alert message',
-        type: 'info'
+    ).subscribe(() => {
+      if (this.isMobile && this.isSidebarOpen) {
+        this.closeSidebar();
       }
     });
   }
 
-  openCreateAcademyModal() {
-    this.dialog.open(CreateAcademyModalComponent, {
-      width: '500px'
-    });
+  @HostListener('window:resize')
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 768;
+    // Close sidebar when resizing to desktop
+    if (!this.isMobile && this.isSidebarOpen) {
+      this.isSidebarOpen = false;
+    }
   }
 
-  openRolePickerModal() {
-    this.dialog.open(RolePickerModalComponent, {
-      width: '500px'
-    });
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+    // Add or remove scrolling capability when sidebar is open
+    if (this.isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+  }
+
+  closeSidebar() {
+    if (this.isSidebarOpen) {
+      this.isSidebarOpen = false;
+      document.body.style.overflow = '';
+    }
   }
 } 
