@@ -90,7 +90,8 @@ export class RegisterComponent implements OnInit {
                 title: 'Error',
                 message: error.error.message || 'Registration failed. Please try again.',
                 type: 'error'
-              }
+              },
+              disableClose: false
             });
             return of(null);
           }),
@@ -106,13 +107,13 @@ export class RegisterComponent implements OnInit {
                 title: 'Success',
                 message: 'Registration successful! Please login to continue.',
                 type: 'success'
-              }
+              },
+              disableClose: false
             });
 
-            dialogRef.afterClosed().subscribe(result => {
-              if (result) {
-                this.router.navigate(['/login'], { queryParams: { animation: 'down' } });
-              }
+            dialogRef.afterClosed().subscribe(() => {
+              // Always navigate to login page when the dialog closes
+              this.router.navigate(['/login'], { queryParams: { animation: 'down' } });
             });
           }
         });
