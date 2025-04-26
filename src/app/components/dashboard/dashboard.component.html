@@ -1,5 +1,27 @@
 <div class="dashboard-container">
-  <app-sidebar></app-sidebar>
+  <!-- Particles background like login page -->
+  <app-particles [color]="isDarkMode ? '#2DD8A8' : '#1DD8B2'" particleCount="40" connectionDistance="100"></app-particles>
+
+  <!-- Mobile Header with Burger Menu -->
+  <div class="mobile-header">
+    <button class="burger-menu" (click)="toggleSidebar()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="logo">
+      <img [src]="themeService.getMainLogo()" alt="Schoolie Logo">
+      <span>Schoolie</span>
+    </div>
+  </div>
+
+  <!-- Sidebar - visible on desktop, toggleable on mobile -->
+  <div class="sidebar-container" [class.open]="isSidebarOpen">
+    <div class="sidebar-overlay" (click)="closeSidebar()" *ngIf="isSidebarOpen"></div>
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <!-- Main Content -->
   <main class="dashboard-content">
     <router-outlet></router-outlet>
   </main>

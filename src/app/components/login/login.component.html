@@ -1,9 +1,9 @@
 <div class="login-container">
-  <canvas #particleCanvas class="particle-canvas"></canvas>
-  <div class="login-box">
+  <app-particles [color]="isDarkMode ? '#2DD8A8' : '#1DD8B2'" particleCount="50" connectionDistance="100"></app-particles>
+  <div class="login-box" [ngClass]="animationType">
     <div class="logo-container">
       <!-- Add your app logo here -->
-      <img src="https://i.imgur.com/ok86mwF.png">
+      <img [src]="themeService.getMainLogo()">
     </div>
     
     <h3>Welcome Back</h3>
@@ -55,7 +55,7 @@
     </form>
 
     <div class="signup-container">
-      <p>Don't have an account? <a routerLink="/register" class="signup-link">Sign up</a></p>
+      <p>Don't have an account? <a routerLink="/register" [queryParams]="{animation: 'up'}" class="signup-link">Sign up</a></p>
     </div>
   </div>
 </div> 

@@ -8,7 +8,7 @@
   position: relative;
   height: 100vh;
   overflow: hidden;
-  background: #111;
+  background: $dark;
 }
 
 canvas {
@@ -27,7 +27,6 @@ canvas {
   left: 0;
   width: 100%;
   height: 100%;
-  // z-index: -1; /* ทำให้ canvas อยู่ด้านหลัง */
   background-color: transparent; /* แค่เพิ่มสีพื้นหลังให้ canvas เห็น */
 }
 
@@ -35,12 +34,21 @@ canvas {
 .login-box {
   position: relative;
   z-index: 1; /* ทำให้ login box อยู่ด้านหน้าของ canvas */
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: $background-primary;
+  padding: $spacing-lg;
+  border-radius: $border-radius-md;
+  box-shadow: $box-shadow;
   width: 400px;
   text-align: center;
+
+  // Add conditional animations
+  &.slide-up {
+    animation: slide-up 0.5s ease forwards;
+  }
+
+  &.slide-down {
+    animation: slide-down 0.5s ease forwards;
+  }
 }
 
 /* ให้ container ของ login อยู่บนสุด */
@@ -54,12 +62,7 @@ canvas {
 }
 
 .particle-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+  display: none;
 }
 
 // Custom styles for login component
@@ -92,6 +95,7 @@ canvas {
     max-width: 400px;
     padding: $spacing-xl;
     @include card-shadow;
+    background-color: $background-primary;
 
     .logo-container {
       margin-bottom: $spacing-xl;
@@ -131,6 +135,8 @@ canvas {
 
         input {
           @include form-input;
+          background-color: $background-primary;
+          color: $text-primary;
         }
 
         .error-message {
@@ -156,6 +162,7 @@ canvas {
             input[type="checkbox"] {
               width: 16px;
               height: 16px;
+              accent-color: $primary-color;
             }
           }
 
@@ -198,5 +205,27 @@ canvas {
         }
       }
     }
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 } 

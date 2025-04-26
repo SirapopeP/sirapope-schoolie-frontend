@@ -1,0 +1,65 @@
+@import 'src/styles/variables';
+
+.alert-modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 400px;
+}
+
+.alert-modal-content {
+  width: 100%;
+  background-color: $background-primary;
+  border-radius: $border-radius-md;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 20px;
+  background: $background-tertiary;
+  border-bottom: 1px solid $border-color;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: $font-weight-bold;
+    color: $text-primary;
+    text-align: center;
+  }
+}
+
+.modal-body {
+  padding: 24px 20px;
+  
+  p {
+    margin: 0;
+    font-size: 1rem;
+    color: $text-secondary;
+    text-align: center;
+    line-height: $line-height-base;
+  }
+}
+
+.modal-footer {
+  padding: 15px 20px 20px;
+  display: flex;
+  justify-content: center;
+  
+  .btn-primary {
+    min-width: 120px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: $border-radius-sm;
+    background-color: $primary-color;
+    color: white;
+    font-size: 1rem;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    transition: $transition-base;
+    
+    &:hover {
+      background-color: $primary-dark;
+    }
+  }
+} 

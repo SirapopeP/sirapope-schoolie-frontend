@@ -4,9 +4,10 @@ import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/register/register.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -27,6 +28,10 @@ const routes: Routes = [
       {
         path: 'teacher',
         loadChildren: () => import('./components/teacher/teacher.module').then(m => m.TeacherModule)
+      },
+      {
+        path: 'options',
+        loadComponent: () => import('./components/options/options.component').then(m => m.OptionsComponent)
       }
     ]
   }
