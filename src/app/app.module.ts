@@ -5,10 +5,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ChangePasswordComponent } from './components/change-password/change-password.component';
 import { AlertComponent } from './components/alert/alert.component';
+import { LoginModule } from './components/login/login.module';
+import { LoginComponent } from './components/login/login.component';
 
 // กำหนด routes
 const routes: Routes = [
@@ -20,20 +21,15 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    DashboardComponent,
-    ChangePasswordComponent,
-    AlertComponent
-  ],
+  declarations: [],
   imports: [
     BrowserModule,
     HttpClientModule,
     ReactiveFormsModule,
-    RouterModule.forRoot(routes)  // เพิ่ม RouterModule.forRoot()
+    RouterModule.forRoot(routes),
+    LoginModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: []
 })
 export class AppModule { }
