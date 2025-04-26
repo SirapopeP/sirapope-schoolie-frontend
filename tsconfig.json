@@ -10,14 +10,15 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "outDir": "./dist/out-tsc",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "importHelpers": true,
     "lib": [
       "es2018",
       "dom"
     ],
     "paths": {
-      "@app/*": ["src/app/*"]
+      "@app/*": ["src/app/*"],
+      "@env": ["src/environments/environment"]
     }
   },
   "angularCompilerOptions": {

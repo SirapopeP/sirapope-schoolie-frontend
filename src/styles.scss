@@ -2,6 +2,9 @@
 @import 'styles/variables';
 @import 'styles/mixins';
 
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
 /* Global styles */
 * {
   box-sizing: border-box;
@@ -14,7 +17,11 @@ body {
   line-height: $line-height-base;
   color: $text-primary;
   background-color: $background-primary;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+html, body { height: 100%; }
 
 a {
   color: $primary-color;
@@ -89,5 +96,47 @@ h1, h2, h3, h4, h5, h6 {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+/* Add dark theme class at the end of the file */
+.dark-theme {
+  /* Override variables for dark theme */
+  --background-primary: #1a1a1a;
+  --background-secondary: #2d2d2d;
+  --background-tertiary: #333333;
+  
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-muted: #999999;
+  
+  --border-color: #404040;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  
+  /* Override element styles for dark theme */
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  
+  /* Make sure to apply theme to Angular Material */
+  .mat-app-background {
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+  }
+  
+  /* Style cards for dark theme */
+  .card {
+    background-color: var(--background-primary);
+    box-shadow: 0 2px 8px var(--shadow-color);
+  }
+  
+  /* Adjust form fields */
+  .mat-form-field {
+    color: var(--text-primary);
+  }
+  
+  /* Style buttons */
+  .mat-button, .mat-raised-button, .mat-icon-button, .mat-stroked-button,
+  .mat-flat-button, .mat-fab, .mat-mini-fab {
+    color: var(--text-primary);
   }
 } 

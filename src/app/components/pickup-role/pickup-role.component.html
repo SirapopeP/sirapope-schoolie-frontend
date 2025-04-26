@@ -1,0 +1,12 @@
+<div class="min-h-screen flex items-center justify-center p-4">
+  <div class="text-center">
+    <h1 class="text-4xl font-bold mb-4">Welcome to Schoolie!</h1>
+    <p class="text-lg mb-8">Let's get started by selecting your role</p>
+    <button class="btn btn-primary" (click)="openRolePicker()">
+      Select Role
+    </button>
+  </div>
+</div>
+
+<app-role-picker-modal (roleSelected)="onRoleSelected($event)"></app-role-picker-modal>
+<app-create-academy-modal (academyCreated)="onAcademyCreated($event)"></app-create-academy-modal>

@@ -1,15 +1,18 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
 .student-container {
-  padding: 20px;
+  padding: $spacing-lg;
   
   h1 {
-    margin-bottom: 20px;
-    color: #333;
+    margin-bottom: $spacing-lg;
+    color: $text-primary;
   }
   
   .student-content {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: $background-primary;
+    border-radius: $border-radius-md;
+    padding: $spacing-lg;
+    box-shadow: $box-shadow;
   }
 } 

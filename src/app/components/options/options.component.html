@@ -1,0 +1,61 @@
+<div class="options-container">
+  <h1 class="page-title">Options</h1>
+  <div class="description">Customize your app settings and preferences</div>
+
+  <div class="card">
+    <h2>Appearance</h2>
+    
+    <div class="option-item">
+      <div class="option-info">
+        <div class="option-title">
+          <mat-icon>{{ isDarkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
+          <span>Theme Mode</span>
+        </div>
+        <div class="option-description">
+          Switch between light and dark theme
+        </div>
+      </div>
+      
+      <div class="option-control">
+        <div class="theme-toggle">
+          <span class="light-label" [class.active]="!isDarkMode">Light</span>
+          <mat-slide-toggle 
+            [checked]="isDarkMode" 
+            (change)="toggleDarkMode()" 
+            color="primary">
+          </mat-slide-toggle>
+          <span class="dark-label" [class.active]="isDarkMode">Dark</span>
+        </div>
+      </div>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="theme-preview">
+      <div class="preview-container light" [class.selected]="!isDarkMode">
+        <div class="preview-header">Light Theme</div>
+        <div class="preview-body">
+          <div class="preview-sidebar"></div>
+          <div class="preview-content">
+            <div class="preview-card"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="preview-container dark" [class.selected]="isDarkMode">
+        <div class="preview-header">Dark Theme</div>
+        <div class="preview-body">
+          <div class="preview-sidebar"></div>
+          <div class="preview-content">
+            <div class="preview-card"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>More Settings</h2>
+    <p>Additional settings will be added in future updates.</p>
+  </div>
+</div> 
