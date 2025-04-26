@@ -1,6 +1,6 @@
 <div class="dashboard-container">
   <!-- Particles background like login page -->
-  <app-particles color="#1DD8B2" particleCount="40" connectionDistance="100"></app-particles>
+  <app-particles [color]="isDarkMode ? '#2DD8A8' : '#1DD8B2'" particleCount="40" connectionDistance="100"></app-particles>
 
   <!-- Mobile Header with Burger Menu -->
   <div class="mobile-header">
@@ -10,7 +10,7 @@
       <span></span>
     </button>
     <div class="logo">
-      <img src="https://i.imgur.com/ok86mwF.png" alt="Schoolie Logo">
+      <img [src]="themeService.getMainLogo()" alt="Schoolie Logo">
       <span>Schoolie</span>
     </div>
   </div>

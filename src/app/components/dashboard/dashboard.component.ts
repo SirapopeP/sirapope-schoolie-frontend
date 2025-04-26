@@ -1,9 +1,11 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { ParticlesComponent } from '../particles/particles.component';
 import { filter } from 'rxjs/operators';
+import { ThemeService } from '../../services/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -19,12 +21,15 @@ import { filter } from 'rxjs/operators';
     ParticlesComponent
   ]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   isSidebarOpen: boolean = false;
   isMobile: boolean = false;
+  isDarkMode: boolean = false;
+  private themeSubscription: Subscription;
 
   constructor(
-    private router: Router
+    private router: Router,
+    public themeService: ThemeService
   ) {
     this.checkScreenSize();
   }
@@ -41,6 +46,17 @@ export class DashboardComponent implements OnInit {
         this.closeSidebar();
       }
     });
+
+    // Subscribe to theme changes
+    this.themeSubscription = this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
   }
 
   @HostListener('window:resize')

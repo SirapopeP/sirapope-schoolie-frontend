@@ -1,5 +1,5 @@
 // src/app/components/change-password/change-password.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { AlertComponent } from '../alert/alert.component';
 import { AlertService } from '../../services/alert.service';
 import { ParticlesComponent } from '../particles/particles.component';
+import { ThemeService } from '../../services/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-change-password',
@@ -15,7 +17,7 @@ import { ParticlesComponent } from '../particles/particles.component';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, AlertComponent, ParticlesComponent]
 })
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordComponent implements OnInit, OnDestroy {
   passwordForm: FormGroup;
   private apiUrl = 'http://localhost:3000';
   mode: 'forgot' | 'first-login' | 'normal' = 'normal';
@@ -23,13 +25,16 @@ export class ChangePasswordComponent implements OnInit {
   userId: number | null = null;
   token: string | null = null;
   emailOrUsername: string | null = null;
+  isDarkMode = false;
+  private themeSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
-    private alertService: AlertService
+    private alertService: AlertService,
+    public themeService: ThemeService
   ) {
     this.initializeForm();
   }
@@ -68,6 +73,17 @@ export class ChangePasswordComponent implements OnInit {
       }
       this.initializeForm();
     });
+
+    // Subscribe to theme changes
+    this.themeSubscription = this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
   }
 
   passwordMatchValidator(g: FormGroup) {

@@ -48,7 +48,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     @Inject(MatDialog) private dialog: MatDialog,
-    private themeService: ThemeService
+    public themeService: ThemeService
   ) {}
 
   ngOnInit() {

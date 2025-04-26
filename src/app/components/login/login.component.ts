@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -7,6 +7,8 @@ import { CommonModule } from '@angular/common';
 import { AlertComponent } from '../alert/alert.component';
 import { ParticlesComponent } from '../particles/particles.component';
 import { filter } from 'rxjs/operators';
+import { ThemeService } from '../../services/theme.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,17 +17,20 @@ import { filter } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule, AlertComponent, ParticlesComponent]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   loginForm: FormGroup;
   private apiUrl = 'http://localhost:3000';
   animationType = 'slide-up'; // Default animation
+  isDarkMode = false;
+  private themeSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private http: HttpClient,
-    private alertService: AlertService
+    private alertService: AlertService,
+    public themeService: ThemeService
   ) {
     this.loginForm = this.fb.group({
       usernameOrEmail: ['', [Validators.required]],
@@ -53,6 +58,17 @@ export class LoginComponent implements OnInit {
         this.animationType = 'slide-down';
       }
     });
+
+    // Subscribe to theme changes
+    this.themeSubscription = this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.themeSubscription) {
+      this.themeSubscription.unsubscribe();
+    }
   }
 
   onLogin(): void {

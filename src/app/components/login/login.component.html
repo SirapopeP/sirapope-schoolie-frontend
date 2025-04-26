@@ -1,9 +1,9 @@
 <div class="login-container">
-  <app-particles color="#1DD8B2" particleCount="50" connectionDistance="100"></app-particles>
+  <app-particles [color]="isDarkMode ? '#2DD8A8' : '#1DD8B2'" particleCount="50" connectionDistance="100"></app-particles>
   <div class="login-box" [ngClass]="animationType">
     <div class="logo-container">
       <!-- Add your app logo here -->
-      <img src="https://i.imgur.com/ok86mwF.png">
+      <img [src]="themeService.getMainLogo()">
     </div>
     
     <h3>Welcome Back</h3>

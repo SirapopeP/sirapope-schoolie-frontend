@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { LOGO_PATHS } from '../constants/app-constants';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,12 @@ import { BehaviorSubject } from 'rxjs';
 export class ThemeService {
   private isDarkMode = new BehaviorSubject<boolean>(false);
   isDarkMode$ = this.isDarkMode.asObservable();
+  
+  // Logo paths
+  readonly LOGO_MAIN_LIGHT = LOGO_PATHS.LOGO_MAIN_LIGHT;
+  readonly LOGO_MAIN_DARK = LOGO_PATHS.LOGO_MAIN_DARK;
+  readonly LOGO_MINI_LIGHT = LOGO_PATHS.LOGO_MINI_LIGHT;
+  readonly LOGO_MINI_DARK = LOGO_PATHS.LOGO_MINI_DARK;
 
   constructor() {
     // Check if user has a preferred theme
@@ -18,6 +25,15 @@ export class ThemeService {
     this.isDarkMode.next(newValue);
     localStorage.setItem('darkMode', newValue.toString());
     this.applyTheme(newValue);
+  }
+
+  // Get the appropriate logo based on current theme
+  getMainLogo(): string {
+    return this.isDarkMode.value ? this.LOGO_MAIN_DARK : this.LOGO_MAIN_LIGHT;
+  }
+
+  getMiniLogo(): string {
+    return this.isDarkMode.value ? this.LOGO_MINI_DARK : this.LOGO_MINI_LIGHT;
   }
 
   private loadSavedTheme() {
