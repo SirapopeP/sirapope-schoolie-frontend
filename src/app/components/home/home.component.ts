@@ -4,6 +4,7 @@ import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
 import { StatCardComponent } from '../shared/stat-card/stat-card.component';
 import { CalendarObjectComponent } from '../shared/calendar-object/calendar-object.component';
+import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
 
 interface UserProfile {
   fullName: string;
@@ -33,7 +34,31 @@ interface Student {
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
   standalone: true,
-  imports: [CommonModule, StatCardComponent, CalendarObjectComponent]
+  imports: [CommonModule, StatCardComponent, CalendarObjectComponent],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('400ms ease-in', style({ opacity: 1 })),
+      ]),
+    ]),
+    trigger('slideIn', [
+      transition(':enter', [
+        style({ transform: 'translateY(20px)', opacity: 0 }),
+        animate('400ms ease-out', style({ transform: 'translateY(0)', opacity: 1 })),
+      ]),
+    ]),
+    trigger('staggerList', [
+      transition(':enter', [
+        query(':enter', [
+          style({ opacity: 0, transform: 'translateY(10px)' }),
+          stagger('100ms', [
+            animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' })),
+          ]),
+        ], { optional: true }),
+      ]),
+    ]),
+  ]
 })
 export class HomeComponent implements OnInit, OnDestroy {
   isDarkMode = false;
@@ -92,8 +117,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
   
   // Current month and date
-  currentMonth = 'APRIL';
-  currentDate = new Date();
+  selectedDate = new Date(); // For the selected date from calendar
+  formattedSelectedDate = ''; // Formatted date for display
   
   // Stat card icons (ใช้ class จาก fontawesome/material-icons)
   statIcons = {
@@ -109,15 +134,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     'assets/styles/gg-4.svg',
   ];
 
-  // Calendar days and legend (placeholder)
-  calendarDays = [
-    { value: 30, inactive: true }, { value: 31, inactive: true },
-    { value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }, { value: 5 },
-    { value: 6 }, { value: 7 }, { value: 8 }, { value: 9 }, { value: 10 }, { value: 11 }, { value: 12 },
-    { value: 13 }, { value: 14 }, { value: 15, active: true }, { value: 16 }, { value: 17 }, { value: 18 }, { value: 19 },
-    { value: 20 }, { value: 21 }, { value: 22 }, { value: 23 }, { value: 24 }, { value: 25 }, { value: 26 },
-    { value: 27 }, { value: 28 }, { value: 29 }, { value: 30 }, { value: 1, inactive: true }, { value: 2, inactive: true }, { value: 3, inactive: true }
-  ];
+  // Calendar legend for display
   calendarLegend = [
     { color: '#1DD8B2', label: 'Classes' },
     { color: '#3AA5FF', label: 'Meetings' },
@@ -132,6 +149,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.updateThemeVariables();
     });
     this.updateThemeVariables();
+    
+    // Initialize formatted date
+    this.updateFormattedDate(this.selectedDate);
   }
   
   ngOnDestroy() {
@@ -150,5 +170,20 @@ export class HomeComponent implements OnInit, OnDestroy {
       case 'cancelled': return 'bg-error text-white';
       default: return 'bg-info text-white';
     }
+  }
+  
+  // Handle date selection from calendar
+  onDateSelected(date: Date) {
+    this.selectedDate = date;
+    this.updateFormattedDate(date);
+  }
+  
+  // Format date as "DD MMM YYYY"
+  private updateFormattedDate(date: Date) {
+    const day = date.getDate();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    this.formattedSelectedDate = `${day} ${month} ${year}`;
   }
 } 
