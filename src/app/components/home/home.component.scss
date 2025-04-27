@@ -11,7 +11,7 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
   font-family: $font-family-base;
   
   // Header styles
@@ -132,7 +132,7 @@
   
   // Intro Card
   .intro-card {
-    margin-bottom: $spacing-lg;
+    margin-bottom: 0.5rem;
     
     .card {
       @include card-shadow;
@@ -143,21 +143,15 @@
         display: flex;
         align-items: center;
         gap: $spacing-md;
+        padding: 1rem 1.5rem;
         svg {
           width: 2rem;
           height: 2rem;
+          color: #1DD8B2;
         }
         span {
           @include body-text;
-        }
-      }
-      
-      .alert-info {
-        background-color: rgba(var(--primary-color-rgb), 0.1);
-        color: var(--text-primary);
-        
-        svg {
-          color: var(--primary-color);
+          color: var(--text-primary);
         }
       }
     }
@@ -168,7 +162,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
-    margin-top: 1rem;
+    margin-top: 0;
     
     app-stat-card {
       display: block;
@@ -445,9 +439,12 @@
 :host-context(.dark-theme) {
   .home-container {
     .header-container {
-      .logo-text {
-        .logo-second {
+      .header-left {
+        .dashboard-title {
           color: #fff;
+        }
+        .dashboard-subtitle {
+          color: rgba(255, 255, 255, 0.7);
         }
       }
       
@@ -471,10 +468,17 @@
     
     .intro-card {
       .card {
-        background-color: var(--background-secondary);
+        background-color: #2a2a2a;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         
-        .alert-info {
-          background-color: rgba(var(--primary-color-rgb), 0.2);
+        .card-body {
+          span {
+            color: rgba(255, 255, 255, 0.9);
+          }
+          
+          svg {
+            color: #1DD8B2;
+          }
         }
       }
     }
@@ -482,8 +486,8 @@
     .workshop-list,
     .student-section,
     .calendar-section {
-      background-color: var(--background-secondary);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      background-color: #2a2a2a;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
       
       .section-title {
         color: #fff;
@@ -524,6 +528,11 @@
           border-color: var(--primary-color);
         }
       }
+      
+      .workshop-value,
+      .session-value {
+        color: #1DD8B2;
+      }
     }
     
     .date-badge {
@@ -533,6 +542,15 @@
     
     .badge-outline {
       border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .add-button {
+      background-color: #1DD8B2;
+      color: #fff;
+      
+      &:hover {
+        background-color: darken(#1DD8B2, 8%);
+      }
     }
   }
 }

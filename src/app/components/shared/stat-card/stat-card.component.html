@@ -3,15 +3,17 @@
     <div class="stat-card-gradient-shape" *ngIf="gradientSvg" [style.background-image]="'url(' + gradientSvg + ')'"></div>
   </div>
   
+  <div class="stat-card-icon">
+    <i [ngClass]="icon"></i>
+  </div>
+  
   <div class="stat-card-header">
     <div class="stat-card-title">{{ title }}</div>
     <button *ngIf="actionLabel" class="stat-card-action">{{ actionLabel }}</button>
   </div>
   
   <div class="stat-card-body">
-    <div class="stat-card-icon">
-      <i [ngClass]="icon"></i>
-    </div>
+    <div></div> <!-- Empty div for layout purposes -->
     <div class="stat-card-value">
       {{ value }}
       <i *ngIf="showStar" class="fas fa-star"></i>
