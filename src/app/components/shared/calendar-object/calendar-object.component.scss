@@ -3,6 +3,7 @@
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
   padding: 1.2rem;
+  padding-top: 0.8rem;
   width: 100%;
   min-height: 340px;
   display: flex;
@@ -116,7 +117,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-  margin-bottom: 1rem;
+  margin-bottom: 0;
   .calendar-day-cell {
     aspect-ratio: 1/1;
     display: flex;
@@ -174,6 +175,78 @@
       height: 8px;
       border-radius: 50%;
       display: inline-block;
+    }
+  }
+}
+
+/* Dark mode styles */
+:host-context(.dark-theme) {
+  .calendar-object {
+    background: #2a2a2a;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .calendar-icon svg {
+    rect {
+      fill: rgba(29, 216, 178, 0.15);
+      stroke: #1DD8B2;
+    }
+    path {
+      stroke: #1DD8B2;
+    }
+  }
+
+  .calendar-month {
+    color: #1DD8B2;
+  }
+
+  .year-select {
+    background: #333;
+    border-color: #444;
+    color: #ddd;
+  }
+
+  .calendar-nav {
+    .nav-button, .today-button {
+      background: rgba(29, 216, 178, 0.15);
+      color: #1DD8B2;
+
+      &:hover {
+        background: #1DD8B2;
+        color: #fff;
+      }
+    }
+  }
+
+  .calendar-days-header .calendar-day-name {
+    color: #aaa;
+  }
+
+  .calendar-days-grid {
+    .calendar-day-cell {
+      background: #333;
+      color: #ddd;
+
+      &:hover {
+        background: #444;
+      }
+
+      &.inactive {
+        color: #777;
+        background: #2d2d2d;
+        &:hover {
+          background: #383838;
+        }
+      }
+
+      &.active {
+        background: #1DD8B2;
+        color: #fff;
+      }
+
+      &.today:not(.active) {
+        border-color: #1DD8B2;
+      }
     }
   }
 } 

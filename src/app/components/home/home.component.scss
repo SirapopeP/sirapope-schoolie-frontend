@@ -188,6 +188,37 @@
         @extend %section-header;
       }
       
+      .divider {
+        margin-bottom: 12px; // Consistent divider spacing
+      }
+      
+      // Container for workshop items with fixed height and scrolling
+      .workshop-items-container {
+        height: 390px; // Height for 6 workshop items
+        overflow-y: auto;
+        padding-right: 6px; // Add padding for spacing between scrollbar and container edge
+        margin-right: 4px; // Add margin to create space between scrollbar and list box
+        
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #ddd;
+          border-radius: 10px;
+          
+          &:hover {
+            background: #ccc;
+          }
+        }
+      }
+      
       .workshop-items {
         list-style: none;
         padding: 0;
@@ -283,6 +314,10 @@
         }
       }
       
+      .divider {
+        margin-bottom: 12px; // Consistent divider spacing
+      }
+      
       .list-actions {
         display: flex;
         justify-content: flex-end;
@@ -303,6 +338,33 @@
           
           &:hover {
             background: darken(#1DD8B2, 8%);
+          }
+        }
+      }
+      
+      // Container for student list with fixed height and scrolling
+      .student-list-container {
+        height: 380px; // Height for 3 student cards
+        overflow-y: auto;
+        padding-right: 6px; // Add padding for spacing between scrollbar and container edge
+        margin-right: 4px; // Add margin to create space between scrollbar and list box
+        
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #ddd;
+          border-radius: 10px;
+          
+          &:hover {
+            background: #ccc;
           }
         }
       }
@@ -428,8 +490,22 @@
     // Calendar Section
     .calendar-section {
       @extend %card-base;
+      display: flex;
+      flex-direction: column;
+      margin-top: 0;
+      
       .list-header {
         @extend %section-header;
+      }
+      
+      .divider {
+        margin-bottom: 12px; // Add more space after the divider
+      }
+
+      app-calendar-object {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
       }
     }
   }
@@ -550,6 +626,98 @@
       
       &:hover {
         background-color: darken(#1DD8B2, 8%);
+      }
+    }
+    
+    // Fix dark mode for section headers
+    .list-header {
+      .section-icon {
+        background: rgba(29, 216, 178, 0.15);
+      }
+      
+      .section-title {
+        color: #fff;
+      }
+    }
+    
+    // Update section dividers for dark mode
+    .divider {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    // Fix dark mode for list headers
+    .list-header-row {
+      .list-header {
+        .section-icon {
+          background: rgba(29, 216, 178, 0.15);
+          
+          i {
+            color: #1DD8B2 !important;
+          }
+        }
+        
+        .section-title {
+          color: #fff;
+        }
+      }
+    }
+    
+    // Dark mode for student cards
+    .student-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      
+      .student-header {
+        .student-name {
+          color: #fff;
+        }
+        
+        .student-age {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+      
+      .student-course {
+        .workshop-name {
+          color: rgba(255, 255, 255, 0.7);
+          
+          .workshop-value {
+            color: #1DD8B2;
+          }
+        }
+        
+        .session-date {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+      
+      .session-details {
+        .session-label {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .session-value {
+          color: #1DD8B2;
+        }
+      }
+    }
+    
+    // Dark mode for student list container scrollbar
+    .student-list-container,
+    .workshop-items-container {
+      &::-webkit-scrollbar-track {
+        background: #333;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #555;
+        
+        &:hover {
+          background: #666;
+        }
       }
     }
   }

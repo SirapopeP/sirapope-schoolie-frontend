@@ -85,7 +85,15 @@ export class HomeComponent implements OnInit, OnDestroy {
   workshops: Workshop[] = [
     { id: 1, title: 'Art Mixing 101', status: 'active' },
     { id: 2, title: 'Art Mixing 107', status: 'active' },
-    { id: 3, title: 'Art DIY 109', status: 'cancelled' }
+    { id: 3, title: 'Art DIY 109', status: 'cancelled' },
+    { id: 4, title: 'Art DIY 109', status: 'cancelled' },
+    { id: 5, title: 'Art DIY 109', status: 'cancelled' },
+    { id: 6, title: 'Art DIY 109', status: 'cancelled' },
+    { id: 7, title: 'Art DIY 109', status: 'cancelled' },
+    { id: 8, title: 'Art DIY 109', status: 'cancelled' },
+    { id: 9, title: 'Art DIY 109', status: 'cancelled' },
+    { id: 10, title: 'Art DIY 109', status: 'cancelled' },
+    
   ];
   
   // Students list
@@ -113,6 +121,14 @@ export class HomeComponent implements OnInit, OnDestroy {
       workshop: 'Art Mixing 101', 
       sessionDate: '2/12', 
       sessionDetail: 'สีน้ำ + การ์ตูน' 
+    },
+    { 
+      id: 4, 
+      name: 'Lion Gategara', 
+      age: 8, 
+      workshop: 'Art Mixing 101', 
+      sessionDate: '2/12', 
+      sessionDetail: 'สีน้ำ + การ์ตูน' 
     }
   ];
   
@@ -134,13 +150,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     'assets/styles/gg-4.svg',
   ];
 
-  // Calendar legend for display
-  calendarLegend = [
-    { color: '#1DD8B2', label: 'Classes' },
-    { color: '#3AA5FF', label: 'Meetings' },
-    { color: '#FFC107', label: 'Events' },
-  ];
-  
   constructor(public themeService: ThemeService) {}
   
   ngOnInit() {
