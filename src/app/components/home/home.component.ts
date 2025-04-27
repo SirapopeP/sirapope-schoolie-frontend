@@ -44,16 +44,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   // User profile data
   userProfile: UserProfile = {
-    fullName: 'goodadmin',
+    fullName: 'good admin',
     role: 'Admin',
-    academy: 'Good Academy',
-    avatarUrl: 'https://i.pravatar.cc/300'
+    academy: 'good academy',
+    avatarUrl: '' // เว้นว่างไว้เพื่อทดสอบ placeholder
   };
   
   // Dashboard statistics
-  workshopCount = 7;
-  studentCount = 3;
+  workshopCount = 4;
+  studentCount = 6;
   teacherCount = 2;
+  academyLevel = 3;
   
   // Workshops list
   workshops: Workshop[] = [
@@ -102,10 +103,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     achievement: 'fas fa-star',
   };
   statGradients = [
-    'assets/styles/gd-1-green.svg',
-    'assets/styles/gd-2-blue.svg',
-    'assets/styles/gd-3-vio.svg',
-    'assets/styles/gd-4-orange.svg',
+    'assets/styles/gg-1.svg',
+    'assets/styles/gg-2.svg',
+    'assets/styles/gg-3.svg',
+    'assets/styles/gg-4.svg',
   ];
 
   // Calendar days and legend (placeholder)

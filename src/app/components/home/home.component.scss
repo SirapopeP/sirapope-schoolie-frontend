@@ -21,33 +21,73 @@
     align-items: center;
     margin-bottom: $spacing-lg;
     
-    .logo-text {
-      font-weight: $font-weight-bold;
-      font-size: 1.5rem;
-      
-      .logo-first {
-        color: var(--primary-color);
+    .header-left {
+      .dashboard-title {
+        font-weight: $font-weight-bold;
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        color: var(--text-primary);
       }
       
-      .logo-second {
-        color: var(--text-primary);
+      .dashboard-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin: 0;
       }
     }
     
-    .header-actions {
+    .user-profile {
       display: flex;
       align-items: center;
-      gap: $spacing-md;
+      gap: 1rem;
+      
+      .user-info {
+        text-align: right;
+        
+        .user-name {
+          font-weight: 500;
+          font-size: 0.9rem;
+          color: var(--text-primary);
+          margin-bottom: 0.125rem;
+        }
+        
+        .academy-name {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #1DD8B2;
+        }
+      }
       
       .avatar-container {
-        margin-left: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         
         .avatar-image {
           width: 48px;
           height: 48px;
           border-radius: 50%;
           object-fit: cover;
-          border: none;
+          border: 2px solid white;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .avatar-placeholder {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background-color: #f0f0f0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid white;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          
+          i {
+            font-size: 1.5rem;
+            color: #999;
+          }
         }
       }
     }
@@ -408,6 +448,23 @@
       .logo-text {
         .logo-second {
           color: #fff;
+        }
+      }
+      
+      .user-profile {
+        .user-info {
+          .user-name {
+            color: #fff;
+          }
+        }
+        
+        .avatar-placeholder {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+          
+          i {
+            color: rgba(255, 255, 255, 0.7);
+          }
         }
       }
     }

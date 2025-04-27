@@ -7,11 +7,14 @@
     </div>
     <div class="user-profile">
       <div class="user-info">
-        <div class="user-name">{{ userProfile.fullName }} | {{ userProfile.role }}</div>
-        <div class="academy-name">{{ userProfile.academy }}</div>
+        <div class="user-name">{{ userProfile.fullName || 'good admin' }} | {{ userProfile.role || 'Admin' }}</div>
+        <div class="academy-name">{{ userProfile.academy || 'good academy' }}</div>
       </div>
       <div class="avatar-container">
-        <img src="assets/avatar.jpg" alt="User Profile" class="avatar-image">
+        <img *ngIf="userProfile?.avatarUrl" [src]="userProfile.avatarUrl" alt="User Profile" class="avatar-image">
+        <div *ngIf="!userProfile?.avatarUrl" class="avatar-placeholder">
+          <i class="fas fa-user"></i>
+        </div>
       </div>
     </div>
   </div>
@@ -30,32 +33,33 @@
   <!-- Statistics Section -->
   <div class="stats-container">
     <app-stat-card 
-      [icon]="statIcons.student"
+      [icon]="statIcons.workshop"
       [gradientSvg]="statGradients[0]" 
-      [title]="'Students'"
-      [value]="studentCount.toString()"
-      [actionLabel]="'View All'"
+      [title]="'WORKSHOPS'"
+      [value]="workshopCount.toString()"
+      [actionLabel]="'+'"
     ></app-stat-card>
     <app-stat-card 
-      [icon]="statIcons.workshop"
+      [icon]="statIcons.student"
       [gradientSvg]="statGradients[1]" 
-      [title]="'Workshops'"
-      [value]="workshopCount.toString()"
-      [actionLabel]="'Find Workshop'"
+      [title]="'STUDENTS'"
+      [value]="studentCount.toString()"
+      [actionLabel]="'+'"
     ></app-stat-card>
     <app-stat-card 
       [icon]="statIcons.teacher"
       [gradientSvg]="statGradients[2]" 
-      [title]="'Calendar'"
-      [value]="'12'"
-      [actionLabel]="'View Calendar'"
+      [title]="'TEACHER'"
+      [value]="teacherCount.toString()"
+      [actionLabel]="'+'"
     ></app-stat-card>
     <app-stat-card 
       [icon]="statIcons.achievement"
       [gradientSvg]="statGradients[3]" 
-      [title]="'Achievement'"
-      [value]="'87%'"
-      [actionLabel]="'Show Detail'"
+      [title]="'ACADEMY LEVEL'"
+      [value]="academyLevel.toString()"
+      [actionLabel]="'+'"
+      [showStar]="true"
     ></app-stat-card>
   </div>
 

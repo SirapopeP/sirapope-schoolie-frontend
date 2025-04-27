@@ -15,4 +15,5 @@ export class StatCardComponent {
   @Input() gradient: string = '';
   @Input() actionLabel: string = '';
   @Input() gradientSvg: string = '';
+  @Input() showStar: boolean = false;
 } 
