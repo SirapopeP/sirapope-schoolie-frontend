@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostBinding } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AlertService } from '../../services/alert.service';
 import { CommonModule } from '@angular/common';
@@ -15,6 +15,14 @@ import { Subscription } from 'rxjs';
 export class SidebarComponent implements OnInit, OnDestroy {
   isDarkMode = false;
   private themeSubscription: Subscription;
+
+  // Enhanced host bindings with !important flags
+  @HostBinding('style.position') position = 'relative';
+  @HostBinding('style.z-index') zIndex = '1050';
+  @HostBinding('style.pointer-events') pointerEvents = 'auto !important';
+  @HostBinding('style.touch-action') touchAction = 'auto !important';
+  @HostBinding('style.display') display = 'block';
+  @HostBinding('style.height') height = '100%';
 
   constructor(
     private router: Router,

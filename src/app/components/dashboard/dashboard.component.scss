@@ -85,22 +85,31 @@
   }
 }
 
+// Sidebar overlay (Now outside sidebar container)
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: $z-index-modal-backdrop;
+}
+
 // Sidebar container
 .sidebar-container {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  z-index: $z-index-fixed;
+  z-index: $z-index-modal; // Higher z-index
   
-  .sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: $z-index-modal-backdrop;
+  app-sidebar, .sidebar-component {
+    position: relative;
+    z-index: $z-index-modal + 10; // Much higher z-index to be above overlay
+    display: block;
+    height: 100%;
+    pointer-events: all !important; // Force pointer events
   }
 }
 
@@ -155,11 +164,29 @@
     
     &.open {
       transform: translateX(0);
+      animation: mobile-sidebar-appear 0.3s ease-out;
+    }
+
+    // Ensure sidebar is clickable in mobile view
+    app-sidebar, .sidebar-component {
+      height: 100%;
+      pointer-events: all !important;
+      touch-action: auto !important;
     }
   }
   
   .dashboard-content {
     margin-left: 0;
     padding-top: 80px; // Add padding for mobile header
+  }
+}
+
+// Animation for mobile sidebar appearance
+@keyframes mobile-sidebar-appear {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
   }
 } 
