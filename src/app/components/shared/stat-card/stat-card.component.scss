@@ -1,0 +1,106 @@
+.stat-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  overflow: hidden;
+  min-height: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.stat-card-bg {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  min-height: 80px;
+  margin-right: 1rem;
+  overflow: hidden;
+}
+
+.stat-card-gradient-shape {
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  width: 80px;
+  height: 80px;
+  z-index: 1;
+  pointer-events: none;
+  object-fit: contain;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.stat-card-icon {
+  position: absolute;
+  left: 15px;
+  top: 15px;
+  width: 36px;
+  height: 36px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: #fff;
+  background: none;
+}
+
+.icon-placeholder {
+  color: #bbb;
+  font-size: 2rem;
+}
+
+.stat-card-content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.stat-card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1DD8B2;
+  margin-bottom: 0.25rem;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.stat-card-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #222;
+  text-align: left;
+}
+
+.stat-card-action {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #1DD8B2;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  &:hover {
+    background: #3AA5FF;
+  }
+} 

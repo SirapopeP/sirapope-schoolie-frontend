@@ -1,18 +1,518 @@
 @import '../../../styles/variables';
 @import '../../../styles/mixins';
 
+:host {
+  width: 100%;
+  display: block;
+}
+
 .home-container {
-  padding: $spacing-lg;
+  width: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  font-family: $font-family-base;
   
-  h1 {
+  // Header styles
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: $spacing-lg;
-    color: $text-primary;
+    
+    .logo-text {
+      font-weight: $font-weight-bold;
+      font-size: 1.5rem;
+      
+      .logo-first {
+        color: var(--primary-color);
+      }
+      
+      .logo-second {
+        color: var(--text-primary);
+      }
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      
+      .avatar-container {
+        margin-left: 10px;
+        
+        .avatar-image {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: none;
+        }
+      }
+    }
   }
   
-  .home-content {
-    background-color: $background-primary;
-    border-radius: $border-radius-md;
-    padding: $spacing-lg;
-    box-shadow: $box-shadow;
+  // Shared styles for cards
+  %card-base {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+  }
+  
+  %section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    
+    .section-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(29, 216, 178, 0.1);
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+    }
+    
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+  }
+  
+  .divider {
+    height: 1px;
+    background: #E0E0E0;
+    margin: 0.5rem 0;
+  }
+  
+  // Intro Card
+  .intro-card {
+    margin-bottom: $spacing-lg;
+    
+    .card {
+      @include card-shadow;
+      border-radius: $border-radius-md;
+      background-color: var(--background-primary);
+      
+      .card-body {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        svg {
+          width: 2rem;
+          height: 2rem;
+        }
+        span {
+          @include body-text;
+        }
+      }
+      
+      .alert-info {
+        background-color: rgba(var(--primary-color-rgb), 0.1);
+        color: var(--text-primary);
+        
+        svg {
+          color: var(--primary-color);
+        }
+      }
+    }
+  }
+  
+  // Stats Container
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 1rem;
+    
+    app-stat-card {
+      display: block;
+      height: 100%;
+    }
+  }
+  
+  // Main Content Area
+  .main-content-area {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    
+    // Workshop List Section
+    .workshop-list {
+      @extend %card-base;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      
+      .list-header {
+        @extend %section-header;
+      }
+      
+      .workshop-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .workshop-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: #F8F9FA;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #F0F0F0;
+          transform: translateY(-2px);
+        }
+        
+        .status-badge {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          margin-right: 0.75rem;
+          
+          &.active {
+            background: #1DD8B2;
+          }
+          
+          &.cancelled {
+            background: #FF5757;
+          }
+        }
+        
+        .workshop-name {
+          flex: 1;
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #333;
+        }
+        
+        .workshop-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .btn-circle {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          border: 1px solid #E0E0E0;
+          color: #777;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background: #1DD8B2;
+            color: white;
+            border-color: #1DD8B2;
+          }
+        }
+      }
+    }
+    
+    // Student Section
+    .student-section {
+      @extend %card-base;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      
+      .list-header {
+        @extend %section-header;
+        .section-title {
+          flex: 1;
+        }
+        
+        .date-badge {
+          background: #F8F9FA;
+          color: #555;
+          font-size: 0.8rem;
+          font-weight: 500;
+          padding: 0.4rem 0.8rem;
+          border-radius: 6px;
+        }
+      }
+      
+      .list-actions {
+        display: flex;
+        justify-content: flex-end;
+        
+        .add-button {
+          background: #1DD8B2;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 0.5rem 1rem;
+          font-size: 0.85rem;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background: darken(#1DD8B2, 8%);
+          }
+        }
+      }
+      
+      .student-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .student-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        background: #F8F9FA;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #F0F0F0;
+          transform: translateY(-2px);
+        }
+        
+        .student-avatar {
+          .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1DD8B2;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+          }
+        }
+        
+        .student-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          
+          .student-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            
+            .student-name {
+              font-weight: 600;
+              font-size: 1rem;
+              color: #333;
+            }
+            
+            .student-age {
+              color: #666;
+              font-size: 0.8rem;
+            }
+          }
+          
+          .student-course {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 0.85rem;
+            
+            .workshop-name {
+              color: #555;
+              
+              .workshop-value {
+                color: #1DD8B2;
+                font-weight: 500;
+              }
+            }
+            
+            .session-date {
+              color: #777;
+            }
+          }
+          
+          .session-details {
+            font-size: 0.85rem;
+            
+            .session-label {
+              color: #555;
+            }
+            
+            .session-value {
+              color: #1DD8B2;
+              font-weight: 500;
+            }
+          }
+        }
+        
+        .student-actions {
+          .edit-button {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #777;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              background: #1DD8B2;
+              color: white;
+              border-color: #1DD8B2;
+            }
+          }
+        }
+      }
+    }
+    
+    // Calendar Section
+    .calendar-section {
+      @extend %card-base;
+      .list-header {
+        @extend %section-header;
+      }
+    }
+  }
+}
+
+// Dark mode specific styles
+:host-context(.dark-theme) {
+  .home-container {
+    .header-container {
+      .logo-text {
+        .logo-second {
+          color: #fff;
+        }
+      }
+    }
+    
+    .intro-card {
+      .card {
+        background-color: var(--background-secondary);
+        
+        .alert-info {
+          background-color: rgba(var(--primary-color-rgb), 0.2);
+        }
+      }
+    }
+    
+    .workshop-list,
+    .student-section,
+    .calendar-section {
+      background-color: var(--background-secondary);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      
+      .section-title {
+        color: #fff;
+      }
+      
+      .divider {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    .workshop-item,
+    .student-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      
+      .workshop-name,
+      .student-name {
+        color: #fff;
+      }
+      
+      .student-age,
+      .session-date,
+      .session-label {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      .btn-circle,
+      .edit-button {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        
+        &:hover {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+        }
+      }
+    }
+    
+    .date-badge {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    
+    .badge-outline {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
+// Responsive design for different screen sizes
+@media (max-width: 1200px) {
+  .home-container {
+    .stats-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-content-area {
+      grid-template-columns: 1fr 1fr;
+      
+      .calendar-section {
+        grid-column: span 2;
+        margin-top: 1.5rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+    
+    .stats-container {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .main-content-area {
+      grid-template-columns: 1fr;
+      
+      .calendar-section {
+        grid-column: auto;
+      }
+    }
   }
 } 

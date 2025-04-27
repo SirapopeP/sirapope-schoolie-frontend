@@ -1,0 +1,13 @@
+<div class="stat-card">
+  <div class="stat-card-bg">
+    <div class="stat-card-gradient-shape" *ngIf="gradientSvg" [style.background-image]="'url(' + gradientSvg + ')'"></div>
+    <div class="stat-card-icon">
+      <i [ngClass]="icon"></i>
+    </div>
+  </div>
+  <div class="stat-card-content">
+    <div class="stat-card-title">{{ title }}</div>
+    <div class="stat-card-value">{{ value }}</div>
+    <button *ngIf="actionLabel" class="stat-card-action">{{ actionLabel }}</button>
+  </div>
+</div> 

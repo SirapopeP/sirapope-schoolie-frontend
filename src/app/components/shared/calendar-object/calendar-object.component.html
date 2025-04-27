@@ -1,0 +1,36 @@
+<div class="calendar-object">
+  <div class="calendar-header">
+    <div class="calendar-icon">
+      <!-- Placeholder SVG Calendar Icon -->
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="6" y="12" width="44" height="38" rx="10" fill="#E6FAF6"/>
+        <rect x="6" y="12" width="44" height="38" rx="10" stroke="#1DD8B2" stroke-width="2"/>
+        <rect x="14" y="6" width="4" height="12" rx="2" fill="#1DD8B2"/>
+        <rect x="38" y="6" width="4" height="12" rx="2" fill="#1DD8B2"/>
+      </svg>
+    </div>
+    <div class="calendar-month">{{ month }}</div>
+    <div class="calendar-controls">
+      <button (click)="prevMonth.emit()">&#60;</button>
+      <button (click)="today.emit()">Today</button>
+      <button (click)="nextMonth.emit()">&#62;</button>
+    </div>
+  </div>
+  <div class="calendar-days-header">
+    <div class="calendar-day-name" *ngFor="let d of ['M','T','W','TH','F','S','SU']">{{ d }}</div>
+  </div>
+  <div class="calendar-days-grid">
+    <div *ngFor="let day of days"
+         [class.inactive]="day.inactive"
+         [class.active]="day.active"
+         class="calendar-day-cell">
+      {{ day.value }}
+    </div>
+  </div>
+  <div class="calendar-legend">
+    <div class="calendar-legend-item" *ngFor="let l of legend">
+      <span class="calendar-legend-marker" [style.background]="l.color"></span>
+      <span>{{ l.label }}</span>
+    </div>
+  </div>
+</div> 
