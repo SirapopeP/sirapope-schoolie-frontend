@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AlertService } from '../../services/alert.service';
+import { LoadingService } from '../../services/loading.service';
 import { CommonModule } from '@angular/common';
 import { AlertComponent } from '../alert/alert.component';
 import { ParticlesComponent } from '../particles/particles.component';
@@ -30,6 +31,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private http: HttpClient,
     private alertService: AlertService,
+    private loadingService: LoadingService,
     public themeService: ThemeService
   ) {
     this.loginForm = this.fb.group({
@@ -74,9 +76,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   onLogin(): void {
     if (this.loginForm.valid) {
       const { usernameOrEmail, password, rememberMe } = this.loginForm.value;
-
-      // ส่งแค่ Content-Type header เท่านั้น
       const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+      // Show loading spinner
+      this.loadingService.show();
 
       this.http.post<any>(
         `${this.apiUrl}/auth/login`, 
@@ -97,8 +100,11 @@ export class LoginComponent implements OnInit, OnDestroy {
             sessionStorage.setItem('token', response.access_token);
           }
 
-           // ถ้าเป็นการ login ครั้งแรก ให้ไปหน้าเปลี่ยนรหัสผ่าน
-           if (response.user.isFirstLogin) {
+          // Hide loading spinner
+          this.loadingService.hide();
+
+          // ถ้าเป็นการ login ครั้งแรก ให้ไปหน้าเปลี่ยนรหัสผ่าน
+          if (response.user.isFirstLogin) {
             this.router.navigate(['/change-password']);
           } else {
             this.router.navigate(['/dashboard']);
@@ -106,6 +112,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           
         },
         error: (error) => {
+          // Hide loading spinner on error
+          this.loadingService.hide();
+          
           let message = 'Login failed';
           if (error.status === 401) {
             message = 'Invalid username or password';
