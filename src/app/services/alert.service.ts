@@ -15,6 +15,7 @@ export class AlertService {
   alert$ = this.alertSubject.asObservable();
 
   showAlert(alert: Alert) {
+    console.log('AlertService: Showing alert -', alert.type, alert.message);
     this.alertSubject.next(alert);
   }
 }

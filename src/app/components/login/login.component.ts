@@ -89,12 +89,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         { headers }
       ).subscribe({
         next: (response) => {
-          console.log('Login response:', response);
-          
-          this.alertService.showAlert({
-            type: 'success',
-            message: 'Login successful!'
-          });
+          console.log('Login successful, response:', response);
           
           // Store data in localStorage or sessionStorage based on remember me
           if (rememberMe) {
@@ -108,19 +103,27 @@ export class LoginComponent implements OnInit, OnDestroy {
           // ALSO store in UserProfileService to make it available immediately
           this.userProfileService.setUser(response.user);
           console.log('User data stored in UserProfileService');
-
+          
           // Hide loading spinner
           this.loadingService.hide();
-
-          // ถ้าเป็นการ login ครั้งแรก ให้ไปหน้าเปลี่ยนรหัสผ่าน
-          if (response.user.isFirstLogin) {
-            this.router.navigate(['/change-password']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
           
+          // Show success alert
+          console.log('Showing success alert');
+          this.alertService.showAlert({
+            type: 'success',
+            message: 'Login successful!'
+          });
+          
+          // Delay navigation to allow alert to be visible
+          console.log('Delaying navigation for 1.5 seconds to show alert');
+          setTimeout(() => {
+            console.log('Navigating to dashboard');
+            this.router.navigate(['/dashboard']);
+          }, 1500);
         },
         error: (error) => {
+          console.error('Login error:', error);
+          
           // Hide loading spinner on error
           this.loadingService.hide();
           
@@ -130,6 +133,9 @@ export class LoginComponent implements OnInit, OnDestroy {
           } else if (error.status === 404) {
             message = 'User not found';
           }
+          
+          // Show error alert
+          console.log('Showing error alert');
           this.alertService.showAlert({
             type: 'error',
             message

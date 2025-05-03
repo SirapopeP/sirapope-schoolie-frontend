@@ -1,7 +1,8 @@
 // src/app/components/alert/alert.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AlertService } from '../../services/alert.service';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-alert',
@@ -18,6 +19,8 @@ import { CommonModule } from '@angular/common';
       border-radius: 4px;
       margin-bottom: 1rem;
       text-align: center;
+      z-index: 1000;
+      position: relative;
     }
     .alert-success {
       background-color: #d4edda;
@@ -41,16 +44,30 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class AlertComponent implements OnInit {
+export class AlertComponent implements OnInit, OnDestroy {
   alert: any;
+  private alertSubscription: Subscription | null = null;
 
   constructor(private alertService: AlertService) {}
 
   ngOnInit() {
-    this.alertService.alert$.subscribe(alert => {
+    console.log('AlertComponent: Initializing and subscribing to alerts');
+    this.alertSubscription = this.alertService.alert$.subscribe(alert => {
+      console.log('AlertComponent: Received alert -', alert.type, alert.message);
       this.alert = alert;
       // Auto hide after 5 seconds
-      setTimeout(() => this.alert = null, 5000);
+      setTimeout(() => {
+        console.log('AlertComponent: Auto-hiding alert');
+        this.alert = null;
+      }, 5000);
     });
+  }
+
+  ngOnDestroy() {
+    console.log('AlertComponent: Destroying and unsubscribing');
+    if (this.alertSubscription) {
+      this.alertSubscription.unsubscribe();
+      this.alertSubscription = null;
+    }
   }
 }

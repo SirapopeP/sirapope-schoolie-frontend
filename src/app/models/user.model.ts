@@ -15,7 +15,6 @@ export interface User {
   username: string;
   roles: string[];
   profile: UserProfile;
-  isFirstLogin?: boolean;
 }
 
 export interface AuthResponse {
