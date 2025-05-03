@@ -30,16 +30,24 @@
         </div>
       </div>
     </div>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
   </div>
   
   <div class="modal-footer">
-    <button class="btn-cancel" (click)="close()">Cancel</button>
+    <button class="btn-cancel" (click)="close()" [disabled]="isLoading">Cancel</button>
     <button 
       class="btn-confirm" 
-      [disabled]="!selectedRole"
-      [class.disabled]="!selectedRole"
+      [disabled]="!selectedRole || isLoading"
+      [class.disabled]="!selectedRole || isLoading"
       (click)="confirmSelection()">
-      Confirm
+      <span *ngIf="!isLoading">Confirm</span>
+      <span *ngIf="isLoading" class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+      </span>
     </button>
   </div>
 </div> 

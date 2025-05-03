@@ -10,6 +10,7 @@
   gap: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
+  border-radius: var(--border-radius-lg);
 }
 
 /* Header Section */
@@ -17,6 +18,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0.5rem;
   
   .header-content {
     .dashboard-title {
@@ -48,7 +50,7 @@
       }
       
       .academy-name {
-        color: #1DD8B2;
+        color: var(--primary-color);
         font-size: 0.9rem;
       }
     }
@@ -73,13 +75,13 @@
 
 /* Info Section with Select Role Button */
 .info-section {
-  background-color: var(--card-bg, white);
-  border-radius: 8px;
+  background-color: var(--background-secondary, #f5f5f5);
+  border-radius: var(--border-radius-xl, 16px);
   padding: 1.25rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px var(--shadow-color);
   
   .info-content {
     display: flex;
@@ -87,30 +89,43 @@
     gap: 1rem;
     
     .info-icon {
-      color: #1DD8B2;
+      color: var(--primary-color);
       font-size: 1.25rem;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(var(--primary-color-rgb), 0.1);
+      border-radius: 50%;
     }
     
     .info-text {
-      color: var(--text-secondary, #666);
+      color: var(--text-secondary);
       margin: 0;
       font-size: 0.95rem;
     }
   }
   
   .select-role-button {
-    background: #1DD8B2;
+    background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 6px;
-    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius-lg, 12px);
+    padding: 0.6rem 1.2rem;
     font-size: 0.9rem;
-    font-weight: 500;
+    font-weight: var(--font-weight-medium);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: var(--transition-base);
     
     &:hover {
-      background: darken(#1DD8B2, 8%);
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
     }
   }
 }
@@ -122,12 +137,12 @@
   gap: 1.5rem;
   
   .stat-card {
-    background-color: var(--card-bg, white);
-    border-radius: 8px;
+    background-color: var(--background-secondary);
+    border-radius: var(--border-radius-xl, 16px);
     padding: 1.5rem;
     display: flex;
     position: relative;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px var(--shadow-color);
     overflow: hidden;
     height: 140px;
     
@@ -145,8 +160,8 @@
         
         .stat-title {
           font-size: 0.75rem;
-          font-weight: 600;
-          color: var(--text-secondary, #777);
+          font-weight: var(--font-weight-bold);
+          color: var(--text-light, white);
           letter-spacing: 0.5px;
           margin: 0;
         }
@@ -157,7 +172,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 4px;
+          border-radius: var(--border-radius-sm);
           color: #ffffff;
           cursor: pointer;
           
@@ -169,8 +184,8 @@
       
       .stat-value {
         font-size: 3.5rem;
-        font-weight: 700;
-        color: var(--text-primary, #333);
+        font-weight: var(--font-weight-bold);
+        color: var(--text-light, white);
         margin-top: 1rem;
         
         .star-icon {
@@ -188,6 +203,7 @@
       padding: 1rem;
       font-size: 5rem;
       opacity: 0.1;
+      color: white;
     }
     
     // White curved shape in the top-right corner
@@ -204,25 +220,25 @@
     }
   }
   
-  .workshops {
-    background: linear-gradient(135deg, #1DD8B2, #37E2BC);
+  .workshops, .available-courses {
+    background: linear-gradient(135deg, var(--primary-color), #37E2BC);
     .stat-title, .stat-value { color: white; }
     .stat-action { background-color: rgba(255, 255, 255, 0.2); }
   }
   
-  .students {
+  .students, .active-students {
     background: linear-gradient(135deg, #5B9FFF, #85BDFF);
     .stat-title, .stat-value { color: white; }
     .stat-action { background-color: rgba(255, 255, 255, 0.2); }
   }
   
-  .teacher {
+  .teacher, .qualified-teachers {
     background: linear-gradient(135deg, #B06AB3, #D58EE3);
     .stat-title, .stat-value { color: white; }
     .stat-action { background-color: rgba(255, 255, 255, 0.2); }
   }
   
-  .academy-level {
+  .academy-level, .certification {
     background: linear-gradient(135deg, #FFA600, #FFCE69);
     .stat-title, .stat-value { color: white; }
   }
@@ -266,6 +282,49 @@
   }
 }
 
+/* Dark mode specific overrides */
+:host-context(.dark-theme) {
+  .info-section {
+    background-color: var(--background-tertiary, #333333);
+    
+    .info-text {
+      color: var(--text-secondary, #cccccc);
+    }
+  }
+  
+  .stat-card {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    
+    &::before {
+      opacity: 0.15;
+    }
+  }
+  
+  .dashboard-header {
+    .dashboard-title {
+      color: var(--text-primary, #ffffff);
+    }
+    
+    .dashboard-subtitle {
+      color: var(--text-secondary, #cccccc);
+    }
+    
+    .user-info {
+      .user-name {
+        color: var(--text-primary, #ffffff);
+      }
+    }
+  }
+  
+  .avatar-container .avatar-placeholder {
+    background-color: rgba(255, 255, 255, 0.1);
+    
+    i {
+      color: var(--text-secondary, #cccccc);
+    }
+  }
+}
+
 // Intro card
 .intro-card {
   margin-bottom: 25px;
@@ -297,9 +356,70 @@
 
 // Main content area
 .main-content-area {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  background-color: rgba(var(--card-bg-rgb), 0.7);
+  box-shadow: var(--card-shadow);
+  gap: 2rem;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
+  
+  .welcome-image {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;
+    height: 300px;
+    margin: 0 auto;
+    
+    #dotlottie-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none; /* Hidden by default, shown when canvas fails */
+      
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+  
+  .welcome-content {
+    flex: 1;
+    padding: 1rem;
+    
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      color: var(--text-color);
+    }
+    
+    p {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+  }
   
   .featured-courses, .about-section {
     background-color: var(--card-bg);
@@ -310,7 +430,15 @@
   }
   
   @media (max-width: 992px) {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    
+    .welcome-image {
+      order: 2;
+    }
+    
+    .welcome-content {
+      order: 1;
+    }
   }
 }
 
@@ -597,4 +725,13 @@
       }
     }
   }
+}
+
+/* Dark mode styles for SVG */
+:host-context(.dark-theme) .animation svg .light {
+  fill: #2d3238 !important;
+}
+
+:host-context(.dark-theme) .animation svg circle[stroke="#eee"] {
+  stroke: #555 !important;
 } 
