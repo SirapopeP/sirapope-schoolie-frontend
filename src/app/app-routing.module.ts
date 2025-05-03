@@ -11,6 +11,7 @@ import { WorkshopComponent } from './components/workshop/workshop.component';
 import { StudentComponent } from './components/student/student.component';
 import { TeacherComponent } from './components/teacher/teacher.component';
 import { OptionsComponent } from './components/options/options.component';
+import { HomeGuestComponent } from './components/home-guest/home-guest.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -39,7 +40,7 @@ export const routes: Routes = [
       },
       { 
         path: 'home-guest', 
-        component: HomeComponent,
+        component: HomeGuestComponent,
         canActivate: [AuthGuard]
       },
       { 
