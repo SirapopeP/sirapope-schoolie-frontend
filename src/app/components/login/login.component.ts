@@ -10,6 +10,7 @@ import { ParticlesComponent } from '../particles/particles.component';
 import { filter } from 'rxjs/operators';
 import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
+import { UserProfileService } from '../../services/user-profile.service';
 
 @Component({
   selector: 'app-login',
@@ -32,7 +33,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private alertService: AlertService,
     private loadingService: LoadingService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private userProfileService: UserProfileService
   ) {
     this.loginForm = this.fb.group({
       usernameOrEmail: ['', [Validators.required]],
@@ -87,11 +89,14 @@ export class LoginComponent implements OnInit, OnDestroy {
         { headers }
       ).subscribe({
         next: (response) => {
+          console.log('Login response:', response);
+          
           this.alertService.showAlert({
             type: 'success',
             message: 'Login successful!'
           });
           
+          // Store data in localStorage or sessionStorage based on remember me
           if (rememberMe) {
             localStorage.setItem('user', JSON.stringify(response.user));
             localStorage.setItem('token', response.access_token);
@@ -99,6 +104,10 @@ export class LoginComponent implements OnInit, OnDestroy {
             sessionStorage.setItem('user', JSON.stringify(response.user));
             sessionStorage.setItem('token', response.access_token);
           }
+          
+          // ALSO store in UserProfileService to make it available immediately
+          this.userProfileService.setUser(response.user);
+          console.log('User data stored in UserProfileService');
 
           // Hide loading spinner
           this.loadingService.hide();

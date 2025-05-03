@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, switchMap } from 'rxjs/operators';
 import { of, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { AlertComponent } from '../alert/alert.component';
@@ -14,6 +14,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 import { ThemeService } from '../../services/theme.service';
+import { environment } from '@env';
+
+interface RegisterResponse {
+  id: string;
+  email: string;
+  username: string;
+  [key: string]: any;
+}
 
 @Component({
   selector: 'app-register',
@@ -69,6 +77,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.registerForm = this.fb.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
       name: ['', [Validators.required]],
+      nickName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]]
@@ -91,19 +100,36 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.isLoading = true;
       const formData = this.registerForm.value;
       
-      // Remove confirmPassword from the payload
-      const { confirmPassword, ...payload } = formData;
+      // ปรับโครงสร้าง payload ตามที่ API ต้องการ
+      const { confirmPassword, ...formValues } = formData;
+      
+      // แปลงจาก name เป็น fullName ตามที่ API ต้องการ
+      const payload = {
+        email: formValues.email,
+        username: formValues.username,
+        password: formValues.password,
+        fullName: formValues.name, // ใช้ name เป็น fullName
+        nickName: formValues.nickName
+      };
 
-      this.http.post('http://localhost:3000/auth/register', payload)
+      // ส่ง request ลงทะเบียน
+      this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/register`, payload)
         .pipe(
           catchError(error => {
             console.error('Registration error:', error);
-            // Show error alert
+            // แสดงข้อความ error ที่เจาะจงมากขึ้น
+            let errorMessage = 'Registration failed. Please try again.';
+            if (error.error && error.error.message) {
+              errorMessage = error.error.message;
+            } else if (error.status === 404) {
+              errorMessage = 'API endpoint not found. Please check server configuration.';
+            }
+            
             this.dialog.open(AlertModalComponent, {
               width: '400px',
               data: {
                 title: 'Error',
-                message: error.error.message || 'Registration failed. Please try again.',
+                message: errorMessage,
                 type: 'error'
               },
               disableClose: false

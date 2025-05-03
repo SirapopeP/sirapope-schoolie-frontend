@@ -1,0 +1,274 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1001;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+.modal-content {
+  background-color: var(--background-primary);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  animation: slide-in 0.3s ease-out forwards;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  
+  &:hover {
+    color: var(--text-primary);
+    background-color: var(--background-hover);
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+// Profile creation container
+.create-profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.empty-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  
+  .avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: rgba(29, 216, 178, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    i {
+      font-size: 3rem;
+      color: #1DD8B2;
+    }
+  }
+  
+  .empty-text {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+  }
+}
+
+// Form styles
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  
+  @media (max-width: 576px) {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .form-group {
+    flex: 1;
+  }
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--background-input);
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    
+    &:focus {
+      outline: none;
+      border-color: #1DD8B2;
+      box-shadow: 0 0 0 3px rgba(29, 216, 178, 0.15);
+    }
+    
+    &.invalid {
+      border-color: var(--error-color);
+      
+      &:focus {
+        box-shadow: 0 0 0 3px rgba(255, 87, 87, 0.15);
+      }
+    }
+  }
+  
+  .textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  
+  .error-message {
+    color: var(--error-color);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+// Button styles
+.btn-primary, .btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  
+  i {
+    font-size: 1rem;
+  }
+}
+
+.btn-primary {
+  background-color: #1DD8B2;
+  color: white;
+  
+  &:hover {
+    background-color: darken(#1DD8B2, 8%);
+  }
+  
+  &:disabled {
+    background-color: rgba(29, 216, 178, 0.5);
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  
+  &:hover {
+    background-color: var(--background-hover);
+  }
+}
+
+// Dark mode styles
+:host-context(.dark-theme) {
+  .modal-content {
+    background-color: #2a2a2a;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modal-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .empty-profile {
+    .avatar-placeholder {
+      background-color: rgba(29, 216, 178, 0.2);
+    }
+    
+    .empty-text {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
+  
+  .form-group {
+    label {
+      color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .form-control {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      
+      &:focus {
+        border-color: #1DD8B2;
+        box-shadow: 0 0 0 3px rgba(29, 216, 178, 0.25);
+      }
+    }
+  }
+  
+  .btn-secondary {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+} 

@@ -7,10 +7,10 @@
     </div>
     <div class="user-profile">
       <div class="user-info">
-        <div class="user-name">{{ userProfile.fullName || 'good admin' }} | {{ userProfile.role || 'Admin' }}</div>
-        <div class="academy-name">{{ userProfile.academy || 'good academy' }}</div>
+        <div class="user-name">{{ userProfile.fullName }} | {{ userProfile.role }}</div>
+        <div class="academy-name">{{ userProfile.academy || 'None' }}</div>
       </div>
-      <div class="avatar-container">
+      <div class="avatar-container" (click)="openProfileModal()">
         <img *ngIf="userProfile?.avatarUrl" [src]="userProfile.avatarUrl" alt="User Profile" class="avatar-image">
         <div *ngIf="!userProfile?.avatarUrl" class="avatar-placeholder">
           <i class="fas fa-user"></i>
@@ -158,4 +158,12 @@
       </app-calendar-object>
     </div>
   </div>
+  
+  <!-- User Profile Modal -->
+  <app-user-profile-modal
+    [isOpen]="isProfileModalOpen"
+    [userProfile]="currentUserProfile"
+    (closeModal)="closeProfileModal()"
+    (profileSaved)="onProfileSaved($event)"
+  ></app-user-profile-modal>
 </div> 
