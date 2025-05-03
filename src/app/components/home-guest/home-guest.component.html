@@ -1,0 +1,147 @@
+<div class="home-container" @fadeIn>
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <h1 class="dashboard-title">Guest Dashboard</h1>
+      <p class="dashboard-subtitle">ACADEMY MANAGEMENT SYSTEM</p>
+    </div>
+    <div class="user-profile">
+      <div class="user-info">
+        <div class="user-name">Guest User</div>
+        <div class="academy-name">No Academy</div>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar-placeholder">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="intro-card" @fadeIn>
+    <div class="card">
+      <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Welcome to the guest dashboard. Please register or log in to access more features.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats-container" @slideIn>
+    <app-stat-card 
+      [icon]="'fas fa-chalkboard'"
+      [gradientSvg]="'assets/styles/gg-1.svg'" 
+      [title]="'AVAILABLE COURSES'"
+      [value]="'5'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="'fas fa-user-graduate'"
+      [gradientSvg]="'assets/styles/gg-2.svg'" 
+      [title]="'ACTIVE STUDENTS'"
+      [value]="'120+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="'fas fa-chalkboard-teacher'"
+      [gradientSvg]="'assets/styles/gg-3.svg'" 
+      [title]="'QUALIFIED TEACHERS'"
+      [value]="'25+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="'fas fa-certificate'"
+      [gradientSvg]="'assets/styles/gg-4.svg'" 
+      [title]="'CERTIFICATION'"
+      [value]="'100%'"
+      [showStar]="true"
+    ></app-stat-card>
+  </div>
+
+  <!-- Main Content Area with improved layout -->
+  <div class="main-content-area" @staggerList>
+    <!-- Featured Courses with better styling -->
+    <div class="featured-courses" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-certificate" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">FEATURED COURSES</h2>
+        </div>
+      </div>
+      <div class="divider"></div>
+      
+      <div class="course-container">
+        <div class="course-card">
+          <div class="course-image">
+            <img src="assets/images/course-art-mixing.jpg" alt="Art Mixing Course" onerror="this.src='assets/images/placeholder.jpg'">
+            <div class="course-badge">Popular</div>
+          </div>
+          <div class="course-content">
+            <div class="course-title">Art Mixing 101</div>
+            <div class="course-desc">Introduction to mixing various art materials for beginners</div>
+            <div class="course-meta">
+              <span><i class="fas fa-clock"></i> 8 weeks</span>
+              <span><i class="fas fa-user-graduate"></i> 20 students</span>
+            </div>
+            <button class="register-button" (click)="navigateToRegister()">Register Now</button>
+          </div>
+        </div>
+        
+        <div class="course-card">
+          <div class="course-image">
+            <img src="assets/images/course-watercolor.jpg" alt="Watercolor Course" onerror="this.src='assets/images/placeholder.jpg'">
+            <div class="course-badge">New</div>
+          </div>
+          <div class="course-content">
+            <div class="course-title">Watercolor Basics</div>
+            <div class="course-desc">Learn the fundamentals of watercolor painting techniques</div>
+            <div class="course-meta">
+              <span><i class="fas fa-clock"></i> 6 weeks</span>
+              <span><i class="fas fa-user-graduate"></i> 15 students</span>
+            </div>
+            <button class="register-button" (click)="navigateToRegister()">Register Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section with improved styling -->
+    <div class="about-section" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-info-circle" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">ABOUT OUR ACADEMY</h2>
+        </div>
+      </div>
+      
+      <div class="divider"></div>
+      
+      <div class="about-content">
+        <div class="about-image">
+          <img src="assets/images/academy.jpg" alt="Our Academy" onerror="this.src='assets/images/placeholder.jpg'">
+        </div>
+        
+        <p>Our academy offers a variety of art courses taught by experienced professionals. Register for an account to:</p>
+        <ul>
+          <li><i class="fas fa-check-circle"></i> Access full course catalog</li>
+          <li><i class="fas fa-check-circle"></i> Track your progress</li>
+          <li><i class="fas fa-check-circle"></i> Interact with teachers and students</li>
+          <li><i class="fas fa-check-circle"></i> Receive certifications upon completion</li>
+        </ul>
+        
+        <div class="testimonial">
+          <div class="quote-mark"><i class="fas fa-quote-left"></i></div>
+          <p class="quote-text">"The courses at this academy have completely transformed my artistic abilities. The teachers are excellent!"</p>
+          <div class="quote-author">- Sarah Johnson, Student</div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="login-button" (click)="navigateToLogin()">Login</button>
+          <button class="register-button" (click)="navigateToRegister()">Register</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

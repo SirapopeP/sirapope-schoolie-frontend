@@ -1,0 +1,161 @@
+<div class="home-container" @fadeIn>
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <h1 class="dashboard-title">Student Dashboard</h1>
+      <p class="dashboard-subtitle">ACADEMY MANAGEMENT SYSTEM</p>
+    </div>
+    <div class="user-profile">
+      <div class="user-info">
+        <div class="user-name">{{ userProfile.fullName }} | {{ userProfile.role }}</div>
+        <div class="academy-name">{{ userProfile.academy || 'None' }}</div>
+      </div>
+      <div class="avatar-container" (click)="openProfileModal()">
+        <img *ngIf="userProfile?.avatarUrl" [src]="userProfile.avatarUrl" alt="User Profile" class="avatar-image">
+        <div *ngIf="!userProfile?.avatarUrl" class="avatar-placeholder">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="intro-card" @fadeIn>
+    <div class="card">
+      <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Welcome to your student dashboard. View your upcoming classes, materials, and progress.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats-container" @slideIn>
+    <app-stat-card 
+      [icon]="statIcons.workshop"
+      [gradientSvg]="statGradients[0]" 
+      [title]="'ENROLLED CLASSES'"
+      [value]="workshopCount.toString()"
+      [actionLabel]="'+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="statIcons.student"
+      [gradientSvg]="statGradients[1]" 
+      [title]="'CLASSMATES'"
+      [value]="studentCount.toString()"
+      [actionLabel]="'+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="statIcons.completed"
+      [gradientSvg]="statGradients[2]" 
+      [title]="'COMPLETED'"
+      [value]="completedClassesCount.toString()"
+      [actionLabel]="'+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="statIcons.certificate"
+      [gradientSvg]="statGradients[3]" 
+      [title]="'CERTIFICATES'"
+      [value]="certificateCount.toString()"
+      [showStar]="true"
+    ></app-stat-card>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content-area" @staggerList>
+    <!-- Upcoming Classes -->
+    <div class="upcoming-classes" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-calendar-check" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">UPCOMING CLASSES</h2>
+        </div>
+      </div>
+      <div class="divider"></div>
+      
+      <div class="class-items-container">
+        <ul class="class-items">
+          <li class="class-item" *ngFor="let class of upcomingClasses" @fadeIn>
+            <div class="class-details">
+              <div class="class-title">{{ class.title }}</div>
+              <div class="class-time">{{ class.date }} | {{ class.time }}</div>
+              <div class="class-teacher">Teacher: {{ class.teacher }}</div>
+            </div>
+            <div class="class-actions">
+              <button class="btn-circle">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </li>
+          <li *ngIf="upcomingClasses.length === 0" class="empty-list">
+            No upcoming classes scheduled
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- My Progress -->
+    <div class="my-progress" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-chart-line" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">MY PROGRESS</h2>
+          <div class="date-badge">{{ formattedSelectedDate }}</div>
+        </div> 
+      </div>
+      
+      <div class="divider"></div>
+      
+      <div class="progress-container">
+        <div class="progress-card">
+          <div class="progress-title">Art Mixing 101</div>
+          <div class="progress-detail">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 75%"></div>
+            </div>
+            <div class="progress-text">75% Complete</div>
+          </div>
+        </div>
+        
+        <div class="progress-card">
+          <div class="progress-title">Watercolor Basics</div>
+          <div class="progress-detail">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 30%"></div>
+            </div>
+            <div class="progress-text">30% Complete</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Calendar Section -->
+    <div class="calendar-section" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-calendar-alt" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">CALENDAR</h2>
+        </div>
+      </div>
+      
+      <div class="divider"></div>
+      
+      <app-calendar-object 
+        (dateSelected)="onDateSelected($event)">
+      </app-calendar-object>
+    </div>
+  </div>
+  
+  <!-- User Profile Modal -->
+  <app-user-profile-modal
+    [isOpen]="isProfileModalOpen"
+    [userProfile]="currentUserProfile"
+    (closeModal)="closeProfileModal()"
+    (profileSaved)="onProfileSaved($event)"
+  ></app-user-profile-modal>
+</div> 

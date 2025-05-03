@@ -11,6 +11,7 @@ import { filter } from 'rxjs/operators';
 import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
 import { UserProfileService } from '../../services/user-profile.service';
+import { RoleRedirectService } from '../../services/role-redirect.service';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +35,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private alertService: AlertService,
     private loadingService: LoadingService,
     public themeService: ThemeService,
-    private userProfileService: UserProfileService
+    private userProfileService: UserProfileService,
+    private roleRedirectService: RoleRedirectService
   ) {
     this.loginForm = this.fb.group({
       usernameOrEmail: ['', [Validators.required]],
@@ -117,8 +119,8 @@ export class LoginComponent implements OnInit, OnDestroy {
           // Delay navigation to allow alert to be visible
           console.log('Delaying navigation for 1.5 seconds to show alert');
           setTimeout(() => {
-            console.log('Navigating to dashboard');
-            this.router.navigate(['/dashboard']);
+            console.log('Navigating based on user role');
+            this.roleRedirectService.redirectBasedOnRole();
           }, 1500);
         },
         error: (error) => {

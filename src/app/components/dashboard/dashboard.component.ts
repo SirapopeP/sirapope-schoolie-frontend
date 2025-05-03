@@ -6,6 +6,7 @@ import { ParticlesComponent } from '../particles/particles.component';
 import { filter } from 'rxjs/operators';
 import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
+import { RoleRedirectService } from '../../services/role-redirect.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,12 +31,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     public themeService: ThemeService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private roleRedirectService: RoleRedirectService
   ) {
     this.checkScreenSize();
   }
 
   ngOnInit() {
+    // Check if we're at the root dashboard URL, redirect based on role if needed
+    if (this.router.url === '/dashboard' || this.router.url === '/dashboard/') {
+      this.roleRedirectService.redirectBasedOnRole();
+    }
+    
     // Check screen size on init
     this.checkScreenSize();
     
