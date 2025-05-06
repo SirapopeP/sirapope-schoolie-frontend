@@ -223,11 +223,38 @@
   border-radius: var(--border-radius-md);
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   font-size: 0.9rem;
   
   i {
     margin-right: 10px;
     font-size: 1.1rem;
+  }
+  
+  span {
+    flex: 1;
+  }
+  
+  .btn-refresh {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    width: 100%;
+    
+    &:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
   }
 }
 

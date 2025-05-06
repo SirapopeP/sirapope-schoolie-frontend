@@ -13,6 +13,7 @@ import { UserProfileService } from '@app/services';
 import { UserProfile } from '@app/models/user.model';
 import { DotLottie } from '@lottiefiles/dotlottie-web';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { AuthService } from '@app/services';
 
 @Component({
   selector: 'app-home-guest',
@@ -83,7 +84,8 @@ export class HomeGuestComponent implements OnInit, OnDestroy, AfterViewInit {
     @Inject(MatDialog) private dialog: MatDialog,
     private router: Router,
     private userProfileService: UserProfileService,
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) {}
   
   ngOnInit() {
@@ -235,18 +237,54 @@ export class HomeGuestComponent implements OnInit, OnDestroy, AfterViewInit {
   openRolePickerModal(): void {
     // Get user ID and current role from user profile service
     const user = this.userProfileService.getUser();
+    console.log('Current user from userProfileService:', user);
+    
+    // ถ้าผู้ใช้เข้าถึงหน้านี้ได้ แสดงว่าควรจะล็อกอินอยู่แล้ว
+    // แต่เราจะตรวจสอบข้อมูลผู้ใช้อีกครั้งเพื่อความแน่ใจ
     const userId = user?.id || '';
     const currentRole = user?.roles && user.roles.length > 0 ? user.roles[0] : 'GUEST';
     
+    // ถ้าไม่พบ ID ผู้ใช้ แสดงว่าอาจมีปัญหากับข้อมูลผู้ใช้ แต่เราจะให้ดำเนินการต่อ
+    // โดยใช้ค่าเริ่มต้นแทนที่จะบล็อกผู้ใช้
+    console.log(`Opening role picker with userId: ${userId || 'Using guest ID'}, currentRole: ${currentRole}`);
+    
+    // Open the role picker modal without additional authentication checks
     const dialogRef = RolePickerModalComponent.open(this.dialog, {
-      userId: userId,
+      userId: userId || 'guest-user', // ใช้ค่าเริ่มต้นถ้าไม่มี ID
       currentRole: currentRole
     });
     
+    // Handle dialog close
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Selected role:', result);
-        this.handleRoleSelection(result);
+        console.log('Dialog result:', result);
+        
+        // Handle authentication error from role picker
+        if (result.authError) {
+          // ถ้าเกิด error authentication จาก role picker
+          // แนะนำให้ผู้ใช้ refresh หน้าแทนที่จะให้ login ใหม่ทันที
+          this.dialog.open(AlertModalComponent, {
+            width: '400px',
+            data: {
+              title: 'Session Issue',
+              message: 'There might be an issue with your session. Would you like to refresh the page?',
+              type: 'warning'
+            },
+            disableClose: false
+          }).afterClosed().subscribe(refresh => {
+            if (refresh) {
+              // Refresh the page to restore session
+              window.location.reload();
+            }
+          });
+        } else if (typeof result === 'string' && 
+                  (result === 'ACADEMY_OWNER' || 
+                   result === 'TEACHER' || 
+                   result === 'STUDENT')) {
+          // Handle successful role selection with type checking
+          console.log('Selected role:', result);
+          this.handleRoleSelection(result as 'ACADEMY_OWNER' | 'TEACHER' | 'STUDENT');
+        }
       }
     });
   }
@@ -261,22 +299,16 @@ export class HomeGuestComponent implements OnInit, OnDestroy, AfterViewInit {
     this.dialog.open(AlertModalComponent, {
       width: '400px',
       data: {
-        title: 'Role Selected',
-        message: `You have selected ${formattedRole} role. Redirecting to appropriate dashboard.`,
+        title: 'Role Updated',
+        message: `You have selected the ${formattedRole} role. The page will refresh to apply your changes.`,
         type: 'success'
       },
       disableClose: false
     });
 
-    // Route to the appropriate dashboard based on role
+    // ให้รีเฟรชหน้าแทนที่จะนำทางไปยังหน้าอื่น เนื่องจาก API ไม่ทำงาน
     setTimeout(() => {
-      if (role === 'ACADEMY_OWNER') {
-        this.router.navigate(['/dashboard/home']);
-      } else if (role === 'TEACHER') {
-        this.router.navigate(['/dashboard/home-teacher']);
-      } else if (role === 'STUDENT') {
-        this.router.navigate(['/dashboard/home-student']);
-      }
+      window.location.reload();
     }, 1500);
   }
 

@@ -7,6 +7,14 @@ import { Subscription, filter } from 'rxjs';
 import { UserProfileService } from '../../services/user-profile.service';
 import { MenuPermissionService } from '../../services/menu-permission.service';
 
+interface MenuItem {
+  id: string;
+  name: string;
+  icon: string;
+  route: string;
+  canAccess?: boolean;
+}
+
 @Component({
   selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
@@ -20,7 +28,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
   private routerSubscription: Subscription;
   currentUrl: string = '';
   userRoles: string[] = [];
-  menuItems = [
+  menuItems: MenuItem[] = [
     { id: 'home', name: 'Dashboard', icon: 'home', route: '/dashboard/home' },
     { id: 'workshop', name: 'Workshop', icon: 'workshop', route: '/dashboard/workshop' },
     { id: 'student', name: 'Students', icon: 'student', route: '/dashboard/student' },
@@ -48,7 +56,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentUrl = event.url;
-        console.log('Current URL:', this.currentUrl);
       });
   }
 
@@ -60,23 +67,19 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     // Get user roles
     const user = this.userProfileService.getUser();
-    console.log('User in sidebar:', user);
     if (user && user.roles) {
       this.userRoles = user.roles;
-      console.log('User roles in sidebar:', this.userRoles);
       // Update dashboard route based on user role
       this.updateDashboardRoute();
       
-      // Debug permissions for each menu
+      // แคชค่าการเข้าถึงเมนูไว้เลย เพื่อไม่ต้องเรียก canAccessMenu ซ้ำๆ
       this.menuItems.forEach(item => {
-        const canAccess = this.canAccessMenu(item.id);
-        console.log(`Menu ${item.id} accessible: ${canAccess}`);
+        item.canAccess = this.menuPermissionService.canAccessMenu(item.id, this.userRoles);
       });
     }
 
     // Set initial current URL
     this.currentUrl = this.router.url;
-    console.log('Initial URL:', this.currentUrl);
   }
 
   ngOnDestroy() {
@@ -93,7 +96,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
     const dashboardItem = this.menuItems.find(item => item.id === 'home');
     if (dashboardItem) {
       dashboardItem.route = this.getRouteByRole();
-      console.log('Dashboard route updated to:', dashboardItem.route);
     }
   }
 
@@ -112,25 +114,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   // Navigate to a route programmatically
   navigateTo(route: string): void {
-    console.log('Attempting to navigate to:', route);
-    
-    // If the route is workshop, student, or teacher, log a message
-    if (route.includes('workshop') || route.includes('student') || route.includes('teacher')) {
-      console.log('Navigating to a potentially problematic route:', route);
-    }
-    
-    this.router.navigate([route]).then(
-      success => {
-        if (success) {
-          console.log('Navigation successful to:', route);
-        } else {
-          console.log('Navigation to', route, 'was prevented (returned false)');
-        }
-      },
-      error => {
-        console.error('Navigation error to', route, error);
-      }
-    );
+    this.router.navigate([route]);
   }
 
   // Check if a route is currently active
@@ -172,7 +156,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
   }
 
   canAccessMenu(menuId: string): boolean {
+    // ใช้ค่าที่แคชไว้แล้วถ้ามี
+    const menuItem = this.menuItems.find(item => item.id === menuId);
+    if (menuItem && menuItem.canAccess !== undefined) {
+      return menuItem.canAccess;
+    }
+    
+    // ถ้ายังไม่เคยแคช ให้เรียกและแคชไว้
     const canAccess = this.menuPermissionService.canAccessMenu(menuId, this.userRoles);
+    
+    // แคชค่าไว้สำหรับการเรียกใช้ต่อไป
+    if (menuItem) {
+      menuItem.canAccess = canAccess;
+    }
+    
     return canAccess;
   }
 } 

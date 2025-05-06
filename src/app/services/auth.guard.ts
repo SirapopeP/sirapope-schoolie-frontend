@@ -7,6 +7,9 @@ import { MenuPermissionService } from './menu-permission.service';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
+  // แคชค่าการตรวจสอบไว้เพื่อไม่ต้องตรวจสอบซ้ำ
+  private accessCache: {[key: string]: boolean} = {};
+  
   constructor(
     private userProfileService: UserProfileService,
     private menuPermissionService: MenuPermissionService,
@@ -14,12 +17,9 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    console.log('AuthGuard: Checking route access for:', state.url);
-    
     const currentUser = this.userProfileService.getUser();
     
     if (!currentUser) {
-      console.log('No authenticated user found, redirecting to login');
       this.router.navigate(['/login']);
       return false;
     }
@@ -41,25 +41,27 @@ export class AuthGuard implements CanActivate {
       menuId = routePart.split('-')[0];
     }
     
-    console.log('Checking access for menu ID:', menuId);
-    
     // If no menu ID was found or it's empty, allow access
     if (!menuId) {
       return true;
     }
     
-    // Check if user has permission to access this menu
-    const userRoles = currentUser.roles || [];
-    console.log('User roles:', userRoles);
+    // ตรวจสอบว่าเคยมีการแคชการเข้าถึงนี้ไว้หรือไม่
+    const cacheKey = `${menuId}_${currentUser.roles?.join('_')}`;
+    if (this.accessCache[cacheKey] !== undefined) {
+      return this.accessCache[cacheKey];
+    }
     
-    // For debugging only - temporarily allow all access
-    // Remove for production
-    console.log('⚠️ DEBUG MODE: Allowing all route access');
+    // อนุญาตให้เข้าถึงทุกเส้นทางในโหมด debug
     return true;
     
-    /*
+    // Check if user has permission to access this menu
+    /* การตรวจสอบจริงๆ ควรเป็นแบบนี้ แต่ตอนนี้ทาง debug ไว้ก่อน
+    const userRoles = currentUser.roles || [];
     const canAccess = this.menuPermissionService.canAccessMenu(menuId, userRoles);
-    console.log(`Can access menu ${menuId}?`, canAccess);
+    
+    // เก็บผลลัพธ์ไว้ในแคช
+    this.accessCache[cacheKey] = canAccess;
 
     if (!canAccess) {
       // User doesn't have required permission, redirect to appropriate home

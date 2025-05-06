@@ -82,6 +82,11 @@ export class LoginComponent implements OnInit, OnDestroy {
       const { usernameOrEmail, password, rememberMe } = this.loginForm.value;
       const headers = new HttpHeaders().set('Content-Type', 'application/json');
 
+      // ล้าง token เก่าออกก่อน
+      localStorage.removeItem('schoolie_token');
+      localStorage.removeItem('token');
+      localStorage.removeItem('token_timestamp');
+
       // Show loading spinner
       this.loadingService.show();
 
@@ -93,14 +98,33 @@ export class LoginComponent implements OnInit, OnDestroy {
         next: (response) => {
           console.log('Login successful, response:', response);
           
-          // Store data in localStorage or sessionStorage based on remember me
-          if (rememberMe) {
-            localStorage.setItem('user', JSON.stringify(response.user));
-            localStorage.setItem('token', response.access_token);
-          } else {
-            sessionStorage.setItem('user', JSON.stringify(response.user));
-            sessionStorage.setItem('token', response.access_token);
+          // ตรวจสอบว่ามี token ใน response
+          if (!response.access_token) {
+            console.error('No access token in response');
+            this.alertService.showAlert({
+              type: 'error',
+              message: 'Authentication error: No access token received'
+            });
+            this.loadingService.hide();
+            return;
           }
+          
+          // แสดง token ในรูปแบบที่ไม่เปิดเผยทั้งหมด
+          console.log('Token received (first 15 chars):', response.access_token.substring(0, 15) + '...');
+          
+          // Store data in localStorage - ใช้ localStorage เท่านั้น
+          localStorage.setItem('user', JSON.stringify(response.user));
+          
+          // ตรวจสอบว่า token ไม่ใช่ mock token
+          if (response.access_token.startsWith('mock_token_')) {
+            console.error('Received a mock token from server - this should not happen');
+          }
+          
+          // บันทึก token ใน localStorage
+          localStorage.setItem('schoolie_token', response.access_token);
+          
+          // บันทึกเวลาที่ได้รับ token
+          localStorage.setItem('token_timestamp', Date.now().toString());
           
           // ALSO store in UserProfileService to make it available immediately
           this.userProfileService.setUser(response.user);
