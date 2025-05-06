@@ -7,6 +7,7 @@ import { ProfileService } from '../../../services/profile.service';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertModalComponent } from '../alert-modal/alert-modal.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-profile-modal',
@@ -43,6 +44,7 @@ export class UserProfileModalComponent implements OnInit {
   isEditMode = false;
   showForm = false;
   isLoading = false;
+  formError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -56,7 +58,7 @@ export class UserProfileModalComponent implements OnInit {
   ngOnInit(): void {
     if (this.userProfile) {
       this.isEditMode = true;
-      this.profileForm.patchValue(this.userProfile);
+      this.patchFormValues(this.userProfile);
       this.showForm = true;
     } else {
       // Try to load the user profile on init
@@ -66,19 +68,43 @@ export class UserProfileModalComponent implements OnInit {
   
   async loadUserProfile(): Promise<void> {
     const user = this.userProfileService.getUser();
-    if (!user) return;
+    if (!user) {
+      console.error('No user found in UserProfileService');
+      return;
+    }
     
     try {
-      const profile = await this.profileService.getUserProfile(user.id).toPromise();
-      if (profile) {
-        this.userProfile = profile;
-        this.isEditMode = true;
-        this.profileForm.patchValue(profile);
-        this.showForm = true;
-      }
+      console.log('Loading profile for user ID:', user.id);
+      this.isLoading = true;
+      
+      this.profileService.getUserProfile(user.id).subscribe({
+        next: (profile) => {
+          if (profile) {
+            console.log('Profile loaded successfully:', profile);
+            this.userProfile = profile;
+            this.isEditMode = true;
+            this.patchFormValues(profile);
+            this.showForm = true;
+          } else {
+            console.log('No profile exists for this user');
+          }
+        },
+        error: (error) => {
+          console.error('Failed to load user profile:', error);
+          // If we get a 404, it means the profile doesn't exist yet
+          if (error.status === 404) {
+            console.log('Profile not found, user can create a new one');
+          } else {
+            this.handleApiError(error);
+          }
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
     } catch (error) {
-      console.error('Failed to load user profile:', error);
-      // Profile doesn't exist for this user, keep isEditMode as false
+      console.error('Error in loadUserProfile:', error);
+      this.isLoading = false;
     }
   }
 
@@ -88,44 +114,124 @@ export class UserProfileModalComponent implements OnInit {
       nickName: ['', [Validators.required]],
       birthDate: [''],
       bio: [''],
+      avatarUrl: [''],
       phoneNumber: ['', [Validators.pattern('^[0-9]+$')]],
       address: ['']
     });
+  }
+  
+  patchFormValues(profile: UserProfile): void {
+    // Ensure all expected properties exist in the form
+    this.profileForm.patchValue({
+      fullName: profile.fullName || '',
+      nickName: profile.nickName || '',
+      birthDate: profile.birthDate || '',
+      bio: profile.bio || '',
+      avatarUrl: profile.avatarUrl || '',
+      phoneNumber: profile.phoneNumber || '',
+      address: profile.address || ''
+    });
+    
+    console.log('Form patched with values:', this.profileForm.value);
   }
 
   showProfileForm(): void {
     this.showForm = true;
   }
 
-  async onSubmit(): Promise<void> {
+  // Format the form data for API submission
+  prepareFormData(): any {
+    const formData = this.profileForm.value;
+    
+    // Add default avatar URL if not provided
+    if (!formData.avatarUrl) {
+      formData.avatarUrl = 'https://example.com/default-avatar.jpg';
+    }
+    
+    // Make sure date is in the correct format
+    if (formData.birthDate) {
+      // Ensure consistent format for birth date
+      const date = new Date(formData.birthDate);
+      formData.birthDate = date.toISOString();
+    }
+    
+    return formData;
+  }
+
+  onSubmit(): void {
     if (this.profileForm.valid && !this.isLoading) {
       this.isLoading = true;
-      const formData = this.profileForm.value;
+      this.formError = null;
       
-      try {
-        let result: UserProfile;
-        
-        if (this.isEditMode) {
-          // Update existing profile
-          result = await this.profileService.updateUserProfile(formData);
-          this.showSuccessAlert('Profile Updated', 'Your profile has been successfully updated.');
-        } else {
-          // Create new profile
-          result = await this.profileService.createUserProfile(formData);
-          this.showSuccessAlert('Profile Created', 'Your profile has been successfully created.');
-        }
-        
-        // Emit the result to the parent component
-        this.profileSaved.emit(result);
-        
-        // Close the modal
-        this.close();
-      } catch (error) {
-        console.error('Error saving profile:', error);
-        this.showErrorAlert('Error', 'There was a problem saving your profile. Please try again.');
-      } finally {
-        this.isLoading = false;
+      const formData = this.prepareFormData();
+      console.log('Submitting form data:', formData);
+      
+      if (this.isEditMode) {
+        // Update existing profile
+        this.updateProfile(formData);
+      } else {
+        // Create new profile
+        this.createProfile(formData);
       }
+    } else {
+      this.formError = 'Please fix the errors in the form before submitting.';
+    }
+  }
+  
+  createProfile(formData: any): void {
+    console.log('Creating new user profile');
+    this.profileService.createUserProfile(formData)
+      .then(result => {
+        console.log('Profile created successfully:', result);
+        this.profileSaved.emit(result);
+        this.close();
+      })
+      .catch(error => {
+        console.error('Error creating profile:', error);
+        this.handleApiError(error);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
+  }
+  
+  updateProfile(formData: any): void {
+    console.log('Updating existing user profile');
+    this.profileService.updateUserProfile(formData)
+      .then(result => {
+        console.log('Profile updated successfully:', result);
+        this.profileSaved.emit(result);
+        this.close();
+      })
+      .catch(error => {
+        console.error('Error updating profile:', error);
+        this.handleApiError(error);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
+  }
+  
+  handleApiError(error: any): void {
+    let errorMessage = 'There was a problem saving your profile. Please try again.';
+    const isAuthError = error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403);
+    
+    if (error instanceof HttpErrorResponse) {
+      if (error.status === 401) {
+        errorMessage = 'Your session has expired. Please login again.';
+      } else if (error.status === 403) {
+        errorMessage = 'You do not have permission to perform this action.';
+      } else if (error.status === 400 && error.error) {
+        errorMessage = error.error.message || 'Invalid data provided. Please check your form.';
+      }
+    }
+    
+    // Set the form error message for all error types
+    this.formError = errorMessage;
+    
+    // For authentication errors, also show a modal dialog as they require user action
+    if (isAuthError) {
+      this.showErrorAlert('Authentication Error', errorMessage);
     }
   }
   
@@ -155,7 +261,9 @@ export class UserProfileModalComponent implements OnInit {
 
   close(): void {
     this.isOpen = false;
+    this.formError = null;
     this.closeModal.emit();
+    
     // Reset the form display after closing animation would complete
     setTimeout(() => {
       this.showForm = this.isEditMode;

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, from } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, from, throwError } from 'rxjs';
 import { environment } from '@env';
 import { UserProfile } from '../models/user.model';
 import { UserProfileService } from './user-profile.service';
 import { catchError, map, tap } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,28 +13,86 @@ import { catchError, map, tap } from 'rxjs/operators';
 export class ProfileService {
   constructor(
     private http: HttpClient,
-    private userProfileService: UserProfileService
+    private userProfileService: UserProfileService,
+    private authService: AuthService
   ) {}
+
+  /**
+   * Creates HttpHeaders with authorization token
+   */
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+    if (!token) {
+      console.error('No authentication token available');
+      return new HttpHeaders({
+        'Content-Type': 'application/json'
+      });
+    }
+
+    const authToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': authToken
+    });
+  }
 
   /**
    * Get the user profile for a specific user ID
    */
   getUserProfile(userId: string): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${environment.apiUrl}/user-profiles/user/${userId}`);
+    console.log(`Fetching profile for user ${userId}`);
+    const headers = this.getAuthHeaders();
+    
+    return this.http.get<UserProfile>(
+      `${environment.apiUrl}/user-profiles/user/${userId}`, 
+      { headers }
+    ).pipe(
+      tap(response => console.log('Profile fetch response:', response)),
+      catchError(error => {
+        console.error('Error fetching user profile:', error);
+        return throwError(() => error);
+      })
+    );
   }
   
   /**
    * Create a new user profile
    */
   createProfile(profileData: Partial<UserProfile>): Observable<UserProfile> {
-    return this.http.post<UserProfile>(`${environment.apiUrl}/user-profiles`, profileData);
+    console.log('Creating profile with data:', profileData);
+    const headers = this.getAuthHeaders();
+    
+    return this.http.post<UserProfile>(
+      `${environment.apiUrl}/user-profiles`, 
+      profileData,
+      { headers }
+    ).pipe(
+      tap(response => console.log('Profile creation response:', response)),
+      catchError(error => {
+        console.error('Error creating profile:', error);
+        return throwError(() => error);
+      })
+    );
   }
   
   /**
    * Update an existing user profile
    */
   updateProfile(userId: string, profileData: Partial<UserProfile>): Observable<UserProfile> {
-    return this.http.put<UserProfile>(`${environment.apiUrl}/user-profiles/user/${userId}`, profileData);
+    console.log(`Updating profile for user ${userId} with data:`, profileData);
+    const headers = this.getAuthHeaders();
+    
+    return this.http.put<UserProfile>(
+      `${environment.apiUrl}/user-profiles/user/${userId}`, 
+      profileData,
+      { headers }
+    ).pipe(
+      tap(response => console.log('Profile update response:', response)),
+      catchError(error => {
+        console.error('Error updating profile:', error);
+        return throwError(() => error);
+      })
+    );
   }
   
   /**
@@ -43,7 +102,16 @@ export class ProfileService {
     const formData = new FormData();
     formData.append('avatar', file);
     
-    return this.http.post<{ avatarUrl: string }>(`${environment.apiUrl}/user-profiles/avatar`, formData);
+    const token = this.authService.getToken();
+    const headers = new HttpHeaders({
+      'Authorization': token ? (token.startsWith('Bearer ') ? token : `Bearer ${token}`) : ''
+    });
+    
+    return this.http.post<{ avatarUrl: string }>(
+      `${environment.apiUrl}/user-profiles/avatar`, 
+      formData,
+      { headers }
+    );
   }
   
   /**
@@ -85,7 +153,9 @@ export class ProfileService {
     };
     
     try {
-      const result = await this.createProfile(payload).toPromise();
+      console.log('Creating user profile with payload:', payload);
+      const result = await firstValueFrom(this.createProfile(payload));
+      
       // Update the global user profile state
       this.userProfileService.updateUser({ profile: result });
       return result;
@@ -105,7 +175,12 @@ export class ProfileService {
     }
     
     try {
-      const result = await this.updateProfile(user.id, profileData).toPromise();
+      console.log('Updating user profile for user ID:', user.id);
+      console.log('Update payload:', profileData);
+      
+      // Convert observables to promises with firstValueFrom
+      const result = await firstValueFrom(this.updateProfile(user.id, profileData));
+      
       // Update the global user profile state
       this.userProfileService.updateProfile(result);
       return result;
@@ -120,7 +195,7 @@ export class ProfileService {
    */
   async uploadUserAvatar(file: File): Promise<string> {
     try {
-      const result = await this.uploadAvatar(file).toPromise();
+      const result = await firstValueFrom(this.uploadAvatar(file));
       // Update just the avatar URL in the global state
       this.userProfileService.updateProfile({ avatarUrl: result.avatarUrl });
       return result.avatarUrl;
@@ -129,4 +204,21 @@ export class ProfileService {
       throw error;
     }
   }
+}
+
+// Helper function to replace deprecated toPromise()
+function firstValueFrom<T>(source: Observable<T>): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const subscription = source.subscribe({
+      next: value => {
+        resolve(value);
+        subscription.unsubscribe();
+      },
+      error: err => {
+        reject(err);
+        subscription.unsubscribe();
+      },
+      complete: () => subscription.unsubscribe()
+    });
+  });
 } 
