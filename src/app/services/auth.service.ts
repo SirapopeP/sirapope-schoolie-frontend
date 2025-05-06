@@ -10,7 +10,9 @@ import { UserProfileService } from './user-profile.service';
 })
 export class AuthService {
   private tokenKey = 'schoolie_token';
+  private legacyTokenKey = 'token'; // For backward compatibility
   private userKey = 'user'; // Key used in login component
+  private schoolieUserKey = 'schoolie_user';
   private tokenValidity = 24 * 60 * 60 * 1000; // token validity in milliseconds (24 hours)
   private tokenRefreshTime = 23 * 60 * 60 * 1000; // when to refresh token (23 hours)
   private tokenTimeKey = 'token_timestamp';
@@ -23,6 +25,22 @@ export class AuthService {
     this.loadUserData();
     // Check token validity
     this.checkAndRefreshToken();
+    // Synchronize tokens if they exist in different places
+    this.syncTokens();
+  }
+
+  // Synchronize tokens between different storage keys
+  private syncTokens(): void {
+    const schoolieToken = localStorage.getItem(this.tokenKey);
+    const legacyToken = localStorage.getItem(this.legacyTokenKey);
+
+    if (schoolieToken && !legacyToken) {
+      console.log('Syncing token from schoolie_token to token');
+      localStorage.setItem(this.legacyTokenKey, schoolieToken);
+    } else if (!schoolieToken && legacyToken) {
+      console.log('Syncing token from token to schoolie_token');
+      localStorage.setItem(this.tokenKey, legacyToken);
+    }
   }
 
   // Load user data from storage (either localStorage or sessionStorage)
@@ -30,7 +48,7 @@ export class AuthService {
     // Check if we have user data in localStorage or sessionStorage
     const localUser = localStorage.getItem(this.userKey);
     const sessionUser = sessionStorage.getItem(this.userKey);
-    const schoolieUser = localStorage.getItem('schoolie_user');
+    const schoolieUser = localStorage.getItem(this.schoolieUserKey);
     
     if (schoolieUser) {
       console.log('Found user data in schoolie_user');
@@ -51,7 +69,7 @@ export class AuthService {
           console.log('Setting user data from localStorage');
           this.userProfileService.setUser(userData);
           // Also save to schoolie_user for consistency
-          localStorage.setItem('schoolie_user', localUser);
+          localStorage.setItem(this.schoolieUserKey, localUser);
         }
       } catch (e) {
         console.error('Error parsing user data from localStorage', e);
@@ -65,7 +83,7 @@ export class AuthService {
           this.userProfileService.setUser(userData);
           // Also save to localStorage for persistence
           localStorage.setItem(this.userKey, sessionUser);
-          localStorage.setItem('schoolie_user', sessionUser);
+          localStorage.setItem(this.schoolieUserKey, sessionUser);
         }
       } catch (e) {
         console.error('Error parsing user data from sessionStorage', e);
@@ -114,8 +132,10 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
         tap(response => {
-          // Store the token
+          // Store the token in both places for compatibility
           localStorage.setItem(this.tokenKey, response.access_token);
+          localStorage.setItem(this.legacyTokenKey, response.access_token);
+          
           // Store token timestamp
           localStorage.setItem(this.tokenTimeKey, Date.now().toString());
           
@@ -123,24 +143,39 @@ export class AuthService {
           this.userProfileService.setUser(response.user);
 
           // Store user in both localStorage and sessionStorage for better persistence
-          localStorage.setItem(this.userKey, JSON.stringify(response.user));
-          localStorage.setItem('schoolie_user', JSON.stringify(response.user));
-          sessionStorage.setItem(this.userKey, JSON.stringify(response.user));
+          const userJson = JSON.stringify(response.user);
+          localStorage.setItem(this.userKey, userJson);
+          localStorage.setItem(this.schoolieUserKey, userJson);
+          sessionStorage.setItem(this.userKey, userJson);
         })
       );
   }
 
   logout(): void {
+    // Clear all authentication data
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.legacyTokenKey);
     localStorage.removeItem(this.userKey);
-    localStorage.removeItem('schoolie_user');
+    localStorage.removeItem(this.schoolieUserKey);
     localStorage.removeItem(this.tokenTimeKey);
     sessionStorage.removeItem(this.userKey);
     this.userProfileService.clearUser();
   }
 
   getToken(): string | null {
-    const token = localStorage.getItem(this.tokenKey);
+    // Try both token locations
+    let token = localStorage.getItem(this.tokenKey);
+    
+    // If not found in primary location, try legacy location
+    if (!token) {
+      token = localStorage.getItem(this.legacyTokenKey);
+      
+      // If found in legacy location, store it in primary location for future use
+      if (token) {
+        localStorage.setItem(this.tokenKey, token);
+        console.log(`Token found in legacy storage (${this.legacyTokenKey}), copied to primary storage (${this.tokenKey})`);
+      }
+    }
     
     // ตรวจสอบว่ามี token หรือไม่
     if (!token) {
@@ -153,6 +188,7 @@ export class AuthService {
       console.warn('Found a mock token in localStorage - this will not work with the real API');
       // ลบ mock token ออกจาก localStorage
       localStorage.removeItem(this.tokenKey);
+      localStorage.removeItem(this.legacyTokenKey);
       return null;
     }
     

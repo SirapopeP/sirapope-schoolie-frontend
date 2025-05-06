@@ -1,12 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '@env';
 
 @Injectable()
 export class CorsInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Only apply to API requests
+    if (!request.url.includes(environment.apiUrl)) {
+      return next.handle(request);
+    }
+    
+    // Skip if Content-Type is already set
+    if (request.headers.has('Content-Type')) {
+      return next.handle(request);
+    }
+    
     // Clone the request with minimal required headers
-    // ไม่ต้องใส่ headers เกี่ยวกับ CORS เนื่องจากควรตั้งค่าที่ฝั่ง server
     const corsReq = request.clone({
       headers: request.headers
         .set('Content-Type', 'application/json')

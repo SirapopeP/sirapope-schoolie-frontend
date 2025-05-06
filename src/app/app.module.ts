@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 import { routes } from './app-routing.module';
 import { CorsInterceptor } from './interceptors/cors.interceptor';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { HttpRequestInterceptor } from './interceptors/http.interceptor';
 
 @NgModule({
   declarations: [
@@ -33,9 +34,10 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     ReactiveFormsModule
   ],
   providers: [
-    // The order matters - CorsInterceptor first, then AuthInterceptor
+    // The order matters - first set headers, then handle auth, then catch errors
     { provide: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    // Removing HttpRequestInterceptor as it conflicts with AuthInterceptor
   ],
   bootstrap: [AppComponent]
 })
