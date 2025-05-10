@@ -1,0 +1,43 @@
+<div class="academy-invitation-modal">
+  <div class="logo-container">
+    <img [src]="themeService.getMiniLogo()" alt="Schoolie Logo">
+  </div>
+  
+  <h2 class="modal-title">Academy Invitation</h2>
+  
+  <div class="invitation-content">
+    <div class="invite-icon-container">
+      <div class="invite-icon">{{ getAcademyInitials() }}</div>
+    </div>
+    
+    <p class="invitation-message">
+      You have been invited to join <strong>{{ data.invitation.academy?.name }}</strong>
+    </p>
+    
+    <div class="academy-info" *ngIf="data.invitation.academy?.bio">
+      <p class="academy-bio">{{ data.invitation.academy?.bio }}</p>
+    </div>
+    
+    <p class="invitation-note">
+      Please respond to this invitation. You must either accept or reject it to continue.
+    </p>
+  </div>
+  
+  <div class="action-buttons">
+    <button 
+      class="reject-btn" 
+      (click)="rejectInvitation()" 
+      [disabled]="isLoading">
+      <span *ngIf="!isLoading">Reject</span>
+      <div *ngIf="isLoading && data.invitation.status === 'REJECTED'" class="spinner"></div>
+    </button>
+    
+    <button 
+      class="accept-btn" 
+      (click)="acceptInvitation()" 
+      [disabled]="isLoading">
+      <span *ngIf="!isLoading">Accept</span>
+      <div *ngIf="isLoading && data.invitation.status === 'ACCEPTED'" class="spinner"></div>
+    </button>
+  </div>
+</div>

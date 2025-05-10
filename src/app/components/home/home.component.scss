@@ -761,4 +761,42 @@
       }
     }
   }
+}
+
+// Action buttons
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  gap: 8px;
+  
+  i {
+    font-size: 0.85rem;
+  }
+  
+  &.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    
+    &:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}
+
+// Existing styles for .add-button for backwards compatibility
+.add-button {
+  @extend .action-button;
+  @extend .primary-button;
 } 

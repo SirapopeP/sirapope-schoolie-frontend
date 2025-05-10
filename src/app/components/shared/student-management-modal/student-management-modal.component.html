@@ -1,0 +1,125 @@
+<div class="student-management-modal">
+  <div class="logo-container">
+    <img [src]="themeService.getMiniLogo()" alt="Schoolie Logo">
+  </div>
+  <h2 class="modal-title">Manage Students</h2>
+  <p class="subtitle">Add students to your academy</p>
+  
+  <div class="tab-container">
+    <div class="tab-header">
+      <div class="tab-button" [class.active]="selectedTabIndex === 0" (click)="switchToTab(0)">Create New Student</div>
+      <div class="tab-button" [class.active]="selectedTabIndex === 1" (click)="switchToTab(1)">Add Existing Student</div>
+    </div>
+    
+    <div class="tab-content" [hidden]="selectedTabIndex !== 0">
+      <form [formGroup]="createStudentForm" (ngSubmit)="createNewStudent()" class="form-container">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input 
+            type="text" 
+            id="username"
+            formControlName="username"
+            placeholder="Enter username"
+            [class.error]="createStudentForm.get('username')?.invalid && createStudentForm.get('username')?.touched">
+          <div class="error-message" *ngIf="createStudentForm.get('username')?.invalid && createStudentForm.get('username')?.touched">
+            <span *ngIf="createStudentForm.get('username')?.errors?.['required']">Username is required</span>
+            <span *ngIf="createStudentForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email"
+            formControlName="email"
+            placeholder="Enter email"
+            [class.error]="createStudentForm.get('email')?.invalid && createStudentForm.get('email')?.touched">
+          <div class="error-message" *ngIf="createStudentForm.get('email')?.invalid && createStudentForm.get('email')?.touched">
+            <span *ngIf="createStudentForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="createStudentForm.get('email')?.errors?.['email']">Please enter a valid email</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password"
+            formControlName="password"
+            placeholder="Enter password"
+            [class.error]="createStudentForm.get('password')?.invalid && createStudentForm.get('password')?.touched">
+          <div class="error-message" *ngIf="createStudentForm.get('password')?.invalid && createStudentForm.get('password')?.touched">
+            <span *ngIf="createStudentForm.get('password')?.errors?.['required']">Password is required</span>
+            <span *ngIf="createStudentForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input 
+              type="text" 
+              id="fullName"
+              formControlName="fullName"
+              placeholder="Full name">
+          </div>
+
+          <div class="form-group">
+            <label for="nickName">Nickname</label>
+            <input 
+              type="text" 
+              id="nickName"
+              formControlName="nickName"
+              placeholder="Nickname">
+          </div>
+        </div>
+        
+        <button type="submit" [disabled]="createStudentForm.invalid || isLoading" class="submit-btn">
+          <span *ngIf="!isLoading">Create Student</span>
+          <span *ngIf="isLoading">Creating student...</span>
+        </button>
+      </form>
+    </div>
+    
+    <div class="tab-content" [hidden]="selectedTabIndex !== 1">
+      <div class="form-container">
+        <div class="form-group">
+          <label for="searchTerm">Search Students</label>
+          <input 
+            type="text" 
+            id="searchTerm"
+            [(ngModel)]="searchTerm"
+            (keyup)="filterStudents()"
+            placeholder="Search by name or email">
+        </div>
+        
+        <div class="student-list">
+          <div *ngIf="isLoading" class="loading-container">
+            <div class="spinner"></div>
+          </div>
+          
+          <div *ngIf="!isLoading && filteredStudents.length > 0">
+            <div *ngFor="let student of filteredStudents" class="student-item">
+              <div class="student-info">
+                <span class="student-name">{{ student.profile?.fullName || student.username }}</span>
+                <span class="student-email">{{ student.email }}</span>
+              </div>
+              <button (click)="inviteStudent(student)" class="invite-btn">
+                Invite
+              </button>
+            </div>
+          </div>
+          
+          <div *ngIf="!isLoading && filteredStudents.length === 0" class="no-results">
+            <p>No students available for invitation.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <button class="close-btn" mat-dialog-close>Close</button>
+  </div>
+</div>

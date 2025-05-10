@@ -11,6 +11,8 @@ import { User, UserProfile } from '../../models/user.model';
 import { UserProfileModalComponent } from '../shared/user-profile-modal/user-profile-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component';
+import { StudentManagementService, AcademyInvitation } from '../../services/student-management.service';
+import { AcademyInvitationModalComponent } from '../shared/academy-invitation-modal/academy-invitation-modal.component';
 
 @Component({
   selector: 'app-home-student',
@@ -21,7 +23,8 @@ import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component
     CalendarObjectComponent, 
     UserProfileModalComponent,
     MatDialogModule,
-    AlertModalComponent
+    AlertModalComponent,
+    AcademyInvitationModalComponent
   ],
   animations: [
     trigger('fadeIn', [
@@ -116,6 +119,7 @@ export class HomeStudentComponent implements OnInit, OnDestroy {
     public themeService: ThemeService,
     private userProfileService: UserProfileService,
     private profileService: ProfileService,
+    private studentService: StudentManagementService,
     @Inject(MatDialog) private dialog: MatDialog
   ) {}
   
@@ -148,6 +152,11 @@ export class HomeStudentComponent implements OnInit, OnDestroy {
         
         console.log('Updated userProfile in home-student component:', this.userProfile);
         this.currentUserProfile = user.profile;
+        
+        // Check for pending invitations if user is a student
+        if (user.roles && user.roles.includes('STUDENT')) {
+          this.checkPendingInvitations(user.id);
+        }
       } else {
         console.warn('Invalid or incomplete user data received in home-student component');
         // Default values if no user is available
@@ -245,6 +254,53 @@ export class HomeStudentComponent implements OnInit, OnDestroy {
         type: 'error'
       },
       disableClose: false
+    });
+  }
+  
+  // Check for pending academy invitations
+  private checkPendingInvitations(userId: string): void {
+    this.studentService.getPendingInvitations(userId).subscribe({
+      next: (invitations) => {
+        if (invitations && invitations.length > 0) {
+          // Show the first pending invitation
+          this.showInvitationModal(invitations[0]);
+        }
+      },
+      error: (error) => {
+        console.error('Failed to check for pending invitations:', error);
+      }
+    });
+  }
+  
+  // Display the invitation modal
+  private showInvitationModal(invitation: AcademyInvitation): void {
+    AcademyInvitationModalComponent.open(this.dialog, { invitation })
+      .afterClosed().subscribe(result => {
+        if (result) {
+          console.log('Invitation response:', result);
+          
+          if (result.action === 'accepted') {
+            // Refresh the student dashboard or navigate to academy page
+            this.refreshStudentDashboard();
+          }
+        }
+      });
+  }
+  
+  // Refresh student dashboard after accepting an invitation
+  private refreshStudentDashboard(): void {
+    // Update UI elements or refetch data as needed
+    this.workshopCount = 1;  // Just an example, should fetch real data
+    this.certificateCount = 0;
+    
+    // Show a welcome message
+    this.dialog.open(AlertModalComponent, {
+      width: '400px',
+      data: {
+        title: 'Welcome to your new Academy!',
+        message: 'You have successfully joined the academy. Your dashboard will be updated with your academy information.',
+        type: 'success'
+      }
     });
   }
 } 

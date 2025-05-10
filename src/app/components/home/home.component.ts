@@ -12,6 +12,7 @@ import { UserProfileModalComponent } from '../shared/user-profile-modal/user-pro
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component';
 import { AcademiesService } from '../../services';
+import { StudentManagementModalComponent } from '../shared/student-management-modal/student-management-modal.component';
 
 interface Workshop {
   id: number;
@@ -40,7 +41,8 @@ interface Student {
     CalendarObjectComponent, 
     UserProfileModalComponent,
     MatDialogModule,
-    AlertModalComponent
+    AlertModalComponent,
+    StudentManagementModalComponent
   ],
   animations: [
     trigger('fadeIn', [
@@ -162,6 +164,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     'assets/styles/gg-4.svg',
   ];
 
+  // Track the academy ID for the current academy owner
+  currentAcademyId: string = '';
+
   constructor(
     public themeService: ThemeService,
     private userProfileService: UserProfileService,
@@ -203,6 +208,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             academies => {
               if (academies && academies.length > 0) {
                 this.userProfile.academy = academies[0].name;
+                this.currentAcademyId = academies[0].id; // Store the academy ID
               } else {
                 this.userProfile.academy = 'No Academy';
               }
@@ -323,5 +329,36 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       disableClose: false
     });
+  }
+  
+  // Handle Add Student button click
+  openStudentManagementModal() {
+    if (!this.currentAcademyId) {
+      this.showErrorAlert('No Academy Found', 'You must have an academy to manage students. Please create an academy first.');
+      return;
+    }
+
+    StudentManagementModalComponent.open(this.dialog, {
+      academyId: this.currentAcademyId
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Student management result:', result);
+        
+        if (result.action === 'created') {
+          this.showSuccessAlert('Student Created', 'The student has been successfully created and added to your academy.');
+          // Optionally refresh the student list here
+          this.refreshStudentList();
+        } else if (result.action === 'invited') {
+          this.showSuccessAlert('Invitation Sent', 'An invitation has been sent to the student.');
+        }
+      }
+    });
+  }
+  
+  // Refresh student list after adding/inviting a student
+  refreshStudentList() {
+    // This would fetch the updated list of students from your backend
+    // For now, we'll simulate it with a simple increment
+    this.studentCount += 1;
   }
 } 

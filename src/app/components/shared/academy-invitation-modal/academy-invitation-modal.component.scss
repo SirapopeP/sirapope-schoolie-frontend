@@ -1,0 +1,188 @@
+@import '../../../../styles/variables';
+@import '../../../../styles/mixins';
+
+:host ::ng-deep .academy-invitation-dialog {
+  .mat-dialog-container {
+    border-radius: 12px;
+    padding: 1.5rem;
+    overflow: hidden;
+    background-color: var(--background-primary);
+    box-shadow: 0 4px 16px var(--shadow-color);
+    max-width: 90vw;
+  }
+}
+
+.academy-invitation-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: 0.5rem;
+}
+
+.logo-container {
+  margin-bottom: 0.75rem;
+  text-align: center;
+
+  img {
+    max-width: 50px;
+    height: auto;
+  }
+}
+
+.modal-title {
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.invitation-content {
+  width: 100%;
+  padding: 0 0.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.invitation-message {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  
+  strong {
+    color: #1DD8B2;
+    font-weight: 600;
+  }
+}
+
+.invite-icon-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+
+  .invite-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #1DD8B2;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.academy-info {
+  width: 90%;
+  background-color: rgba(29, 216, 178, 0.05);
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin: 0.5rem 0 1rem;
+  border-left: 3px solid #1DD8B2;
+}
+
+.academy-bio {
+  margin: 0;
+  font-style: italic;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-align: left;
+}
+
+.invitation-note {
+  margin: 0.5rem 0 1rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-align: center;
+  width: 90%;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.accept-btn, .reject-btn {
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+  
+  &:active:not([disabled]) {
+    transform: translateY(1px);
+  }
+}
+
+.accept-btn {
+  background-color: #1DD8B2;
+  color: white;
+  
+  &:hover:not([disabled]) {
+    background-color: darken(#1DD8B2, 8%);
+  }
+}
+
+.reject-btn {
+  background-color: #f44336;
+  color: white;
+  
+  &:hover:not([disabled]) {
+    background-color: darken(#f44336, 8%);
+  }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 1s linear infinite;
+}
+
+/* Dark mode support */
+:host-context(.dark-theme) {
+  .invitation-message strong {
+    color: #28ffe3;
+  }
+  
+  .academy-info {
+    background-color: rgba(40, 255, 227, 0.1);
+    border-left-color: #28ffe3;
+  }
+  
+  .invite-icon {
+    background-color: #28ffe3 !important;
+  }
+  
+  .accept-btn {
+    background-color: #28ffe3;
+    
+    &:hover:not([disabled]) {
+      background-color: darken(#28ffe3, 10%);
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
