@@ -112,7 +112,7 @@ export class HomeGuestComponent implements OnInit, OnDestroy, AfterViewInit {
           this.userProfile = {
             fullName: user.profile?.fullName || user.username || '',
             role: formattedRole,
-            academy: 'User Academy', // Will update when academy info is available
+            academy: user.profile?.bio || 'No bio available', // Display user bio instead of academy name
             avatarUrl: user.profile?.avatarUrl || ''
           };
           
@@ -124,7 +124,7 @@ export class HomeGuestComponent implements OnInit, OnDestroy, AfterViewInit {
           this.userProfile = {
             fullName: 'Anonymous User',
             role: 'Guest',
-            academy: 'No Academy',
+            academy: 'No bio available',
             avatarUrl: ''
           };
           

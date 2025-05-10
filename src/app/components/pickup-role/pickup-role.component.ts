@@ -79,7 +79,14 @@ export class PickupRoleComponent implements OnInit {
         return;
       }
 
-      await this.academiesService.createAcademy(user.id, academyData);
+      const createAcademyRequest = {
+        ownerId: user.id,
+        name: academyData.name,
+        bio: academyData.bio,
+        logoUrl: academyData.logoUrl
+      };
+
+      await this.academiesService.createAcademy(createAcademyRequest);
       this.router.navigate(['/dashboard']);
     } catch (error) {
       console.error('Error creating academy:', error);

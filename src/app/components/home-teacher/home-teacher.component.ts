@@ -167,7 +167,7 @@ export class HomeTeacherComponent implements OnInit, OnDestroy {
         this.userProfile = {
           fullName: user.profile?.fullName || user.username || '',
           role: formattedRole,
-          academy: 'Teacher Academy', // Will update when academy info is available
+          academy: user.profile?.bio || 'No bio available', // Display user bio instead of academy name
           avatarUrl: user.profile?.avatarUrl || ''
         };
         
@@ -179,7 +179,7 @@ export class HomeTeacherComponent implements OnInit, OnDestroy {
         this.userProfile = {
           fullName: 'Anonymous User',
           role: 'Guest',
-          academy: 'No Academy',
+          academy: 'No bio available',
           avatarUrl: ''
         };
         

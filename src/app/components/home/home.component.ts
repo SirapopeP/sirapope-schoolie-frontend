@@ -11,6 +11,7 @@ import { User, UserProfile } from '../../models/user.model';
 import { UserProfileModalComponent } from '../shared/user-profile-modal/user-profile-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component';
+import { AcademiesService } from '../../services';
 
 interface Workshop {
   id: number;
@@ -165,6 +166,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     public themeService: ThemeService,
     private userProfileService: UserProfileService,
     private profileService: ProfileService,
+    private academiesService: AcademiesService,
     @Inject(MatDialog) private dialog: MatDialog
   ) {}
   
@@ -191,9 +193,27 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.userProfile = {
           fullName: user.profile?.fullName || user.username || '',
           role: formattedRole,
-          academy: 'User Academy', // Will update when academy info is available
+          academy: 'Loading academy...', // Placeholder until we fetch the actual academy
           avatarUrl: user.profile?.avatarUrl || ''
         };
+        
+        // Fetch academy information if user is ACADEMY_OWNER
+        if (user.roles && user.roles.includes('ACADEMY_OWNER')) {
+          this.academiesService.getUserAcademies(user.id).subscribe(
+            academies => {
+              if (academies && academies.length > 0) {
+                this.userProfile.academy = academies[0].name;
+              } else {
+                this.userProfile.academy = 'No Academy';
+              }
+              console.log('Updated academy in home component:', this.userProfile.academy);
+            },
+            error => {
+              console.error('Error fetching user academies:', error);
+              this.userProfile.academy = 'Academy Unavailable';
+            }
+          );
+        }
         
         console.log('Updated userProfile in home component:', this.userProfile);
         this.currentUserProfile = user.profile;
