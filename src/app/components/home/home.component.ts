@@ -13,6 +13,9 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component';
 import { AcademiesService } from '../../services';
 import { StudentManagementModalComponent } from '../shared/student-management-modal/student-management-modal.component';
+import { StudentManagementService } from '../../services/student-management.service';
+import { Router } from '@angular/router';
+import { take } from 'rxjs/operators';
 
 interface Workshop {
   id: number;
@@ -91,7 +94,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   
   // Dashboard statistics
   workshopCount = 4;
-  studentCount = 6;
+  studentCount = 0; //linked
   teacherCount = 2;
   academyLevel = 3;
   
@@ -172,7 +175,9 @@ export class HomeComponent implements OnInit, OnDestroy {
     private userProfileService: UserProfileService,
     private profileService: ProfileService,
     private academiesService: AcademiesService,
-    @Inject(MatDialog) private dialog: MatDialog
+    @Inject(MatDialog) private dialog: MatDialog,
+    private studentService: StudentManagementService,
+    private router: Router
   ) {}
   
   ngOnInit() {
@@ -198,48 +203,18 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.userProfile = {
           fullName: user.profile?.fullName || user.username || '',
           role: formattedRole,
-          academy: 'Loading academy...', // Placeholder until we fetch the actual academy
+          academy: '',
           avatarUrl: user.profile?.avatarUrl || ''
         };
         
-        // Fetch academy information if user is ACADEMY_OWNER
+        // Attempt to load user's academy (if they're an owner)
         if (user.roles && user.roles.includes('ACADEMY_OWNER')) {
-          this.academiesService.getUserAcademies(user.id).subscribe(
-            academies => {
-              if (academies && academies.length > 0) {
-                this.userProfile.academy = academies[0].name;
-                this.currentAcademyId = academies[0].id; // Store the academy ID
-              } else {
-                this.userProfile.academy = 'No Academy';
-              }
-              console.log('Updated academy in home component:', this.userProfile.academy);
-            },
-            error => {
-              console.error('Error fetching user academies:', error);
-              this.userProfile.academy = 'Academy Unavailable';
-            }
-          );
+          this.loadAcademyData(user.id);
         }
-        
-        console.log('Updated userProfile in home component:', this.userProfile);
-        this.currentUserProfile = user.profile;
-      } else {
-        console.warn('Invalid or incomplete user data received in home component');
-        // Default values if no user is available
-        this.userProfile = {
-          fullName: 'Anonymous User',
-          role: 'Guest',
-          academy: 'No Academy',
-          avatarUrl: ''
-        };
-        
-        this.currentUserProfile = null;
       }
     });
     
-    this.updateThemeVariables();
-    
-    // Initialize formatted date
+    // Update today's date display
     this.updateFormattedDate(this.selectedDate);
   }
   
@@ -360,5 +335,66 @@ export class HomeComponent implements OnInit, OnDestroy {
     // This would fetch the updated list of students from your backend
     // For now, we'll simulate it with a simple increment
     this.studentCount += 1;
+  }
+  
+  // Load academy data for this owner
+  private loadAcademyData(userId: string) {
+    this.academiesService.getUserAcademies(userId).subscribe({
+      next: (academies) => {
+        if (academies && academies.length > 0) {
+          const currentAcademy = academies[0]; // Use the first academy
+          this.userProfile.academy = currentAcademy.name;
+          this.currentAcademyId = currentAcademy.id;
+          
+          // Now load student count
+          this.loadAcademyStudentCount(currentAcademy.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading user academies:', error);
+      }
+    });
+  }
+  
+  // Load the actual student count for this academy
+  private loadAcademyStudentCount(academyId: string) {
+    // Get current user's ID to use as requesterId
+    this.userProfileService.user$.pipe(
+      take(1) // Take only the current value and complete
+    ).subscribe(user => {
+      if (user && user.id) {
+        console.log(`Loading student count for academy ${academyId} with requesterID ${user.id}`);
+        this.studentService.getAcademyStudents(academyId, user.id).subscribe({
+          next: (students) => {
+            if (students) {
+              this.studentCount = students.length;
+              console.log(`Found ${students.length} students`);
+            }
+          },
+          error: (error) => {
+            console.error('Error loading academy students:', error);
+          }
+        });
+      } else {
+        console.error('User information not available for loading student count');
+      }
+    });
+  }
+
+  // Handle stat card action (+ button) clicks
+  handleStatAction(title: string) {
+    switch(title) {
+      case 'STUDENTS':
+        this.router.navigate(['/student']);
+        break;
+      case 'WORKSHOPS':
+        // Navigate to workshops page
+        break;
+      case 'TEACHER':
+        // Navigate to teachers page
+        break;
+      default:
+        break;
+    }
   }
 } 

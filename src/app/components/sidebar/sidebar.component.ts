@@ -56,6 +56,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
         this.currentUrl = event.url;
+        console.log('Current URL in sidebar:', this.currentUrl);
       });
   }
 
@@ -80,6 +81,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
     // Set initial current URL
     this.currentUrl = this.router.url;
+    console.log('Initial URL in sidebar:', this.currentUrl);
   }
 
   ngOnDestroy() {
@@ -114,7 +116,14 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
   // Navigate to a route programmatically
   navigateTo(route: string): void {
-    this.router.navigate([route]);
+    console.log('Navigating to:', route);
+    
+    // Use router.navigateByUrl instead of navigate for more reliable navigation
+    this.router.navigateByUrl(route).then(() => {
+      console.log('Navigation complete to:', route);
+    }).catch(error => {
+      console.error('Navigation error:', error);
+    });
   }
 
   // Check if a route is currently active

@@ -5,13 +5,14 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AuthGuard } from './services/auth.guard';
 
-// Import components directly
+// Import standalone components directly
 import { HomeComponent } from './components/home/home.component';
-import { WorkshopComponent } from './components/workshop/workshop.component';
-import { StudentComponent } from './components/student/student.component';
-import { TeacherComponent } from './components/teacher/teacher.component';
-import { OptionsComponent } from './components/options/options.component';
 import { HomeGuestComponent } from './components/home-guest/home-guest.component';
+import { TeacherComponent } from './components/teacher/teacher.component';
+import { WorkshopComponent } from './components/workshop/workshop.component';
+import { OptionsComponent } from './components/options/options.component';
+import { StudentComponent } from './components/student/student.component';
+import { StudentDetailComponent } from './components/student/student-detail/student-detail.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -51,6 +52,16 @@ export const routes: Routes = [
       { 
         path: 'student', 
         component: StudentComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'student/detail/:id',
+        component: StudentDetailComponent,
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'student/:academyId/:id',
+        component: StudentDetailComponent,
         canActivate: [AuthGuard]
       },
       { 

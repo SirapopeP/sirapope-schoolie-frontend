@@ -1,6 +1,54 @@
-<div class="student-container">
-  <h1>Student Management</h1>
-  <div class="student-content">
-    <p>Manage student information, enrollments, and progress here.</p>
+<div class="student-container" [ngClass]="{'dark-mode': isDarkMode}" @fadeIn>
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <h1 class="dashboard-title">Student Management</h1>
+      <p class="dashboard-subtitle">MANAGE YOUR ACADEMY STUDENTS</p>
+    </div>
+    <button class="add-student-btn" (click)="openAddStudentModal()">
+      <i class="fas fa-plus"></i> Add Student
+    </button>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="card loading-card" @fadeIn>
+      <div class="spinner"></div>
+      <span>Loading students...</span>
+    </div>
+  </div>
+
+  <!-- Main Content Grid (Student Cards + Student List) -->
+  <div class="main-content-grid" *ngIf="!isLoading" @staggerCards>
+    <ng-container *ngIf="students.length > 0; else noStudents">
+      <div class="student-grid">
+        <app-student-card 
+          *ngFor="let student of students" 
+          [student]="student"
+          [isDarkMode]="isDarkMode"
+          @fadeIn
+        ></app-student-card>
+      </div>
+      
+      <div class="student-list">
+        <app-student-list
+          [students]="students"
+          [isDarkMode]="isDarkMode"
+          @fadeIn
+        ></app-student-list>
+      </div>
+    </ng-container>
+    
+    <ng-template #noStudents>
+      <div class="empty-state-container">
+        <div class="card no-students-card" @fadeIn>
+          <i class="fas fa-user-graduate"></i>
+          <p>No students found in your academy.</p>
+          <button class="add-first-student-btn" (click)="openAddStudentModal()">
+            Add your first student
+          </button>
+        </div>
+      </div>
+    </ng-template>
   </div>
 </div> 

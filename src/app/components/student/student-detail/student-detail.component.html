@@ -1,0 +1,106 @@
+<div class="student-detail-container" [ngClass]="{'dark-mode': isDarkMode}" @fadeIn>
+  <div class="student-detail-header" @slideIn>
+    <button class="back-button" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon> กลับไปยังรายชื่อนักเรียน
+    </button>
+    <h1>STUDENT DETAIL</h1>
+  </div>
+  
+  <div class="loading-spinner" *ngIf="isLoading" @fadeIn>
+    <div class="spinner"></div>
+    <span>กำลังโหลดข้อมูลนักเรียน...</span>
+  </div>
+  
+  <div class="student-detail-content" *ngIf="!isLoading && student" @slideIn>
+    <!-- Student Status and Level -->
+    <div class="student-status-section">
+      <div class="status-badge" [ngClass]="student?.memberStatus || 'active'">
+        {{ student?.memberStatus ? (student.memberStatus | titlecase) : 'Active' }}
+      </div>
+      <div class="level-badge">
+        ระดับ: {{ student?.memberLevel !== undefined ? student.memberLevel : '-' }}
+      </div>
+    </div>
+    
+    <div class="student-profile-section" @slideInRight>
+      <div class="avatar-container">
+        <img *ngIf="student?.profile?.avatarUrl" [src]="student.profile.avatarUrl" alt="รูปภาพนักเรียน" class="student-avatar">
+        <div *ngIf="!student?.profile?.avatarUrl" class="avatar-placeholder" [ngStyle]="{'background-color': '#1dd8b2'}">
+          {{ student?.profile?.fullName?.charAt(0) || student?.username?.charAt(0) || 'S' }}
+        </div>
+      </div>
+      
+      <div class="profile-info">
+        <h2 class="student-name">{{ student?.profile?.fullName || student?.username || 'ไม่มีชื่อ' }}</h2>
+        <p class="student-nickname" *ngIf="student?.profile?.nickName">
+          <span class="label">ชื่อเล่น:</span> {{ student.profile.nickName }}
+        </p>
+        <p class="student-age">
+          <span class="label">อายุ:</span> 
+          {{ student?.profile?.birthDate ? (calculateAge(student.profile.birthDate) + ' ปี') : '-' }}
+        </p>
+        <p class="student-email" *ngIf="student?.email">
+          <span class="label">อีเมล:</span> {{ student.email }}
+        </p>
+        <p class="student-phone" *ngIf="student?.profile?.phoneNumber">
+          <span class="label">โทรศัพท์:</span> {{ student.profile.phoneNumber }}
+        </p>
+      </div>
+    </div>
+    
+    <div class="student-workshops-section" @staggerItems>
+      <h3>เวิร์คช็อป</h3>
+      <div class="workshops-container">
+        <div class="workshops-placeholder" *ngIf="workshops.length === 0">
+          <p>ยังไม่มีเวิร์คช็อปที่เข้าร่วม</p>
+        </div>
+        
+        <div class="workshop-card" *ngFor="let workshop of workshops" @fadeIn>
+          <h4>{{ workshop.title }}</h4>
+          <p>{{ workshop.date | date }}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="student-additional-info" @staggerItems>
+      <h3>ข้อมูลเพิ่มเติม</h3>
+      <div class="info-grid">
+        <div class="info-item" @fadeIn>
+          <span class="label">รหัสผู้ใช้:</span>
+          <span>{{ student.id }}</span>
+        </div>
+        <div class="info-item" @fadeIn>
+          <span class="label">ชื่อผู้ใช้:</span>
+          <span>{{ student.username || '-' }}</span>
+        </div>
+        <div class="info-item" @fadeIn>
+          <span class="label">สร้างเมื่อ:</span>
+          <span>{{ student.createdAt | date }}</span>
+        </div>
+        <div class="info-item" @fadeIn>
+          <span class="label">อัปเดตล่าสุด:</span>
+          <span>{{ student.updatedAt | date }}</span>
+        </div>
+        <div class="info-item" @fadeIn>
+          <span class="label">สถานะสมาชิก:</span>
+          <span>{{ student.memberStatus || '-' }}</span>
+        </div>
+        <div class="info-item" @fadeIn>
+          <span class="label">ระดับสมาชิก:</span>
+          <span>{{ student.memberLevel !== undefined ? student.memberLevel : '-' }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="back-button-bottom" (click)="goBack()">
+        BACK
+      </button>
+    </div>
+  </div>
+  
+  <div class="no-student-message" *ngIf="!isLoading && !student" @fadeIn>
+    <p>ไม่พบข้อมูลนักเรียนหรือคุณไม่มีสิทธิ์ในการดูข้อมูลนี้</p>
+    <button mat-raised-button color="primary" (click)="goBack()">กลับไปยังรายชื่อนักเรียน</button>
+  </div>
+</div> 

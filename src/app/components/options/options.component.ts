@@ -2,14 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ThemeService } from '../../services/theme.service';
+import { MenuPermissionService, MenuPermission } from '../../services/menu-permission.service';
+import { UserProfileService } from '../../services/user-profile.service';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MenuPermissionService, MenuPermission } from '../../services/menu-permission.service';
-import { UserProfileService } from '../../services/user-profile.service';
 
 @Component({
   selector: 'app-options',

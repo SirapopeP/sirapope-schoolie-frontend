@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { environment } from '@env';
@@ -122,6 +122,66 @@ export class StudentManagementService {
       tap(invitations => console.log('Pending invitations:', invitations)),
       catchError(this.handleError('getPendingInvitations'))
     );
+  }
+
+  /**
+   * Get all students for an academy
+   */
+  getAcademyStudents(academyId: string, requesterId?: string): Observable<Student[]> {
+    const headers = this.getAuthHeaders();
+    
+    // สร้าง URL ทั้งสองแบบเพื่อใช้แบบที่ถูกต้อง
+    const url = `${environment.apiUrl}/academies/students/${academyId}/students`;
+    
+    // สร้าง query parameter
+    let params = new HttpParams();
+    if (requesterId) {
+      params = params.set('requesterId', requesterId);
+    }
+    
+    console.log(`[NEW] Calling API: ${url} with requesterId=${requesterId}`);
+    
+    // ใช้ GET method และส่ง requesterId เป็น query parameter
+    return this.http.get<Student[]>(url, { headers, params })
+      .pipe(
+        tap(students => {
+          console.log('Academy students data:', students);
+          if (students && students.length > 0) {
+            console.log('Sample student data:', JSON.stringify(students[0], null, 2));
+          }
+        }),
+        catchError((error) => {
+          console.error('API Error:', error);
+          return this.handleError('getAcademyStudents')(error);
+        })
+      );
+  }
+
+  /**
+   * Get details for a specific student
+   */
+  getStudentDetails(academyId: string, studentId: string, requesterId: string): Observable<Student> {
+    const headers = this.getAuthHeaders();
+    
+    const url = `${environment.apiUrl}/academies/students/${academyId}/students/${studentId}`;
+    
+    let params = new HttpParams();
+    if (requesterId) {
+      params = params.set('requesterId', requesterId);
+    }
+    
+    console.log(`Fetching student details: ${url} with requesterId=${requesterId}`);
+    
+    return this.http.get<Student>(url, { headers, params })
+      .pipe(
+        tap(student => {
+          console.log('Student details data:', student);
+        }),
+        catchError((error) => {
+          console.error('API Error when fetching student details:', error);
+          return this.handleError('getStudentDetails')(error);
+        })
+      );
   }
 
   /**
