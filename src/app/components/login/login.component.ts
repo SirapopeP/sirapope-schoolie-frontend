@@ -3,12 +3,15 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AlertService } from '../../services/alert.service';
+import { LoadingService } from '../../services/loading.service';
 import { CommonModule } from '@angular/common';
 import { AlertComponent } from '../alert/alert.component';
 import { ParticlesComponent } from '../particles/particles.component';
 import { filter } from 'rxjs/operators';
 import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
+import { UserProfileService } from '../../services/user-profile.service';
+import { RoleRedirectService } from '../../services/role-redirect.service';
 
 @Component({
   selector: 'app-login',
@@ -30,7 +33,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private http: HttpClient,
     private alertService: AlertService,
-    public themeService: ThemeService
+    private loadingService: LoadingService,
+    public themeService: ThemeService,
+    private userProfileService: UserProfileService,
+    private roleRedirectService: RoleRedirectService
   ) {
     this.loginForm = this.fb.group({
       usernameOrEmail: ['', [Validators.required]],
@@ -74,9 +80,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   onLogin(): void {
     if (this.loginForm.valid) {
       const { usernameOrEmail, password, rememberMe } = this.loginForm.value;
-
-      // ส่งแค่ Content-Type header เท่านั้น
       const headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+      // ล้าง token เก่าออกก่อน
+      localStorage.removeItem('schoolie_token');
+      localStorage.removeItem('token');
+      localStorage.removeItem('token_timestamp');
+
+      // Show loading spinner
+      this.loadingService.show();
 
       this.http.post<any>(
         `${this.apiUrl}/auth/login`, 
@@ -84,34 +96,72 @@ export class LoginComponent implements OnInit, OnDestroy {
         { headers }
       ).subscribe({
         next: (response) => {
+          console.log('Login successful, response:', response);
+          
+          // ตรวจสอบว่ามี token ใน response
+          if (!response.access_token) {
+            console.error('No access token in response');
+            this.alertService.showAlert({
+              type: 'error',
+              message: 'Authentication error: No access token received'
+            });
+            this.loadingService.hide();
+            return;
+          }
+          
+          // แสดง token ในรูปแบบที่ไม่เปิดเผยทั้งหมด
+          console.log('Token received (first 15 chars):', response.access_token.substring(0, 15) + '...');
+          
+          // Store data in localStorage - ใช้ localStorage เท่านั้น
+          localStorage.setItem('user', JSON.stringify(response.user));
+          
+          // ตรวจสอบว่า token ไม่ใช่ mock token
+          if (response.access_token.startsWith('mock_token_')) {
+            console.error('Received a mock token from server - this should not happen');
+          }
+          
+          // บันทึก token ใน localStorage
+          localStorage.setItem('schoolie_token', response.access_token);
+          
+          // บันทึกเวลาที่ได้รับ token
+          localStorage.setItem('token_timestamp', Date.now().toString());
+          
+          // ALSO store in UserProfileService to make it available immediately
+          this.userProfileService.setUser(response.user);
+          console.log('User data stored in UserProfileService');
+          
+          // Hide loading spinner
+          this.loadingService.hide();
+          
+          // Show success alert
+          console.log('Showing success alert');
           this.alertService.showAlert({
             type: 'success',
             message: 'Login successful!'
           });
           
-          if (rememberMe) {
-            localStorage.setItem('user', JSON.stringify(response.user));
-            localStorage.setItem('token', response.access_token);
-          } else {
-            sessionStorage.setItem('user', JSON.stringify(response.user));
-            sessionStorage.setItem('token', response.access_token);
-          }
-
-           // ถ้าเป็นการ login ครั้งแรก ให้ไปหน้าเปลี่ยนรหัสผ่าน
-           if (response.user.isFirstLogin) {
-            this.router.navigate(['/change-password']);
-          } else {
-            this.router.navigate(['/dashboard']);
-          }
-          
+          // Delay navigation to allow alert to be visible
+          console.log('Delaying navigation for 1.5 seconds to show alert');
+          setTimeout(() => {
+            console.log('Navigating based on user role');
+            this.roleRedirectService.redirectBasedOnRole();
+          }, 1500);
         },
         error: (error) => {
+          console.error('Login error:', error);
+          
+          // Hide loading spinner on error
+          this.loadingService.hide();
+          
           let message = 'Login failed';
           if (error.status === 401) {
             message = 'Invalid username or password';
           } else if (error.status === 404) {
             message = 'User not found';
           }
+          
+          // Show error alert
+          console.log('Showing error alert');
           this.alertService.showAlert({
             type: 'error',
             message

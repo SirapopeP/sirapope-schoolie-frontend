@@ -1,0 +1,167 @@
+<div class="guest-dashboard-container" @fadeIn>
+  <!-- Header Section -->
+  <div class="dashboard-header" @slideIn>
+    <div class="header-content">
+      <h1 class="dashboard-title">Guest Dashboard</h1>
+      <p class="dashboard-subtitle">ACADEMY MANAGEMENT SYSTEM</p>
+    </div>
+    <div class="user-profile">
+      <div class="user-info">
+        <div class="user-name">{{ userProfile.fullName || 'No Name' }} | {{ userProfile.role || 'No Role' }}</div>
+        <div class="academy-name">{{ userProfile.academy || 'No Academy' }}</div>
+      </div>
+      <div class="avatar-container">
+        <div class="avatar-placeholder">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Info Section -->
+  <div class="info-section" @fadeIn>
+    <div class="info-content">
+      <div class="info-icon">
+        <i class="fas fa-info-circle"></i>
+      </div>
+      <p class="info-text">Welcome to the guest dashboard. Please select role to access more features.</p>
+    </div>
+    <button class="select-role-button" (click)="openRolePickerModal()">
+      Select Role
+    </button>
+  </div>
+
+  <!-- Stats Section -->
+  <div class="stats-container" @slideIn>
+    <!-- Workshops -->
+    <div class="stat-card workshops">
+      <div class="stat-content">
+        <div class="stat-header">
+          <h3 class="stat-title">AVAILABLE COURSES</h3>
+        </div>
+        <div class="stat-value">4</div>
+      </div>
+      <div class="stat-icon">
+        <i class="fas fa-paint-brush"></i>
+      </div>
+    </div>
+
+    <!-- Students -->
+    <div class="stat-card students">
+      <div class="stat-content">
+        <div class="stat-header">
+          <h3 class="stat-title">ACTIVE STUDENTS</h3>
+        </div>
+        <div class="stat-value">6</div>
+      </div>
+      <div class="stat-icon">
+        <i class="fas fa-user-graduate"></i>
+      </div>
+    </div>
+
+    <!-- Teacher -->
+    <div class="stat-card teacher">
+      <div class="stat-content">
+        <div class="stat-header">
+          <h3 class="stat-title">QUALIFIED TEACHERS</h3>
+        </div>
+        <div class="stat-value">2</div>
+      </div>
+      <div class="stat-icon">
+        <i class="fas fa-chalkboard-teacher"></i>
+      </div>
+    </div>
+
+    <!-- Academy Level -->
+    <div class="stat-card academy-level">
+      <div class="stat-content">
+        <div class="stat-header">
+          <h3 class="stat-title">CERTIFICATION</h3>
+        </div>
+        <div class="stat-value">100%</div>
+      </div>
+      <div class="stat-icon">
+        <i class="fas fa-award"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area with improved layout -->
+  <div class="main-content-area" @staggerList>
+    <div class="welcome-image">
+      <canvas id="dotlottie-canvas" width="300" height="300"></canvas>
+      <div id="animation" class="animation" style="background:transparent;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+          <style>
+            .primary { fill: #1DD8B2; }
+            .secondary { fill: #5B9FFF; }
+            .accent { fill: #B06AB3; }
+            .light { fill: #f8f9fa; }
+            .dark { fill: #343a40; }
+            
+            /* Animation styles */
+            @keyframes float {
+              0% { transform: translateY(0px); }
+              50% { transform: translateY(-10px); }
+              100% { transform: translateY(0px); }
+            }
+            
+            @keyframes pulse {
+              0% { transform: scale(1); }
+              50% { transform: scale(1.05); }
+              100% { transform: scale(1); }
+            }
+            
+            @keyframes rotate {
+              from { transform: rotate(0deg); }
+              to { transform: rotate(360deg); }
+            }
+            
+            .float { animation: float 3s ease-in-out infinite; }
+            .pulse { animation: pulse 2s ease-in-out infinite; }
+            .rotate { animation: rotate 10s linear infinite; }
+          </style>
+          
+          <!-- Background elements -->
+          <circle cx="250" cy="250" r="200" fill="none" stroke="#eee" stroke-width="2" />
+          <circle cx="250" cy="250" r="150" fill="none" stroke="#eee" stroke-width="2" class="rotate" />
+          
+          <!-- Book -->
+          <g class="float">
+            <rect x="150" y="150" width="200" height="220" rx="10" class="light" />
+            <rect x="150" y="150" width="20" height="220" rx="5" class="primary" />
+            <rect x="170" y="170" width="160" height="20" rx="5" class="secondary" />
+            <rect x="170" y="200" width="160" height="10" rx="5" class="dark" opacity="0.2" />
+            <rect x="170" y="220" width="160" height="10" rx="5" class="dark" opacity="0.2" />
+            <rect x="170" y="240" width="160" height="10" rx="5" class="dark" opacity="0.2" />
+            <rect x="170" y="260" width="120" height="10" rx="5" class="dark" opacity="0.2" />
+          </g>
+          
+          <!-- Graduation cap -->
+          <g class="pulse">
+            <polygon points="250,100 200,130 300,130" class="primary" />
+            <rect x="240" y="130" width="20" height="30" class="primary" />
+            <circle cx="250" cy="100" r="10" class="secondary" />
+          </g>
+          
+          <!-- Pencil -->
+          <g class="float" style="animation-delay: -1.5s">
+            <rect x="320" y="180" width="10" height="100" transform="rotate(45, 325, 180)" class="accent" />
+            <polygon points="325,160 315,175 335,175" transform="rotate(45, 325, 160)" class="dark" />
+          </g>
+          
+          <!-- Decorative elements -->
+          <circle cx="150" cy="150" r="10" class="secondary pulse" opacity="0.5" />
+          <circle cx="350" cy="350" r="15" class="primary pulse" style="animation-delay: -0.5s" opacity="0.5" />
+          <circle cx="150" cy="350" r="8" class="accent pulse" style="animation-delay: -1s" opacity="0.5" />
+          <circle cx="350" cy="150" r="12" class="dark pulse" style="animation-delay: -1.5s" opacity="0.3" />
+        </svg>
+      </div>
+    </div>
+    <div class="welcome-content">
+      <h2>Welcome to Schoolie</h2>
+      <p>Your comprehensive academy management system designed to streamline educational workflows and enhance learning experiences.</p>
+      <p>Get started by selecting your role to access features tailored to your needs.</p>
+    </div>
+  </div>
+</div> 

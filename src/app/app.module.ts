@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,10 +12,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { routes } from './app-routing.module';
+import { CorsInterceptor } from './interceptors/cors.interceptor';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { HttpRequestInterceptor } from './interceptors/http.interceptor';
 
 @NgModule({
   declarations: [
-    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +32,12 @@ import { routes } from './app-routing.module';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    // The order matters - first set headers, then handle auth, then catch errors
+    { provide: HTTP_INTERCEPTORS, useClass: CorsInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    // Removing HttpRequestInterceptor as it conflicts with AuthInterceptor
+  ],
+  bootstrap: []
 })
 export class AppModule { }

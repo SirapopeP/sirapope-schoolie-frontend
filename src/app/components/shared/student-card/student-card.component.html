@@ -1,0 +1,49 @@
+<div class="student-card" [ngClass]="{'dark-mode': isDarkMode}" 
+  (click)="navigateToStudentDetail()">
+  <!-- Debug Info (ปิดไว้) -->
+  <div class="debug-info" *ngIf="false" style="font-size: 12px; margin-bottom: 10px; border: 1px solid #ccc; padding: 5px; overflow-wrap: break-word;">
+    <div>ID: {{ student?.id }}</div>
+    <div>UserID: {{ student?.userId }}</div>
+    <div *ngIf="student?.user">User username: {{ student?.user?.username }}</div>
+    <div *ngIf="student?.user">User email: {{ student?.user?.email }}</div>
+    <div>Username: {{ student?.username }}</div>
+    <div>Email: {{ student?.email }}</div>
+    <div *ngIf="student?.profile">Profile: {{ student?.profile | json }}</div>
+    <div *ngIf="student?.user?.profile">User Profile: {{ student?.user?.profile | json }}</div>
+  </div>
+  
+  <div class="student-avatar">
+    <div class="avatar-initials" [style.backgroundColor]="getAvatarColor(student)">
+      {{ getInitials(student) }}
+    </div>
+  </div>
+  
+  <div class="student-details">
+    <h2 class="student-nickname">
+      {{ getNickname(student) }}
+    </h2>
+    
+    <h3 class="student-fullname">
+      {{ getFullname(student) }}
+    </h3>
+    
+    <div class="student-info">
+      <div class="info-row">
+        <span class="info-label">Age :</span>
+        <span class="info-value">{{ getAge(student) }} yo</span>
+      </div>
+      
+      <div class="info-row">
+        <span class="info-label">Workshops :</span>
+        <span class="info-value">{{ getWorkshopCount(student) }}</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="rating">
+    {{ student?.memberLevel || '-' }}
+    <span class="rating-star">★</span>
+  </div>
+  
+  <div class="card-background"></div>
+</div> 

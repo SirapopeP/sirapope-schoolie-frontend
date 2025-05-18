@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy, Renderer2 } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -6,6 +6,7 @@ import { ParticlesComponent } from '../particles/particles.component';
 import { filter } from 'rxjs/operators';
 import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
+import { RoleRedirectService } from '../../services/role-redirect.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,12 +30,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private renderer: Renderer2,
+    private roleRedirectService: RoleRedirectService
   ) {
     this.checkScreenSize();
   }
 
   ngOnInit() {
+    // Check if we're at the root dashboard URL, redirect based on role if needed
+    if (this.router.url === '/dashboard' || this.router.url === '/dashboard/') {
+      this.roleRedirectService.redirectBasedOnRole();
+    }
+    
     // Check screen size on init
     this.checkScreenSize();
     
@@ -57,6 +65,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.themeSubscription) {
       this.themeSubscription.unsubscribe();
     }
+    // Ensure we restore scroll when component is destroyed
+    this.renderer.setStyle(document.body, 'overflow', '');
   }
 
   @HostListener('window:resize')
@@ -65,6 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Close sidebar when resizing to desktop
     if (!this.isMobile && this.isSidebarOpen) {
       this.isSidebarOpen = false;
+      this.renderer.setStyle(document.body, 'overflow', '');
     }
   }
 
@@ -72,16 +83,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.isSidebarOpen = !this.isSidebarOpen;
     // Add or remove scrolling capability when sidebar is open
     if (this.isSidebarOpen) {
-      document.body.style.overflow = 'hidden';
+      this.renderer.setStyle(document.body, 'overflow', 'hidden');
+      // Force redraw/repaint of sidebar when opened
+      setTimeout(() => {
+        // Get the sidebar component and force a redraw
+        const sidebarElement = document.querySelector('.sidebar-component') as HTMLElement;
+        if (sidebarElement) {
+          // Force layout recalculation
+          void sidebarElement.getBoundingClientRect();
+          
+          // Apply a small animation to force repaint
+          this.renderer.setStyle(sidebarElement, 'animation', 'none');
+          void sidebarElement.offsetWidth; // Trigger reflow
+          this.renderer.removeStyle(sidebarElement, 'animation');
+          
+          // Ensure pointer events are enabled
+          this.renderer.setStyle(sidebarElement, 'pointer-events', 'auto');
+          this.renderer.setStyle(sidebarElement, 'touch-action', 'auto');
+        }
+      }, 50);
     } else {
-      document.body.style.overflow = '';
+      this.renderer.setStyle(document.body, 'overflow', '');
     }
   }
 
   closeSidebar() {
     if (this.isSidebarOpen) {
       this.isSidebarOpen = false;
-      document.body.style.overflow = '';
+      this.renderer.setStyle(document.body, 'overflow', '');
     }
   }
 } 

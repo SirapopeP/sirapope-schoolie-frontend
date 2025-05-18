@@ -1,0 +1,145 @@
+<div class="modal-backdrop" *ngIf="isOpen" @fadeIn (click)="close()"></div>
+
+<div class="modal-container" *ngIf="isOpen" @slideInOut>
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ isEditMode ? 'Update Profile' : 'Create Profile' }}</h2>
+      <button class="close-button" (click)="close()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <!-- Display create profile button if profile is null and form is not shown -->
+      <div *ngIf="!showForm && !isEditMode" class="create-profile-container" @fadeIn>
+        <div class="empty-profile">
+          <div class="avatar-placeholder">
+            <i class="fas fa-user"></i>
+          </div>
+          <p class="empty-text">You don't have a profile yet</p>
+          <button class="btn-primary rounded" (click)="showProfileForm()">
+            <i class="fas fa-plus-circle"></i> Add Profile
+          </button>
+        </div>
+      </div>
+      
+      <!-- Loading indicator -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </div>
+        <p>{{ isEditMode ? 'Loading your profile...' : 'Creating your profile...' }}</p>
+      </div>
+      
+      <!-- Error message -->
+      <div *ngIf="formError" class="error-message-container">
+        <div class="error-message">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ formError }}</span>
+        </div>
+      </div>
+      
+      <!-- Profile form -->
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="showForm && !isLoading" @slideInOut>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name *</label>
+            <input 
+              type="text" 
+              id="fullName" 
+              formControlName="fullName" 
+              class="form-control rounded"
+              [ngClass]="{'invalid': profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched}"
+            >
+            <div *ngIf="profileForm.get('fullName')?.invalid && profileForm.get('fullName')?.touched" class="error-message">
+              Full name is required
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="nickName">Nickname *</label>
+            <input 
+              type="text" 
+              id="nickName" 
+              formControlName="nickName" 
+              class="form-control rounded"
+              [ngClass]="{'invalid': profileForm.get('nickName')?.invalid && profileForm.get('nickName')?.touched}"
+            >
+            <div *ngIf="profileForm.get('nickName')?.invalid && profileForm.get('nickName')?.touched" class="error-message">
+              Nickname is required
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="birthDate">Birth Date</label>
+            <input 
+              type="date" 
+              id="birthDate" 
+              formControlName="birthDate" 
+              class="form-control rounded"
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input 
+              type="tel" 
+              id="phoneNumber" 
+              formControlName="phoneNumber" 
+              class="form-control rounded"
+              [ngClass]="{'invalid': profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched}"
+            >
+            <div *ngIf="profileForm.get('phoneNumber')?.invalid && profileForm.get('phoneNumber')?.touched" class="error-message">
+              Please enter a valid phone number
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="avatarUrl">Avatar URL</label>
+          <input 
+            type="text" 
+            id="avatarUrl" 
+            formControlName="avatarUrl" 
+            class="form-control rounded"
+            placeholder="https://example.com/your-avatar.jpg"
+          >
+          <small class="form-text text-muted">Enter a URL for your profile avatar image</small>
+        </div>
+        
+        <div class="form-group">
+          <label for="bio">Bio</label>
+          <textarea 
+            id="bio" 
+            formControlName="bio" 
+            class="form-control textarea rounded" 
+            rows="3"
+            placeholder="Tell us about yourself..."
+          ></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="address">Address</label>
+          <textarea 
+            id="address" 
+            formControlName="address" 
+            class="form-control textarea rounded" 
+            rows="2"
+            placeholder="Your address..."
+          ></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-secondary rounded" [disabled]="isLoading" (click)="close()">Cancel</button>
+          <button type="submit" class="btn-primary rounded" [disabled]="profileForm.invalid || isLoading">
+            <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
+            <span *ngIf="!isLoading">{{ isEditMode ? 'Update' : 'Save' }}</span>
+            <span *ngIf="isLoading">{{ isEditMode ? 'Updating...' : 'Saving...' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

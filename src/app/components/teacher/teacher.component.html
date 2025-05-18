@@ -1,6 +1,245 @@
 <div class="teacher-container">
-  <h1>Teacher Management</h1>
-  <div class="teacher-content">
-    <p>Manage teachers, courses, and schedules here.</p>
+  <!-- Particles Background -->
+  <app-particles [color]="isDarkMode ? '#2DD8A8' : '#1DD8B2'" particleCount="40" connectionDistance="100"></app-particles>
+  
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <h1 class="page-title">Teacher Management</h1>
+      <p class="page-subtitle">FIND AND MANAGE YOUR TEACHERS</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary">
+        <i class="fas fa-plus"></i>
+        <span>Add Teacher</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification/Ad Banner -->
+  <div class="intro-card" @fadeIn>
+    <div class="card">
+      <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Efficiently manage teachers and view their statistics here</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content-area">
+    <!-- Left Column - Teacher Filters & List -->
+    <div class="left-column">
+      <!-- Filters Card -->
+      <div class="card filters-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-filter"></i>
+            </div>
+            <h3 class="section-title">Filters</h3>
+          </div>
+          <div class="filter-actions">
+            <button class="btn-text" (click)="resetFilters()">
+              <i class="fas fa-redo-alt"></i>
+              <span>Reset</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="filters-content">
+          <div class="filter-row">
+            <div class="filter-group">
+              <label>Search</label>
+              <div class="search-input">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search teachers..." [(ngModel)]="searchQuery" (input)="applyFilters()">
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-row">
+            <div class="filter-group">
+              <label>Sort By</label>
+              <div class="sort-buttons">
+                <button [class.active]="currentSort === 'name-asc'" (click)="setSort('name-asc')">
+                  <i class="fas fa-sort-alpha-down"></i>
+                  <span>A-Z</span>
+                </button>
+                <button [class.active]="currentSort === 'name-desc'" (click)="setSort('name-desc')">
+                  <i class="fas fa-sort-alpha-up"></i>
+                  <span>Z-A</span>
+                </button>
+                <button [class.active]="currentSort === 'level-desc'" (click)="setSort('level-desc')">
+                  <i class="fas fa-star"></i>
+                  <span>Level</span>
+                </button>
+                <button [class.active]="currentSort === 'students-desc'" (click)="setSort('students-desc')">
+                  <i class="fas fa-user-graduate"></i>
+                  <span>Students</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="filter-row">
+            <div class="filter-group">
+              <label>Status</label>
+              <div class="status-buttons">
+                <button [class.active]="statusFilter === 'all'" (click)="setStatusFilter('all')">All</button>
+                <button [class.active]="statusFilter === 'active'" (click)="setStatusFilter('active')">Active</button>
+                <button [class.active]="statusFilter === 'inactive'" (click)="setStatusFilter('inactive')">Inactive</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teachers List Card -->
+      <div class="card teachers-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <h3 class="section-title">Teachers</h3>
+          </div>
+          <div class="header-count">{{ filteredTeachers.length }}</div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="teachers-list">
+          <!-- Teacher Item -->
+          <div class="teacher-item" *ngFor="let teacher of filteredTeachers" [routerLink]="['/dashboard/teacher', teacher.id]">
+            <div class="teacher-avatar">
+              <div class="avatar-circle" *ngIf="!teacher.avatar">
+                <span>{{ getInitials(teacher.fullName) }}</span>
+              </div>
+              <img *ngIf="teacher.avatar" [src]="teacher.avatar" alt="{{ teacher.fullName }}">
+              <div class="status-indicator" [class.active]="teacher.status === 'active'" [class.inactive]="teacher.status === 'inactive'"></div>
+            </div>
+            
+            <div class="teacher-info">
+              <div class="teacher-name">{{ teacher.fullName }}</div>
+              <div class="teacher-subject">{{ teacher.subjects.join(', ') }}</div>
+              
+              <div class="teacher-meta">
+                <div class="meta-item">
+                  <i class="fas fa-star"></i>
+                  <span>Level {{ teacher.level }}</span>
+                </div>
+                <div class="meta-item">
+                  <i class="fas fa-user-graduate"></i>
+                  <span>{{ teacher.studentCount }} Students</span>
+                </div>
+                <div class="meta-item">
+                  <i class="fas fa-chalkboard"></i>
+                  <span>{{ teacher.classCount }} Classes</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="teacher-actions">
+              <button class="btn-icon" (click)="viewTeacher(teacher.id, $event)">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn-icon" (click)="editTeacher(teacher.id, $event)">
+                <i class="fas fa-edit"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Empty State -->
+          <div class="empty-state" *ngIf="filteredTeachers.length === 0">
+            <div class="empty-icon">
+              <i class="fas fa-user-slash"></i>
+            </div>
+            <div class="empty-text">No teachers found matching your filters.</div>
+            <button class="btn-secondary" (click)="resetFilters()">Reset Filters</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column - Stats & Charts -->
+    <div class="right-column">
+      <!-- Stats Card -->
+      <div class="card stats-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-chart-pie"></i>
+            </div>
+            <h3 class="section-title">Teacher Statistics</h3>
+          </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="stats-content">
+          <div class="stats-summary">
+            <div class="stat-item">
+              <div class="stat-value">{{ totalTeachers }}</div>
+              <div class="stat-label">Total Teachers</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ activeTeachers }}</div>
+              <div class="stat-label">Active Teachers</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ avgLevel.toFixed(1) }}</div>
+              <div class="stat-label">Avg. Level</div>
+            </div>
+          </div>
+          
+          <div class="chart-container">
+            <canvas id="teacherPieChart"></canvas>
+          </div>
+          
+          <div class="chart-legend">
+            <div class="legend-item" *ngFor="let subject of topSubjects; let i = index">
+              <div class="legend-color" [style.background-color]="chartColors[i]"></div>
+              <div class="legend-label">{{ subject.name }}</div>
+              <div class="legend-value">{{ subject.count }} Teachers</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Teacher Growth Card -->
+      <div class="card growth-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="section-title">Teacher Activity</h3>
+          </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="growth-content">
+          <div class="activity-list">
+            <div class="activity-item" *ngFor="let activity of recentActivities">
+              <div class="activity-avatar">
+                <div class="avatar-circle">
+                  <span>{{ getInitials(activity.teacherName) }}</span>
+                </div>
+              </div>
+              <div class="activity-info">
+                <div class="activity-text">
+                  <strong>{{ activity.teacherName }}</strong> {{ activity.action }}
+                </div>
+                <div class="activity-time">{{ activity.time }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div> 

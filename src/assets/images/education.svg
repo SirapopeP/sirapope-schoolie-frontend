@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <style>
+    .primary { fill: #1DD8B2; }
+    .secondary { fill: #5B9FFF; }
+    .accent { fill: #B06AB3; }
+    .light { fill: #f8f9fa; }
+    .dark { fill: #343a40; }
+  </style>
+  
+  <!-- Background elements -->
+  <circle cx="250" cy="250" r="200" fill="none" stroke="#eee" stroke-width="2" />
+  <circle cx="250" cy="250" r="150" fill="none" stroke="#eee" stroke-width="2" />
+  
+  <!-- Book -->
+  <rect x="150" y="150" width="200" height="220" rx="10" class="light" />
+  <rect x="150" y="150" width="20" height="220" rx="5" class="primary" />
+  <rect x="170" y="170" width="160" height="20" rx="5" class="secondary" />
+  <rect x="170" y="200" width="160" height="10" rx="5" class="dark" opacity="0.2" />
+  <rect x="170" y="220" width="160" height="10" rx="5" class="dark" opacity="0.2" />
+  <rect x="170" y="240" width="160" height="10" rx="5" class="dark" opacity="0.2" />
+  <rect x="170" y="260" width="120" height="10" rx="5" class="dark" opacity="0.2" />
+  
+  <!-- Graduation cap -->
+  <polygon points="250,100 200,130 300,130" class="primary" />
+  <rect x="240" y="130" width="20" height="30" class="primary" />
+  <circle cx="250" cy="100" r="10" class="secondary" />
+  
+  <!-- Pencil -->
+  <rect x="320" y="180" width="10" height="100" transform="rotate(45, 325, 180)" class="accent" />
+  <polygon points="325,160 315,175 335,175" transform="rotate(45, 325, 160)" class="dark" />
+  
+  <!-- Decorative elements -->
+  <circle cx="150" cy="150" r="10" class="secondary" opacity="0.5" />
+  <circle cx="350" cy="350" r="15" class="primary" opacity="0.5" />
+  <circle cx="150" cy="350" r="8" class="accent" opacity="0.5" />
+  <circle cx="350" cy="150" r="12" class="dark" opacity="0.3" />
+</svg>

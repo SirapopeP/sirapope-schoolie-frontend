@@ -15,10 +15,12 @@
     </div>
   </div>
 
-  <!-- Sidebar - visible on desktop, toggleable on mobile -->
+  <!-- Overlay - Separate from the sidebar for better control -->
+  <div class="sidebar-overlay" (click)="closeSidebar()" *ngIf="isSidebarOpen"></div>
+  
+  <!-- Sidebar container - now without the overlay inside -->
   <div class="sidebar-container" [class.open]="isSidebarOpen">
-    <div class="sidebar-overlay" (click)="closeSidebar()" *ngIf="isSidebarOpen"></div>
-    <app-sidebar></app-sidebar>
+    <app-sidebar class="sidebar-component"></app-sidebar>
   </div>
 
   <!-- Main Content -->

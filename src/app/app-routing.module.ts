@@ -3,6 +3,16 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { RegisterComponent } from './components/register/register.component';
+import { AuthGuard } from './services/auth.guard';
+
+// Import standalone components directly
+import { HomeComponent } from './components/home/home.component';
+import { HomeGuestComponent } from './components/home-guest/home-guest.component';
+import { TeacherComponent } from './components/teacher/teacher.component';
+import { WorkshopComponent } from './components/workshop/workshop.component';
+import { OptionsComponent } from './components/options/options.component';
+import { StudentComponent } from './components/student/student.component';
+import { StudentDetailComponent } from './components/student/student-detail/student-detail.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -11,34 +21,65 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
-      {
-        path: 'home',
-        loadChildren: () => import('./components/home/home.module').then(m => m.HomeModule)
+      { 
+        path: 'home', 
+        component: HomeComponent,
+        canActivate: [AuthGuard]
+      },
+      { 
+        path: 'home-teacher', 
+        component: HomeComponent,
+        canActivate: [AuthGuard]
+      },
+      { 
+        path: 'home-student', 
+        component: HomeComponent,
+        canActivate: [AuthGuard]
+      },
+      { 
+        path: 'home-guest', 
+        component: HomeGuestComponent,
+        canActivate: [AuthGuard]
+      },
+      { 
+        path: 'workshop', 
+        component: WorkshopComponent,
+        canActivate: [AuthGuard]
+      },
+      { 
+        path: 'student', 
+        component: StudentComponent,
+        canActivate: [AuthGuard]
       },
       {
-        path: 'workshop',
-        loadChildren: () => import('./components/workshop/workshop.module').then(m => m.WorkshopModule)
+        path: 'student/detail/:id',
+        component: StudentDetailComponent,
+        canActivate: [AuthGuard]
       },
       {
-        path: 'student',
-        loadChildren: () => import('./components/student/student.module').then(m => m.StudentModule)
+        path: 'student/:academyId/:id',
+        component: StudentDetailComponent,
+        canActivate: [AuthGuard]
       },
-      {
-        path: 'teacher',
-        loadChildren: () => import('./components/teacher/teacher.module').then(m => m.TeacherModule)
+      { 
+        path: 'teacher', 
+        component: TeacherComponent,
+        canActivate: [AuthGuard]
       },
-      {
-        path: 'options',
-        loadComponent: () => import('./components/options/options.component').then(m => m.OptionsComponent)
+      { 
+        path: 'options', 
+        component: OptionsComponent,
+        canActivate: [AuthGuard]
       }
     ]
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { useHash: false })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { } 

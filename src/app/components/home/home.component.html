@@ -1,6 +1,169 @@
-<div class="home-container">
-  <h1>Welcome to the Dashboard</h1>
-  <div class="home-content">
-    <p>This is your school management dashboard. Use the navigation menu to access different sections.</p>
+<div class="home-container" @fadeIn>
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <h1 class="dashboard-title">Welcome to Dashboard</h1>
+      <p class="dashboard-subtitle">ACADEMY MANAGEMENT SYSTEM</p>
+    </div>
+    <div class="user-profile">
+      <div class="user-info">
+        <div class="user-name">{{ userProfile.fullName }} | {{ userProfile.role }}</div>
+        <div class="academy-name">{{ userProfile.academy || 'None' }}</div>
+      </div>
+      <div class="avatar-container" (click)="openProfileModal()">
+        <img *ngIf="userProfile?.avatarUrl" [src]="userProfile.avatarUrl" alt="User Profile" class="avatar-image">
+        <div *ngIf="!userProfile?.avatarUrl" class="avatar-placeholder">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <div class="intro-card" @fadeIn>
+    <div class="card">
+      <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>This is your school management dashboard. Use the navigation menu to access different sections.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Section -->
+  <div class="stats-container" @slideIn>
+    <app-stat-card 
+      [icon]="statIcons.workshop"
+      [gradientSvg]="statGradients[0]" 
+      [title]="'WORKSHOPS'"
+      [value]="workshopCount.toString()"
+      [actionLabel]="'+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="statIcons.student"
+      [gradientSvg]="statGradients[1]" 
+      [title]="'STUDENTS'"
+      [value]="studentCount.toString()"
+      [actionLabel]="'+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="statIcons.teacher"
+      [gradientSvg]="statGradients[2]" 
+      [title]="'TEACHER'"
+      [value]="teacherCount.toString()"
+      [actionLabel]="'+'"
+    ></app-stat-card>
+    <app-stat-card 
+      [icon]="statIcons.achievement"
+      [gradientSvg]="statGradients[3]" 
+      [title]="'ACADEMY LEVEL'"
+      [value]="academyLevel.toString()"
+      [showStar]="true"
+    ></app-stat-card>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content-area" @staggerList>
+    <!-- Workshop List -->
+    <div class="workshop-list" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-chalkboard-teacher" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">WORKSHOP LIST</h2>
+        </div>
+      </div>
+      <div class="divider"></div>
+      
+      <div class="workshop-items-container">
+        <ul class="workshop-items">
+          <li class="workshop-item" *ngFor="let workshop of workshops" @fadeIn>
+            <div class="status-badge" [ngClass]="workshop.status"></div>
+            <div class="workshop-name">{{ workshop.title }}</div>
+            <div class="workshop-actions">
+              <button class="btn-circle">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Student Section -->
+    <div class="student-section" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-user-graduate" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">STUDENT TODAY</h2>
+          <div class="date-badge">{{ formattedSelectedDate }}</div>
+          <div class="list-actions">
+            <button class="action-button primary-button" (click)="openStudentManagementModal()">
+              <i class="fas fa-plus"></i> Add Student
+            </button>
+          </div>
+        </div> 
+      </div>
+      
+      <div class="divider"></div>
+      
+      <div class="student-list-container">
+        <div class="student-list">
+          <div class="student-card" *ngFor="let student of students" @fadeIn>
+            <div class="student-avatar">
+              <div class="avatar">
+                <div class="avatar-letter">{{ student.name.charAt(0) }}</div>
+              </div>
+            </div>
+            <div class="student-info">
+              <div class="student-header">
+                <div class="student-name">{{ student.name }}</div>
+                <div class="student-age">{{ student.age }} years</div>
+              </div>
+              <div class="student-course">
+                <div class="workshop-name">Workshop: <span class="workshop-value">{{ student.workshop }}</span></div>
+                <div class="session-date">{{ student.sessionDate }}</div>
+              </div>
+              <div class="session-details">
+                <span class="session-label">Detail:</span>
+                <span class="session-value">{{ student.sessionDetail }}</span>
+              </div>
+            </div>
+            <div class="student-actions">
+              <button class="edit-button">
+                <i class="fas fa-pencil-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Calendar Section -->
+    <div class="calendar-section" @slideIn>
+      <div class="list-header-row">
+        <div class="list-header">
+          <div class="section-icon">
+            <i class="fas fa-calendar-alt" style="color: #1DD8B2; font-size: 18px;"></i>
+          </div>
+          <h2 class="section-title">CALENDAR</h2>
+        </div>
+      </div>
+      
+      <div class="divider"></div>
+      
+      <app-calendar-object 
+        (dateSelected)="onDateSelected($event)">
+      </app-calendar-object>
+    </div>
+  </div>
+  
+  <!-- User Profile Modal -->
+  <app-user-profile-modal
+    [isOpen]="isProfileModalOpen"
+    [userProfile]="currentUserProfile"
+    (closeModal)="closeProfileModal()"
+    (profileSaved)="onProfileSaved($event)"
+  ></app-user-profile-modal>
 </div> 

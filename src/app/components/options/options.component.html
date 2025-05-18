@@ -54,7 +54,45 @@
     </div>
   </div>
 
-  <div class="card">
+  <!-- Menu Permissions Configuration for Admin -->
+  <div class="card" *ngIf="isAdmin">
+    <h2>
+      <mat-icon>security</mat-icon>
+      Menu Permissions
+    </h2>
+    <div class="description">Configure which user roles can access different menu items</div>
+    
+    <div class="permissions-table">
+      <div class="table-header">
+        <div class="menu-column">Menu</div>
+        <div class="role-column" *ngFor="let role of availableRoles">{{ role }}</div>
+      </div>
+      
+      <div class="table-row" *ngFor="let menu of menuPermissions">
+        <div class="menu-column">{{ menu.menuName }}</div>
+        <div class="role-column" *ngFor="let role of availableRoles">
+          <mat-checkbox 
+            [checked]="hasRole(menu, role)" 
+            (change)="toggleRole(menu, role)"
+            color="primary">
+          </mat-checkbox>
+        </div>
+      </div>
+    </div>
+    
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" (click)="saveMenuPermissions()">
+        <mat-icon>save</mat-icon>
+        Save Permissions
+      </button>
+      <button mat-button (click)="resetToDefault()">
+        <mat-icon>refresh</mat-icon>
+        Reset to Default
+      </button>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="!isAdmin">
     <h2>More Settings</h2>
     <p>Additional settings will be added in future updates.</p>
   </div>

@@ -20,16 +20,31 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="name">Full Name</label>
-        <input 
-          type="text" 
-          id="name"
-          formControlName="name"
-          placeholder="Enter your full name"
-          [class.error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
-        <div class="error-message" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
-          <span *ngIf="registerForm.get('name')?.errors?.['required']">Full name is required</span>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input 
+            type="text" 
+            id="name"
+            formControlName="name"
+            placeholder="Full name"
+            [class.error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+          <div class="error-message" *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched">
+            <span *ngIf="registerForm.get('name')?.errors?.['required']">Full name is required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="nickName">Nickname</label>
+          <input 
+            type="text" 
+            id="nickName"
+            formControlName="nickName"
+            placeholder="Nickname"
+            [class.error]="registerForm.get('nickName')?.invalid && registerForm.get('nickName')?.touched">
+          <div class="error-message" *ngIf="registerForm.get('nickName')?.invalid && registerForm.get('nickName')?.touched">
+            <span *ngIf="registerForm.get('nickName')?.errors?.['required']">Nickname is required</span>
+          </div>
         </div>
       </div>
 

@@ -1,18 +1,802 @@
 @import '../../../styles/variables';
 @import '../../../styles/mixins';
 
+:host {
+  width: 100%;
+  display: block;
+}
+
 .home-container {
-  padding: $spacing-lg;
+  width: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  font-family: $font-family-base;
   
-  h1 {
+  // Header styles
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: $spacing-lg;
-    color: $text-primary;
+    
+    .header-left {
+      .dashboard-title {
+        font-weight: $font-weight-bold;
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+        color: var(--text-primary);
+      }
+      
+      .dashboard-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        margin: 0;
+      }
+    }
+    
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      
+      .user-info {
+        text-align: right;
+        
+        .user-name {
+          font-weight: 500;
+          font-size: 0.9rem;
+          color: var(--text-primary);
+          margin-bottom: 0.125rem;
+        }
+        
+        .academy-name {
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #1DD8B2;
+        }
+      }
+      
+      .avatar-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        
+        &:hover {
+          transform: scale(1.05);
+        }
+        
+        .avatar-image {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 2px solid #3d3d3d;
+        }
+        
+        .avatar-placeholder {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background-color: #3d3d3d;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          
+          i {
+            font-size: 1.5rem;
+            color: #cccccc;
+          }
+        }
+      }
+    }
   }
   
-  .home-content {
-    background-color: $background-primary;
-    border-radius: $border-radius-md;
-    padding: $spacing-lg;
-    box-shadow: $box-shadow;
+  // Shared styles for cards
+  %card-base {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
   }
+  
+  %section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    
+    .section-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(29, 216, 178, 0.1);
+      border-radius: 8px;
+      width: 36px;
+      height: 36px;
+    }
+    
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+  }
+  
+  .divider {
+    height: 1px;
+    background: #E0E0E0;
+    margin: 0.5rem 0;
+  }
+  
+  // Intro Card
+  .intro-card {
+    margin-bottom: 0.5rem;
+    
+    .card {
+      @include card-shadow;
+      border-radius: $border-radius-md;
+      background-color: var(--background-primary);
+      
+      .card-body {
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        padding: 1rem 1.5rem;
+        svg {
+          width: 2rem;
+          height: 2rem;
+          color: #1DD8B2;
+        }
+        span {
+          @include body-text;
+          color: var(--text-primary);
+        }
+      }
+    }
+  }
+  
+  // Stats Container
+  .stats-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-top: 0;
+    
+    app-stat-card {
+      display: block;
+      height: 100%;
+    }
+  }
+  
+  // Main Content Area
+  .main-content-area {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    
+    // Workshop List Section
+    .workshop-list {
+      @extend %card-base;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      
+      .list-header {
+        @extend %section-header;
+      }
+      
+      .divider {
+        margin-bottom: 12px; // Consistent divider spacing
+      }
+      
+      // Container for workshop items with fixed height and scrolling
+      .workshop-items-container {
+        height: 390px; // Height for 6 workshop items
+        overflow-y: auto;
+        padding-right: 6px; // Add padding for spacing between scrollbar and container edge
+        margin-right: 4px; // Add margin to create space between scrollbar and list box
+        
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #ddd;
+          border-radius: 10px;
+          
+          &:hover {
+            background: #ccc;
+          }
+        }
+      }
+      
+      .workshop-items {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      
+      .workshop-item {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        background: #F8F9FA;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #F0F0F0;
+          transform: translateY(-2px);
+        }
+        
+        .status-badge {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          margin-right: 0.75rem;
+          
+          &.active {
+            background: #1DD8B2;
+          }
+          
+          &.cancelled {
+            background: #FF5757;
+          }
+        }
+        
+        .workshop-name {
+          flex: 1;
+          font-size: 0.9rem;
+          font-weight: 500;
+          color: #333;
+        }
+        
+        .workshop-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        .btn-circle {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          border: 1px solid #E0E0E0;
+          color: #777;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background: #1DD8B2;
+            color: white;
+            border-color: #1DD8B2;
+          }
+        }
+      }
+    }
+    
+    // Student Section
+    .student-section {
+      @extend %card-base;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      
+      .list-header {
+        @extend %section-header;
+        .section-title {
+          flex: 1;
+        }
+        
+        .date-badge {
+          background: #F8F9FA;
+          color: #555;
+          font-size: 0.8rem;
+          font-weight: 500;
+          padding: 0.4rem 0.8rem;
+          border-radius: 6px;
+        }
+      }
+      
+      .divider {
+        margin-bottom: 12px; // Consistent divider spacing
+      }
+      
+      .list-actions {
+        display: flex;
+        justify-content: flex-end;
+        
+        .add-button {
+          background: #1DD8B2;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          padding: 0.5rem 1rem;
+          font-size: 0.85rem;
+          font-weight: 500;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background: darken(#1DD8B2, 8%);
+          }
+        }
+      }
+      
+      // Container for student list with fixed height and scrolling
+      .student-list-container {
+        height: 380px; // Height for 3 student cards
+        overflow-y: auto;
+        padding-right: 6px; // Add padding for spacing between scrollbar and container edge
+        margin-right: 4px; // Add margin to create space between scrollbar and list box
+        
+        // Custom scrollbar styling
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background: #ddd;
+          border-radius: 10px;
+          
+          &:hover {
+            background: #ccc;
+          }
+        }
+      }
+      
+      .student-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .student-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+        background: #F8F9FA;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #F0F0F0;
+          transform: translateY(-2px);
+        }
+        
+        .student-avatar {
+          .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1DD8B2;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+          }
+        }
+        
+        .student-info {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          
+          .student-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            
+            .student-name {
+              font-weight: 600;
+              font-size: 1rem;
+              color: #333;
+            }
+            
+            .student-age {
+              color: #666;
+              font-size: 0.8rem;
+            }
+          }
+          
+          .student-course {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 0.85rem;
+            
+            .workshop-name {
+              color: #555;
+              
+              .workshop-value {
+                color: #1DD8B2;
+                font-weight: 500;
+              }
+            }
+            
+            .session-date {
+              color: #777;
+            }
+          }
+          
+          .session-details {
+            font-size: 0.85rem;
+            
+            .session-label {
+              color: #555;
+            }
+            
+            .session-value {
+              color: #1DD8B2;
+              font-weight: 500;
+            }
+          }
+        }
+        
+        .student-actions {
+          .edit-button {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid #E0E0E0;
+            color: #777;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              background: #1DD8B2;
+              color: white;
+              border-color: #1DD8B2;
+            }
+          }
+        }
+      }
+    }
+    
+    // Calendar Section
+    .calendar-section {
+      @extend %card-base;
+      display: flex;
+      flex-direction: column;
+      margin-top: 0;
+      
+      .list-header {
+        @extend %section-header;
+      }
+      
+      .divider {
+        margin-bottom: 12px; // Add more space after the divider
+      }
+
+      app-calendar-object {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+// Dark mode specific styles
+:host-context(.dark-theme) {
+  .home-container {
+    .header-container {
+      .header-left {
+        .dashboard-title {
+          color: #fff;
+        }
+        .dashboard-subtitle {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+      
+      .user-profile {
+        .user-info {
+          .user-name {
+            color: #fff;
+          }
+        }
+        
+        .avatar-placeholder {
+          background-color: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+          
+          i {
+            color: rgba(255, 255, 255, 0.7);
+          }
+        }
+      }
+    }
+    
+    .intro-card {
+      .card {
+        background-color: #2a2a2a;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        
+        .card-body {
+          span {
+            color: rgba(255, 255, 255, 0.9);
+          }
+          
+          svg {
+            color: #1DD8B2;
+          }
+        }
+      }
+    }
+    
+    .workshop-list,
+    .student-section,
+    .calendar-section {
+      background-color: #2a2a2a;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      
+      .section-title {
+        color: #fff;
+      }
+      
+      .divider {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+    
+    .workshop-item,
+    .student-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      
+      .workshop-name,
+      .student-name {
+        color: #fff;
+      }
+      
+      .student-age,
+      .session-date,
+      .session-label {
+        color: rgba(255, 255, 255, 0.7);
+      }
+      
+      .btn-circle,
+      .edit-button {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        
+        &:hover {
+          background-color: var(--primary-color);
+          border-color: var(--primary-color);
+        }
+      }
+      
+      .workshop-value,
+      .session-value {
+        color: #1DD8B2;
+      }
+    }
+    
+    .date-badge {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+    
+    .badge-outline {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .add-button {
+      background-color: #1DD8B2;
+      color: #fff;
+      
+      &:hover {
+        background-color: darken(#1DD8B2, 8%);
+      }
+    }
+    
+    // Fix dark mode for section headers
+    .list-header {
+      .section-icon {
+        background: rgba(29, 216, 178, 0.15);
+      }
+      
+      .section-title {
+        color: #fff;
+      }
+    }
+    
+    // Update section dividers for dark mode
+    .divider {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    // Fix dark mode for list headers
+    .list-header-row {
+      .list-header {
+        .section-icon {
+          background: rgba(29, 216, 178, 0.15);
+          
+          i {
+            color: #1DD8B2 !important;
+          }
+        }
+        
+        .section-title {
+          color: #fff;
+        }
+      }
+    }
+    
+    // Dark mode for student cards
+    .student-card {
+      background-color: rgba(255, 255, 255, 0.05);
+      
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      
+      .student-header {
+        .student-name {
+          color: #fff;
+        }
+        
+        .student-age {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+      
+      .student-course {
+        .workshop-name {
+          color: rgba(255, 255, 255, 0.7);
+          
+          .workshop-value {
+            color: #1DD8B2;
+          }
+        }
+        
+        .session-date {
+          color: rgba(255, 255, 255, 0.7);
+        }
+      }
+      
+      .session-details {
+        .session-label {
+          color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .session-value {
+          color: #1DD8B2;
+        }
+      }
+    }
+    
+    // Dark mode for student list container scrollbar
+    .student-list-container,
+    .workshop-items-container {
+      &::-webkit-scrollbar-track {
+        background: #333;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: #555;
+        
+        &:hover {
+          background: #666;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design for different screen sizes
+@media (max-width: 1200px) {
+  .home-container {
+    .stats-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-content-area {
+      grid-template-columns: 1fr 1fr;
+      
+      .calendar-section {
+        grid-column: span 2;
+        margin-top: 1.5rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .home-container {
+    padding: 1rem;
+    
+    .stats-container {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .main-content-area {
+      grid-template-columns: 1fr;
+      
+      .calendar-section {
+        grid-column: auto;
+      }
+    }
+  }
+}
+
+// Action buttons
+.action-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  gap: 8px;
+  
+  i {
+    font-size: 0.85rem;
+  }
+  
+  &.primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    
+    &:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+}
+
+// Existing styles for .add-button for backwards compatibility
+.add-button {
+  @extend .action-button;
+  @extend .primary-button;
 } 

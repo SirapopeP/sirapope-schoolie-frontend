@@ -1,0 +1,36 @@
+<div class="student-list-container" [ngClass]="{'dark-mode': isDarkMode}">
+  <div class="student-list-header">
+    <h2>STUDENT LIST</h2>
+    <p>Student comparative data</p>
+  </div>
+  
+  <div class="student-list-content">
+    <table class="student-list-table">
+      <thead>
+        <tr>
+          <th class="status-column"></th>
+          <th class="name-column">Name</th>
+          <th class="level-column">Level</th>
+          <th class="rating-column">Income</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of students" (click)="navigateToStudentDetail(student)">
+          <td class="status-column">
+            <div class="status-indicator" [style.backgroundColor]="getStudentStatusColor(student)"></div>
+          </td>
+          <td class="name-column">{{ getStudentNickname(student) }}</td>
+          <td class="level-column">{{ student?.memberLevel || '-' }}</td>
+          <td class="rating-column">{{ student?.memberIncome | number:'1.0-0' }} ฿</td>
+        </tr>
+        
+        <!-- If no students, show empty state -->
+        <tr *ngIf="students.length === 0">
+          <td colspan="4" class="empty-state">
+            No students found
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div> 

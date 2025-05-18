@@ -1,1 +1,120 @@
- 
+<div class="modal-container">
+  <!-- Role Selection View -->
+  <div *ngIf="!isCreatingAcademy">
+    <div class="modal-header">
+      <h2>Select Your Role</h2>
+      <button class="close-button" (click)="close()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <p class="modal-description">Choose a role that best fits your needs in the academy management system.</p>
+      
+      <div class="role-options">
+        <div 
+          *ngFor="let role of roleOptions" 
+          class="role-card" 
+          [class.selected]="selectedRole === role.value"
+          (click)="selectRole(role.value)">
+          
+          <div class="role-icon" [ngClass]="role.id">
+            <i [class]="role.icon"></i>
+          </div>
+          
+          <div class="role-info">
+            <h3>{{ role.title }}</h3>
+            <p>{{ role.description }}</p>
+          </div>
+          
+          <div class="selection-indicator">
+            <div class="radio-button" [class.active]="selectedRole === role.value"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="errorMessage" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+        
+        <button *ngIf="errorMessage && (errorMessage.includes('refresh') || errorMessage.includes('session'))" 
+                class="btn-refresh rounded" 
+                (click)="refreshPage()">
+          Refresh Page
+        </button>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-cancel rounded" (click)="close()" [disabled]="isLoading">Cancel</button>
+      <button 
+        class="btn-confirm rounded" 
+        [disabled]="!selectedRole || isLoading"
+        [class.disabled]="!selectedRole || isLoading"
+        (click)="confirmSelection()">
+        <span *ngIf="!isLoading">Confirm</span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Academy Creation Form -->
+  <div *ngIf="isCreatingAcademy" class="academy-creation-form">
+    <div class="modal-header">
+      <h2>Create Your Academy</h2>
+      <button class="close-button" (click)="close()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="modal-body academy-form-container">
+      <div class="academy-form-left">
+        <div class="form-group">
+          <label for="academy-name">Academy Name <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="academy-name" 
+            class="form-input rounded" 
+            [(ngModel)]="academyFormData.name" 
+            placeholder="Enter your academy name"
+            required>
+        </div>
+        
+        <div class="form-group">
+          <label for="academy-bio">Description</label>
+          <textarea 
+            id="academy-bio" 
+            class="form-textarea rounded" 
+            [(ngModel)]="academyFormData.bio" 
+            placeholder="Tell us about your academy..."
+            rows="5"></textarea>
+        </div>
+      </div>
+      
+      <div class="academy-form-right">
+        <div class="app-graphics-container">
+          <div class="app-graphics-placeholder">
+            <i class="fas fa-school"></i>
+            <p>Academy Management System</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn-cancel rounded" (click)="backToRoleSelection()" [disabled]="isLoading">Back</button>
+      <button 
+        class="btn-confirm rounded" 
+        [disabled]="!academyFormData.name || isLoading"
+        [class.disabled]="!academyFormData.name || isLoading"
+        (click)="confirmSelection()">
+        <span *ngIf="!isLoading">Create Academy</span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+        </span>
+      </button>
+    </div>
+  </div>
+</div> 

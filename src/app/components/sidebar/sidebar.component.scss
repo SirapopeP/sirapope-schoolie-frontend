@@ -8,7 +8,9 @@
   width: 250px;
   display: flex;
   flex-direction: column;
-  z-index: 10; /* Ensure it's above other elements */
+  z-index: 1050; // Use direct value that's very high
+  position: relative;
+  pointer-events: auto !important; // Force pointer events
 
   .brand {
     padding: $spacing-md;
@@ -41,8 +43,19 @@
     gap: $spacing-md;
     list-style-type: none;
     margin: 0;
+    position: relative;
+
+    &.mobile-clickable {
+      pointer-events: auto !important;
+    }
 
     li {
+      position: relative;
+      
+      &.menu-item {
+        pointer-events: auto !important;
+      }
+      
       a {
         @include flex-center;
         justify-content: flex-start;
@@ -54,8 +67,14 @@
         cursor: pointer;
         text-decoration: none;
         font-weight: $font-weight-medium;
-        position: relative; /* For proper event handling */
-        z-index: 1; /* Ensure click events work */
+        position: relative;
+        pointer-events: auto !important;
+        touch-action: auto !important;
+
+        &.menu-link {
+          pointer-events: auto !important;
+          touch-action: auto !important;
+        }
 
         svg {
           width: 1.25rem;
@@ -106,5 +125,20 @@
 @media (max-width: 768px) {
   .drawer-side {
     width: 250px;
+    position: relative;
+    z-index: 1060; // Even higher for mobile
+    
+    .menu {
+      pointer-events: auto !important;
+      
+      .menu-item {
+        pointer-events: auto !important;
+        
+        .menu-link {
+          pointer-events: auto !important;
+          touch-action: auto !important;
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,304 @@
+<div class="workshop-container">
+  <!-- Particles Background -->
+  <app-particles [color]="isDarkMode ? '#2DD8A8' : '#1DD8B2'" particleCount="40" connectionDistance="100"></app-particles>
+  
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <h1 class="page-title">Workshop Management</h1>
+      <p class="page-subtitle">CREATE AND MANAGE YOUR WORKSHOPS</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary" (click)="openNewTemplateModal()">
+        <i class="fas fa-plus"></i>
+        <span>New Template</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification/Ad Banner -->
+  <div class="intro-card" @fadeIn>
+    <div class="card">
+      <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Create workshop templates and manage active workshop classrooms</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content-area">
+    <!-- Left Column - Workshop Templates -->
+    <div class="left-column">
+      <!-- Workshop Templates Card -->
+      <div class="card templates-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h3 class="section-title">Workshop Templates</h3>
+          </div>
+          <div class="header-count">{{ workshopTemplates.length }}</div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="templates-content">
+          <div class="search-filter">
+            <div class="search-input">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Search templates..." [(ngModel)]="templateSearchQuery" (input)="filterTemplates()">
+            </div>
+            <div class="filter-actions">
+              <div class="sort-dropdown">
+                <select [(ngModel)]="templateSortBy" (change)="filterTemplates()">
+                  <option value="name-asc">Name (A-Z)</option>
+                  <option value="name-desc">Name (Z-A)</option>
+                  <option value="date-desc">Newest</option>
+                  <option value="date-asc">Oldest</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Templates Grid -->
+          <div class="templates-grid">
+            <!-- Template Card Item -->
+            <div class="template-card" *ngFor="let template of filteredTemplates">
+              <div class="template-image" [style.background-image]="'url(' + template.imageUrl + ')'">
+                <div class="template-overlay">
+                  <div class="template-actions">
+                    <button class="action-btn" (click)="editTemplate(template)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="action-btn" (click)="createClassroom(template)">
+                      <i class="fas fa-play"></i>
+                    </button>
+                    <button class="action-btn" (click)="duplicateTemplate(template)">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="template-info">
+                <div class="template-name">{{ template.name }}</div>
+                <div class="template-meta">
+                  <div class="meta-item">
+                    <i class="fas fa-layer-group"></i>
+                    <span>{{ template.stepsCount }} Steps</span>
+                  </div>
+                  <div class="meta-item">
+                    <i class="fas fa-clock"></i>
+                    <span>{{ template.duration }} hrs</span>
+                  </div>
+                </div>
+                <div class="template-description">{{ template.description }}</div>
+              </div>
+            </div>
+
+            <!-- New Template Card -->
+            <div class="template-card new-template-card" (click)="openNewTemplateModal()">
+              <div class="add-template">
+                <div class="add-icon">
+                  <i class="fas fa-plus"></i>
+                </div>
+                <div class="add-text">Create New Template</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right Column - Active Workshops -->
+    <div class="right-column">
+      <!-- Active Workshops Card -->
+      <div class="card active-workshops-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-chalkboard"></i>
+            </div>
+            <h3 class="section-title">Active Workshops</h3>
+          </div>
+          <div class="header-count">{{ classrooms.length }}</div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="classrooms-content">
+          <div class="search-filter">
+            <div class="search-input">
+              <i class="fas fa-search"></i>
+              <input type="text" placeholder="Search active workshops..." [(ngModel)]="classroomSearchQuery" (input)="filterClassrooms()">
+            </div>
+          </div>
+
+          <!-- Classrooms List -->
+          <div class="classrooms-list">
+            <!-- Classroom Item -->
+            <div class="classroom-item" *ngFor="let classroom of filteredClassrooms">
+              <div class="classroom-image" [style.background-image]="'url(' + classroom.imageUrl + ')'">
+                <div class="classroom-status" [class.active]="classroom.status === 'active'" 
+                                               [class.completed]="classroom.status === 'completed'"
+                                               [class.upcoming]="classroom.status === 'upcoming'">
+                  {{ classroom.status }}
+                </div>
+              </div>
+              
+              <div class="classroom-info">
+                <div class="classroom-name">{{ classroom.name }}</div>
+                <div class="classroom-meta">
+                  <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{{ classroom.startDate | date:'mediumDate' }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <i class="fas fa-user-graduate"></i>
+                    <span>{{ classroom.studentCount }} Students</span>
+                  </div>
+                </div>
+                <div class="progress-container">
+                  <div class="progress-info">
+                    <span>Progress</span>
+                    <span>{{ classroom.currentStep }}/{{ classroom.totalSteps }}</span>
+                  </div>
+                  <div class="progress-bar">
+                    <div class="progress-fill" [style.width.%]="(classroom.currentStep / classroom.totalSteps) * 100"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="classroom-actions">
+                <button class="btn-icon" (click)="manageClassroom(classroom)">
+                  <i class="fas fa-cog"></i>
+                </button>
+                <button class="btn-icon" (click)="viewClassroom(classroom)">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Empty State -->
+            <div class="empty-state" *ngIf="filteredClassrooms.length === 0">
+              <div class="empty-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+              </div>
+              <div class="empty-text">No active workshops found</div>
+              <p class="empty-subtext">Create a new workshop from a template to get started</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workshop Stats Card -->
+      <div class="card stats-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3 class="section-title">Workshop Statistics</h3>
+          </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="stats-content">
+          <div class="stats-summary">
+            <div class="stat-item">
+              <div class="stat-value">{{ workshopTemplates.length }}</div>
+              <div class="stat-label">Templates</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ classrooms.length }}</div>
+              <div class="stat-label">Active Workshops</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ totalStudents }}</div>
+              <div class="stat-label">Total Students</div>
+            </div>
+          </div>
+          
+          <div class="upcoming-workshops">
+            <h4 class="subsection-title">Upcoming Workshops</h4>
+            <div class="upcoming-list">
+              <div class="upcoming-item" *ngFor="let upcoming of upcomingWorkshops">
+                <div class="upcoming-date">
+                  <div class="date-day">{{ upcoming.startDate | date:'dd' }}</div>
+                  <div class="date-month">{{ upcoming.startDate | date:'MMM' }}</div>
+                </div>
+                <div class="upcoming-info">
+                  <div class="upcoming-name">{{ upcoming.name }}</div>
+                  <div class="upcoming-meta">
+                    <span><i class="fas fa-users"></i> {{ upcoming.studentCount }} registered</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="empty-upcoming" *ngIf="upcomingWorkshops.length === 0">
+                <p>No upcoming workshops scheduled</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template Modal -->
+  <div class="modal-overlay" *ngIf="showTemplateModal" @fadeIn>
+    <div class="modal-container" @slideIn>
+      <div class="modal-header">
+        <h3>{{ editingTemplate ? 'Edit Workshop Template' : 'Create New Workshop Template' }}</h3>
+        <button class="close-btn" (click)="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Workshop Name</label>
+          <input type="text" [(ngModel)]="newTemplate.name" placeholder="Enter workshop name">
+        </div>
+        
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="newTemplate.description" placeholder="Enter workshop description" rows="3"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Duration (hours)</label>
+            <input type="number" [(ngModel)]="newTemplate.duration" min="1" step="0.5">
+          </div>
+          
+          <div class="form-group">
+            <label>Steps Count</label>
+            <input type="number" [(ngModel)]="newTemplate.stepsCount" min="1" max="12">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>Image URL</label>
+          <div class="image-url-input">
+            <input type="text" [(ngModel)]="newTemplate.imageUrl" placeholder="Enter image URL">
+            <button class="preview-btn" (click)="previewImage()" [disabled]="!newTemplate.imageUrl">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="image-preview" *ngIf="previewImageUrl">
+          <img [src]="previewImageUrl" alt="Workshop Preview">
+        </div>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeModal()">Cancel</button>
+        <button class="btn-primary" (click)="saveTemplate()">{{ editingTemplate ? 'Update' : 'Create' }}</button>
+      </div>
+    </div>
+  </div>
+</div> 

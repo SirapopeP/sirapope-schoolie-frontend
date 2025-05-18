@@ -15,11 +15,11 @@ export class RolesService {
 
   constructor(private http: HttpClient) {}
 
-  async assignUserRole(userId: number, role: 'ACADEMY_OWNER' | 'TEACHER' | 'STUDENT') {
+  async assignUserRole(userId: string, role: 'ACADEMY_OWNER' | 'TEACHER' | 'STUDENT') {
     return this.http.post(`${this.apiUrl}/assign`, { userId, role }).toPromise();
   }
 
-  async getUserRoles(userId: number): Promise<UserRole[]> {
+  async getUserRoles(userId: string): Promise<UserRole[]> {
     return this.http.get<UserRole[]>(`${this.apiUrl}/user/${userId}`).toPromise() as Promise<UserRole[]>;
   }
 } 
