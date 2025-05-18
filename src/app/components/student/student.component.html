@@ -11,19 +11,20 @@
   </div>
 
   <!-- Loading Spinner -->
-  <div class="loading-container" *ngIf="isLoading">
-    <div class="card loading-card" @fadeIn>
+  <div *ngIf="isLoading" class="loading-container" @fadeIn>
+    <div class="card loading-card">
       <div class="spinner"></div>
       <span>Loading students...</span>
     </div>
   </div>
 
-  <!-- Main Content Grid (Student Cards + Student List) -->
-  <div class="main-content-grid" *ngIf="!isLoading" @staggerCards>
-    <ng-container *ngIf="students.length > 0; else noStudents">
+  <!-- Main Content -->
+  <ng-container *ngIf="!isLoading">
+    <!-- Students Found -->
+    <div *ngIf="students.length > 0" class="main-content-grid" @staggerCards>
       <div class="student-grid">
         <app-student-card 
-          *ngFor="let student of students" 
+          *ngFor="let student of students; trackBy: trackByStudentId" 
           [student]="student"
           [isDarkMode]="isDarkMode"
           @fadeIn
@@ -37,18 +38,17 @@
           @fadeIn
         ></app-student-list>
       </div>
-    </ng-container>
+    </div>
     
-    <ng-template #noStudents>
-      <div class="empty-state-container">
-        <div class="card no-students-card" @fadeIn>
-          <i class="fas fa-user-graduate"></i>
-          <p>No students found in your academy.</p>
-          <button class="add-first-student-btn" (click)="openAddStudentModal()">
-            Add your first student
-          </button>
-        </div>
+    <!-- No Students Found -->
+    <div *ngIf="students.length === 0" class="empty-state-container" @fadeIn>
+      <div class="card no-students-card">
+        <i class="fas fa-user-graduate"></i>
+        <p>No students found in your academy.</p>
+        <button class="add-first-student-btn" (click)="openAddStudentModal()">
+          Add your first student
+        </button>
       </div>
-    </ng-template>
-  </div>
+    </div>
+  </ng-container>
 </div> 

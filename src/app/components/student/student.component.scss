@@ -6,6 +6,30 @@
   display: block;
 }
 
+// Common styles
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+}
+
+// Button styles mixin
+@mixin button-styles {
+  background-color: var(--primary-color, #1dd8b2);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  
+  &:hover {
+    background-color: darken(#1dd8b2, 10%);
+    transform: translateY(-2px);
+  }
+}
+
 .student-container {
   width: 100%;
   padding: 1.5rem;
@@ -44,14 +68,6 @@
   }
 }
 
-// Card base styles
-.card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-  padding: 1.5rem;
-}
-
 // Header section
 .header-container {
   display: flex;
@@ -80,26 +96,15 @@
 
 // Add student button
 .add-student-btn {
+  @include button-styles;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: var(--primary-color, #1dd8b2);
-  color: white;
-  border: none;
-  border-radius: 8px;
   padding: 8px 14px;
   font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   white-space: nowrap;
   min-width: 120px;
-  
-  &:hover {
-    background-color: darken(#1dd8b2, 10%);
-    transform: translateY(-2px);
-  }
   
   i {
     font-size: 10px;
@@ -138,11 +143,7 @@
   }
 }
 
-// Student grid section
-.student-grid-section {
-  width: 100%;
-}
-
+// Main content layout
 .main-content-grid {
   display: grid;
   grid-template-columns: 1fr 350px;
@@ -159,17 +160,7 @@
   }
 }
 
-// Empty state container (when no students)
-.empty-state-container {
-  grid-column: 1 / -1; // Span all columns
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-}
-
+// Student grid
 .student-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -180,6 +171,16 @@
 .student-list {
   width: 100%;
   height: 100%;
+}
+
+// Empty state (when no students)
+.empty-state-container {
+  grid-column: 1 / -1; // Span all columns
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
 }
 
 // No students message
@@ -208,20 +209,9 @@
 
 // Add first student button
 .add-first-student-btn {
-  background-color: var(--primary-color, #1dd8b2);
-  color: white;
-  border: none;
-  border-radius: 8px;
+  @include button-styles;
   padding: 10px 20px;
   font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  
-  &:hover {
-    background-color: darken(#1dd8b2, 10%);
-    transform: translateY(-2px);
-  }
 }
 
 // Animation for spinner
@@ -257,7 +247,6 @@
   .student-grid {
     grid-template-columns: 1fr;
     gap: 15px;
-    width: 100%;
     
     app-student-card {
       width: 100%;

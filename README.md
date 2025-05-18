@@ -60,6 +60,24 @@ src/
 └── environments/
 ```
 
+## Recent Updates
+
+### Student Navigation Fix
+We've resolved an issue where clicking on student cards would occasionally result in a ChunkLoadError. The solution:
+
+- Added a StudentRedirectComponent that handles navigation to student details using hash URLs
+- Optimized student-detail loading to handle cases with and without academyId
+- Updated navigation patterns to support multiple route formats
+
+### Code Cleanup
+We've performed code cleanup and optimization across several components:
+
+- Removed excessive console logs and debugging statements
+- Improved performance with `trackBy` in `ngFor` loops
+- Refactored redundant code in student components
+- Organized styles with SCSS mixins to reduce duplication
+- Simplified component templates for better maintainability
+
 ## API Integration
 
 The application is configured to work with a RESTful API. Update the `apiUrl` in `src/app/services/api.service.ts` to match your backend API endpoint.

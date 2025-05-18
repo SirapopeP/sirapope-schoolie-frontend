@@ -1,4 +1,5 @@
-<div class="student-card" [ngClass]="{'dark-mode': isDarkMode}" (click)="navigateToStudentDetail()">
+<div class="student-card" [ngClass]="{'dark-mode': isDarkMode}" 
+  (click)="navigateToStudentDetail()">
   <!-- Debug Info (ปิดไว้) -->
   <div class="debug-info" *ngIf="false" style="font-size: 12px; margin-bottom: 10px; border: 1px solid #ccc; padding: 5px; overflow-wrap: break-word;">
     <div>ID: {{ student?.id }}</div>

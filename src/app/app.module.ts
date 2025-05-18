@@ -18,7 +18,6 @@ import { HttpRequestInterceptor } from './interceptors/http.interceptor';
 
 @NgModule({
   declarations: [
-    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +38,6 @@ import { HttpRequestInterceptor } from './interceptors/http.interceptor';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
     // Removing HttpRequestInterceptor as it conflicts with AuthInterceptor
   ],
-  bootstrap: [AppComponent]
+  bootstrap: []
 })
 export class AppModule { }

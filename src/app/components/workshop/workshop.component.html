@@ -1,6 +1,278 @@
-<div class="workshop-container">
-  <h1>Workshop Management</h1>
-  <div class="workshop-content">
-    <p>Manage workshops, schedules, and registrations here.</p>
+<div class="workshop-container" @fadeIn>
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <h1 class="dashboard-title">Workshop Management</h1>
+      <p class="dashboard-subtitle">CREATE AND MANAGE WORKSHOPS</p>
+    </div>
+  </div>
+
+  <div class="intro-card" @fadeIn>
+    <div class="card">
+      <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Create workshop templates, then use them to schedule real classes with students.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs Section -->
+  <div class="tabs-container" @slideIn>
+    <mat-tab-group [(selectedIndex)]="selectedTab" animationDuration="300ms">
+      <mat-tab label="Workshop Templates">
+        <div class="tab-content" @staggerList>
+          <!-- Action buttons -->
+          <div class="action-bar">
+            <button class="action-button primary-button" (click)="toggleCreateTemplateForm()">
+              <i class="fas fa-plus"></i> New Template
+            </button>
+            <div class="search-box">
+              <input type="text" placeholder="Search templates..." [(ngModel)]="searchTerm">
+              <i class="fas fa-search"></i>
+            </div>
+          </div>
+
+          <!-- Create Template Form -->
+          <div class="form-container" *ngIf="showCreateTemplateForm" @slideIn>
+            <div class="form-header">
+              <h3>Create New Workshop Template</h3>
+              <button class="close-button" (click)="toggleCreateTemplateForm()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="form-content">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Title</label>
+                  <input type="text" placeholder="Workshop title">
+                </div>
+                <div class="form-group">
+                  <label>Price (฿)</label>
+                  <input type="number" placeholder="0">
+                </div>
+                <div class="form-group">
+                  <label>Duration (minutes)</label>
+                  <input type="number" placeholder="60">
+                </div>
+                <div class="form-group">
+                  <label>Max Students</label>
+                  <input type="number" placeholder="10">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Description</label>
+                <textarea placeholder="Workshop description"></textarea>
+              </div>
+              
+              <div class="form-section">
+                <h4>Modules</h4>
+                <div class="module-list">
+                  <div class="module-item">
+                    <div class="module-header">
+                      <span class="module-order">1</span>
+                      <input type="text" placeholder="Module title">
+                      <input type="number" placeholder="Duration (min)" class="duration-input">
+                    </div>
+                    <textarea placeholder="Module description"></textarea>
+                  </div>
+                  <button class="add-module-button">
+                    <i class="fas fa-plus"></i> Add Module
+                  </button>
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button class="secondary-button" (click)="toggleCreateTemplateForm()">Cancel</button>
+                <button class="primary-button" (click)="createWorkshopTemplate()">Create Template</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Template Cards -->
+          <div class="template-grid">
+            <div class="template-card" *ngFor="let template of workshopTemplates" @fadeIn>
+              <div class="template-header">
+                <h3>{{ template.title }}</h3>
+                <div class="template-price">{{ formatPrice(template.price) }}</div>
+              </div>
+              <div class="template-info">
+                <div class="info-row">
+                  <div class="info-label">Duration:</div>
+                  <div class="info-value">{{ formatDuration(template.duration) }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Max Students:</div>
+                  <div class="info-value">{{ template.maxStudents }}</div>
+                </div>
+              </div>
+              <p class="template-description">{{ template.description }}</p>
+              <div class="template-modules">
+                <div class="module-count">{{ template.modules.length }} Modules</div>
+                <div class="module-list">
+                  <div class="module-item" *ngFor="let module of template.modules">
+                    <div class="module-title">{{ module.title }}</div>
+                    <div class="module-duration">{{ formatDuration(module.duration) }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="template-actions">
+                <button class="secondary-button">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="primary-button" (click)="toggleCreateClassForm(template)">
+                  <i class="fas fa-calendar-plus"></i> Create Class
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      
+      <mat-tab label="Workshop Classes">
+        <div class="tab-content" @staggerList>
+          <!-- Action buttons -->
+          <div class="action-bar">
+            <div class="filter-container">
+              <select [(ngModel)]="statusFilter">
+                <option value="all">All Classes</option>
+                <option value="scheduled">Scheduled</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="search-box">
+              <input type="text" placeholder="Search classes..." [(ngModel)]="searchTerm">
+              <i class="fas fa-search"></i>
+            </div>
+          </div>
+          
+          <!-- Create Class Form -->
+          <div class="form-container" *ngIf="showCreateClassForm" @slideIn>
+            <div class="form-header">
+              <h3>Create New Workshop Class</h3>
+              <button class="close-button" (click)="toggleCreateClassForm()">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="form-content">
+              <div class="template-selected" *ngIf="selectedTemplate">
+                <div class="template-badge">Template</div>
+                <div class="template-name">{{ selectedTemplate.title }}</div>
+              </div>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Class Title</label>
+                  <input type="text" [placeholder]="selectedTemplate ? selectedTemplate.title : 'Class title'">
+                </div>
+                <div class="form-group">
+                  <label>Price (฿)</label>
+                  <input type="number" [placeholder]="selectedTemplate ? selectedTemplate.price : 0">
+                </div>
+                <div class="form-group">
+                  <label>Start Date & Time</label>
+                  <input type="datetime-local">
+                </div>
+                <div class="form-group">
+                  <label>End Date & Time</label>
+                  <input type="datetime-local">
+                </div>
+              </div>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Instructor</label>
+                  <input type="text" placeholder="Instructor name">
+                </div>
+                <div class="form-group">
+                  <label>Location</label>
+                  <input type="text" placeholder="Class location">
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label>Description</label>
+                <textarea [placeholder]="selectedTemplate ? selectedTemplate.description : 'Class description'"></textarea>
+              </div>
+              
+              <div class="form-actions">
+                <button class="secondary-button" (click)="toggleCreateClassForm()">Cancel</button>
+                <button class="primary-button" (click)="createWorkshopClass()">Create Class</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Class Cards -->
+          <div class="class-list">
+            <div class="class-card" *ngFor="let class of workshopClasses" @fadeIn>
+              <div class="class-status" [ngClass]="class.status">
+                {{ formatStatus(class.status) }}
+              </div>
+              <div class="class-header">
+                <h3>{{ class.title }}</h3>
+                <div class="class-template">
+                  From template: {{ getTemplateById(class.templateId)?.title || 'Unknown' }}
+                </div>
+              </div>
+              <div class="class-info">
+                <div class="info-row">
+                  <i class="fas fa-calendar"></i>
+                  <span>{{ formatDate(class.startDate) }}</span>
+                </div>
+                <div class="info-row">
+                  <i class="fas fa-map-marker-alt"></i>
+                  <span>{{ class.location }}</span>
+                </div>
+                <div class="info-row">
+                  <i class="fas fa-user-tie"></i>
+                  <span>{{ class.instructor }}</span>
+                </div>
+                <div class="info-row">
+                  <i class="fas fa-tag"></i>
+                  <span>{{ formatPrice(class.price) }}</span>
+                </div>
+              </div>
+              <p class="class-description">{{ class.description }}</p>
+              
+              <div class="student-section">
+                <div class="section-header">
+                  <h4>Students ({{ class.students.length }})</h4>
+                  <button class="add-student-button" (click)="addStudentToClass(class.id)">
+                    <i class="fas fa-user-plus"></i> Add Student
+                  </button>
+                </div>
+                <div class="student-list">
+                  <div class="student-item" *ngFor="let student of class.students">
+                    <div class="student-avatar">
+                      <div class="avatar-letter">{{ student.name.charAt(0) }}</div>
+                    </div>
+                    <div class="student-info">
+                      <div class="student-name">{{ student.name }}</div>
+                      <div class="student-email">{{ student.email }}</div>
+                    </div>
+                    <div class="student-status" [ngClass]="student.status">
+                      {{ formatStatus(student.status) }}
+                    </div>
+                  </div>
+                  <div class="empty-students" *ngIf="class.students.length === 0">
+                    <p>No students enrolled yet.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="class-actions">
+                <button class="secondary-button">
+                  <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="primary-button">
+                  <i class="fas fa-chalkboard-teacher"></i> View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
   </div>
 </div> 

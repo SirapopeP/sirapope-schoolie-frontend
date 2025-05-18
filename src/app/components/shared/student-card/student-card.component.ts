@@ -21,6 +21,12 @@ export class StudentCardComponent implements OnInit {
 
   ngOnInit() {
     console.log('Student card received data:', this.student);
+    // Check if student has required properties for navigation
+    if (this.student) {
+      console.log('Student properties available for navigation:',
+        'id=', this.student.id,
+        'academyId=', this.student.academyId);
+    }
   }
 
   getNickname(student: any): string {
@@ -255,21 +261,33 @@ export class StudentCardComponent implements OnInit {
   }
   
   navigateToStudentDetail() {
-    if (this.student) {
-      const studentId = this.student.id;
-      const academyId = this.student.academyId;
-      
-      if (!studentId) {
-        console.error('ไม่สามารถนำทางได้: ไม่มีรหัสนักเรียน', this.student);
-        return;
+    console.log('คลิกที่ student card แล้ว พยายามนำทาง');
+    // Check if student object and necessary IDs exist
+    if (this.student && (this.student.userId || this.student.id)) {
+      // Use userId for navigation if available, otherwise fallback to id
+      const idForNavigation = this.student.userId || this.student.id;
+      const academyId = this.student.academyId; // Get academyId if available
+      console.log('กำลังนำทางไปหน้ารายละเอียดนักเรียน: idForNavigation=', idForNavigation, 'academyId=', academyId);
+
+      const navigationExtras = {
+        state: {
+          student: this.student // Pass the entire student object in state
+        }
+      };
+
+      // Use academyId in the route if available, matching the route '/dashboard/student/:academyId/:id' or '/dashboard/student/detail/:id'
+      // Note: The route parameter name should match what StudentDetailComponent expects for the User ID
+      // Assuming the route expects the User ID as 'id' or 'studentId'
+      if (academyId) {
+        // Navigate with academyId and the ID (User ID)
+        this.router.navigate(['/dashboard/student', academyId, idForNavigation], navigationExtras);
+      } else {
+        // Fallback to navigating with just the ID (User ID)
+        this.router.navigate(['/dashboard/student/detail', idForNavigation], navigationExtras);
       }
-      
-      console.log(`กำลังนำทางไปหน้ารายละเอียดนักเรียน: studentId=${studentId}, academyId=${academyId}`);
-      
-      // Update the navigation path to match the route in app-routing.module.ts
-      this.router.navigate(['/dashboard/student', academyId, studentId]);
+
     } else {
-      console.error('ไม่สามารถนำทางได้: ไม่มีข้อมูลนักเรียน');
+      console.error('Cannot navigate to student detail: Student data or required ID (userId or id) is missing.', this.student);
     }
   }
 } 

@@ -4,6 +4,10 @@ import { DashboardComponent } from './dashboard.component';
 import { CommonModule } from '@angular/common';
 import { AuthGuard } from '../../services/auth.guard';
 
+// Import components โดยตรงผ่าน index.ts
+import { StudentDetailComponent } from '../student/student-detail';
+import { StudentRedirectComponent } from '../student/student-redirect/student-redirect.component';
+
 // Define routes for child components
 const routes: Routes = [
   {
@@ -46,8 +50,18 @@ const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'student/detail/:id',
+        component: StudentDetailComponent, // ใช้ component โดยตรงแทน loadComponent
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'student/:academyId/:id',
-        loadComponent: () => import('../student/student-detail/student-detail.component').then(m => m.StudentDetailComponent),
+        component: StudentDetailComponent, // ใช้ component โดยตรงแทน loadComponent
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'view-student/:studentId',
+        component: StudentRedirectComponent,
         canActivate: [AuthGuard]
       },
       {
@@ -65,9 +79,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
+  declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    StudentDetailComponent,
+    StudentRedirectComponent
   ],
   exports: [RouterModule]
 })

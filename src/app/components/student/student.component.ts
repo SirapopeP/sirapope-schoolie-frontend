@@ -6,7 +6,7 @@ import { StudentListComponent } from '../shared/student-list/student-list.compon
 import { StudentManagementService } from '../../services/student-management.service';
 import { UserProfileService } from '../../services/user-profile.service';
 import { ThemeService } from '../../services/theme.service';
-import { Subscription, forkJoin, of } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 import { AlertModalComponent } from '../shared/alert-modal/alert-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -75,58 +75,49 @@ export class StudentComponent implements OnInit, OnDestroy {
     );
     
     // Load user and academy data, then fetch students
+    this.loadStudents();
+  }
+  
+  ngOnDestroy() {
+    // Unsubscribe from all subscriptions
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+  
+  // Track student items by their ID for better NgFor performance
+  trackByStudentId(index: number, student: any): string {
+    return student.id;
+  }
+  
+  loadStudents() {
     this.subscriptions.push(
       this.userProfileService.user$.pipe(
         switchMap(user => {
-          console.log('Current user:', user); // Debug log
           if (user && user.id && user.roles && user.roles.includes('ACADEMY_OWNER')) {
             return this.academiesService.getUserAcademies(user.id).pipe(
               switchMap(academies => {
-                console.log('User academies:', academies); // Debug log
-                
                 if (!academies || academies.length === 0) {
-                  console.error('No academies found for this user!');
                   this.isLoading = false;
                   return of([]);
                 }
                 
                 if (academies && academies.length > 0) {
                   this.currentAcademyId = academies[0].id;
-                  console.log(`Fetching students for academy ${this.currentAcademyId} with requesterID ${user.id}`); // Debug log
                   return this.studentService.getAcademyStudents(this.currentAcademyId, user.id);
                 }
                 return of([]);
               })
             );
           } else {
-            console.error('User is not an ACADEMY_OWNER or missing user ID/roles');
             this.isLoading = false;
             return of([]);
           }
         }),
         catchError(error => {
-          console.error('Error loading students:', error);
           this.showErrorAlert('Error', 'Failed to load students. Please try again later.');
           this.isLoading = false;
           return of([]);
         })
       ).subscribe(students => {
-        console.log('Raw students data:', students);
-        if (students && students.length > 0) {
-          console.log('Student sample object keys:', Object.keys(students[0]));
-          for (const student of students) {
-            console.log(`Student ID ${student.id || 'unknown'}:`, student);
-            if (student.profile) {
-              console.log(`- Profile for student ${student.id || 'unknown'}:`, student.profile);
-            }
-            for (const key in student) {
-              console.log(`- ${key}:`, student[key]);
-            }
-          }
-        } else {
-          console.log('No students found for this academy');
-        }
-        
         // Append academyId to each student for navigation purposes
         this.students = students.map(student => ({
           ...student,
@@ -135,11 +126,6 @@ export class StudentComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       })
     );
-  }
-  
-  ngOnDestroy() {
-    // Unsubscribe from all subscriptions
-    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
   
   openAddStudentModal() {
@@ -185,7 +171,6 @@ export class StudentComponent implements OnInit, OnDestroy {
               this.isLoading = false;
             },
             error: (error) => {
-              console.error('Error refreshing students:', error);
               this.isLoading = false;
               this.showErrorAlert('Error', 'Failed to load students. Please try again later.');
             }

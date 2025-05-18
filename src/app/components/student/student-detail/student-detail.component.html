@@ -1,106 +1,247 @@
-<div class="student-detail-container" [ngClass]="{'dark-mode': isDarkMode}" @fadeIn>
-  <div class="student-detail-header" @slideIn>
-    <button class="back-button" (click)="goBack()">
-      <mat-icon>arrow_back</mat-icon> กลับไปยังรายชื่อนักเรียน
-    </button>
-    <h1>STUDENT DETAIL</h1>
-  </div>
+<div class="student-detail-container" @fadeIn>
+  <!-- Add particles background -->
+  <app-particles [color]="isDarkMode ? '#2DD8A8' : '#1DD8B2'" particleCount="40" connectionDistance="100"></app-particles>
   
-  <div class="loading-spinner" *ngIf="isLoading" @fadeIn>
-    <div class="spinner"></div>
-    <span>กำลังโหลดข้อมูลนักเรียน...</span>
-  </div>
-  
-  <div class="student-detail-content" *ngIf="!isLoading && student" @slideIn>
-    <!-- Student Status and Level -->
-    <div class="student-status-section">
-      <div class="status-badge" [ngClass]="student?.memberStatus || 'active'">
-        {{ student?.memberStatus ? (student.memberStatus | titlecase) : 'Active' }}
+  <!-- Header Section -->
+  <div class="header-container" @slideIn>
+    <div class="header-left">
+      <div>
+        <h1 class="page-title">Student Detail</h1>
+        <p class="page-subtitle">MANAGEMENT YOUR STUDENTS</p>
       </div>
-      <div class="level-badge">
-        ระดับ: {{ student?.memberLevel !== undefined ? student.memberLevel : '-' }}
+    </div>
+  </div>
+
+  <!-- Notification/Ad Banner -->
+  <div class="intro-card" @fadeIn>
+    <div class="card">
+      <div class="card-body">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current flex-shrink-0 w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Text For Ads</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <div class="spinner"></div>
+    <p>Loading your Student...</p>
+  </div>
+
+  <!-- Main Content Area (Show when data is loaded) -->
+  <div class="main-content-area" *ngIf="!isLoading">
+    <!-- Left Column - Student Profile & Workshops -->
+    <div class="left-column">
+      <!-- Student Profile Card -->
+      <div class="card profile-card" @fadeIn>
+        <div class="profile-header">
+          <div class="profile-info">
+            <h2 class="profile-name">{{ student?.profile?.nickName || (student?.user?.profile?.nickName || 'Unnamed') }}</h2>
+            <p class="profile-subtitle">{{ student?.profile?.fullName || (student?.user?.profile?.fullName || student?.username || 'No Name') }}</p>
+          </div>
+          <div class="profile-status">
+            <span>Status:</span>
+            <div class="status-toggle">
+              <span class="status-label" [ngClass]="{'active-status': isStudentActive, 'inactive-status': !isStudentActive}">
+                {{ isStudentActive ? 'Active' : 'Inactive' }}
+              </span>
+              <label class="switch">
+                <input type="checkbox" [checked]="isStudentActive" (change)="toggleStudentStatus()">
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile-content">
+          <div class="avatar-container">
+            <div class="avatar-circle" [style.backgroundColor]="student?.memberStatus ? 
+              (student.memberStatus === 'active' ? '#1dd8b2' : 
+              student.memberStatus === 'inactive' ? '#ff9f43' : 
+              student.memberStatus === 'suspended' ? '#ee5253' : '#1dd8b2') : '#1dd8b2'">
+              <span>{{ getInitials(student?.profile?.fullName || student?.user?.profile?.fullName) }}</span>
+            </div>
+          </div>
+          
+          <div class="student-details">
+            <div class="detail-grid">
+              <div class="detail-col">
+                <div class="detail-item">
+                  <span class="detail-label">BirthDate:</span>
+                  <span class="detail-value">
+                    {{ student?.profile?.birthDate || student?.user?.profile?.birthDate || 'Not specified' | date:'dd MMM yyyy' }}
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Age:</span>
+                  <span class="detail-value">
+                    {{ calculateAge(student?.profile?.birthDate || student?.user?.profile?.birthDate) }} Year old
+                  </span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Bio:</span>
+                  <span class="detail-value">{{ student?.profile?.bio || 'No bio information' }}</span>
+                </div>
+              </div>
+              <div class="detail-col">
+                <div class="detail-item">
+                  <span class="detail-label">Level:</span>
+                  <span class="detail-value">{{ student?.memberLevel || '0' }} <i class="fas fa-star level-star"></i></span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Grade:</span>
+                  <span class="detail-value">{{ student?.grade || 'N/A' }}</span>
+                </div>
+                <div class="detail-item" *ngIf="student?.email || student?.user?.email">
+                  <span class="detail-label">Email:</span>
+                  <span class="detail-value">{{ student?.email || student?.user?.email }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workshops Card -->
+      <div class="card workshops-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <h3 class="section-title">Workshops</h3>
+          </div>
+          <div class="header-count">{{ workshops.length }}</div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="workshops-list">
+          <!-- Workshop Items -->
+          <div class="workshop-item" *ngFor="let workshop of workshops">
+            <div class="workshop-header">
+              <div>
+                <h4 class="workshop-name">{{ workshop.title }}</h4>
+                <p class="workshop-date">Start Date: <strong>{{ workshop.date | date:'dd MMM yyyy' }}</strong></p>
+              </div>
+              <button class="btn-circle">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width]="((workshop.progress / 8) * 100) + '%'"></div>
+              </div>
+              <div class="progress-steps">
+                <div class="step" *ngFor="let step of [1,2,3,4,5,6,7,8]" [ngClass]="{'active': step <= workshop.progress}">
+                  {{ step }}
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- No Workshop Message -->
+          <div *ngIf="workshops.length === 0" class="no-data-message">
+            <p>ไม่พบข้อมูล Workshop สำหรับนักเรียนคนนี้</p>
+          </div>
+        </div>
       </div>
     </div>
     
-    <div class="student-profile-section" @slideInRight>
-      <div class="avatar-container">
-        <img *ngIf="student?.profile?.avatarUrl" [src]="student.profile.avatarUrl" alt="รูปภาพนักเรียน" class="student-avatar">
-        <div *ngIf="!student?.profile?.avatarUrl" class="avatar-placeholder" [ngStyle]="{'background-color': '#1dd8b2'}">
-          {{ student?.profile?.fullName?.charAt(0) || student?.username?.charAt(0) || 'S' }}
+    <!-- Right Column - Notes & Income -->
+    <div class="right-column">
+      <!-- Student Notes Card -->
+      <div class="card notes-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-sticky-note"></i>
+            </div>
+            <h3 class="section-title">Student Note</h3>
+          </div>
+          <button class="add-button">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="notes-list">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>DATE</th>
+                <th>NOTE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let note of studentNotes">
+                <td>{{ note.date | date:'dd MMM yyyy' }}</td>
+                <td>{{ note.note }}</td>
+              </tr>
+              <tr *ngIf="studentNotes.length === 0">
+                <td colspan="2" class="empty-state">No notes for this student</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
       
-      <div class="profile-info">
-        <h2 class="student-name">{{ student?.profile?.fullName || student?.username || 'ไม่มีชื่อ' }}</h2>
-        <p class="student-nickname" *ngIf="student?.profile?.nickName">
-          <span class="label">ชื่อเล่น:</span> {{ student.profile.nickName }}
-        </p>
-        <p class="student-age">
-          <span class="label">อายุ:</span> 
-          {{ student?.profile?.birthDate ? (calculateAge(student.profile.birthDate) + ' ปี') : '-' }}
-        </p>
-        <p class="student-email" *ngIf="student?.email">
-          <span class="label">อีเมล:</span> {{ student.email }}
-        </p>
-        <p class="student-phone" *ngIf="student?.profile?.phoneNumber">
-          <span class="label">โทรศัพท์:</span> {{ student.profile.phoneNumber }}
-        </p>
-      </div>
-    </div>
-    
-    <div class="student-workshops-section" @staggerItems>
-      <h3>เวิร์คช็อป</h3>
-      <div class="workshops-container">
-        <div class="workshops-placeholder" *ngIf="workshops.length === 0">
-          <p>ยังไม่มีเวิร์คช็อปที่เข้าร่วม</p>
+      <!-- Income Card -->
+      <div class="card income-card" @fadeIn>
+        <div class="section-header">
+          <div class="header-left">
+            <div class="section-icon">
+              <i class="fas fa-coins"></i>
+            </div>
+            <h3 class="section-title">Member Income</h3>
+          </div>
+          <div class="total-income">{{ formatCurrency(totalIncome) }}</div>
         </div>
         
-        <div class="workshop-card" *ngFor="let workshop of workshops" @fadeIn>
-          <h4>{{ workshop.title }}</h4>
-          <p>{{ workshop.date | date }}</p>
+        <div class="divider"></div>
+        
+        <div class="income-list">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>DATE</th>
+                <th>WORKSHOP</th>
+                <th class="text-right">INCOME</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Year Accordion Rows -->
+              <ng-container *ngFor="let yearData of incomeByYear">
+                <!-- Year Header Row (Clickable Accordion Header) -->
+                <tr class="year-row" (click)="toggleYearAccordion(yearData)">
+                  <td class="year-header">
+                    <i class="fas" [ngClass]="yearData.isOpen ? 'fa-chevron-down' : 'fa-chevron-right'"></i> 
+                    {{ yearData.year }}
+                  </td>
+                  <td class="accent-text">{{ yearData.entries.length > 0 ? yearData.entries.length + ' Workshops' : 'No Data' }}</td>
+                  <td class="text-right">{{ formatCurrency(yearData.totalIncome) }}</td>
+                </tr>
+                
+                <!-- Year Detail Rows (Show when accordion is open) -->
+                <ng-container *ngIf="yearData.isOpen">
+                  <tr *ngFor="let entry of yearData.entries">
+                    <td>{{ formatDate(entry.date) }}</td>
+                    <td>{{ entry.workshop }}</td>
+                    <td class="text-right">{{ formatCurrency(entry.income) }}</td>
+                  </tr>
+                  
+                  <!-- Empty State Row -->
+                  <tr *ngIf="yearData.entries.length === 0">
+                    <td colspan="3" class="empty-state">No income records for this year</td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
-    
-    <div class="student-additional-info" @staggerItems>
-      <h3>ข้อมูลเพิ่มเติม</h3>
-      <div class="info-grid">
-        <div class="info-item" @fadeIn>
-          <span class="label">รหัสผู้ใช้:</span>
-          <span>{{ student.id }}</span>
-        </div>
-        <div class="info-item" @fadeIn>
-          <span class="label">ชื่อผู้ใช้:</span>
-          <span>{{ student.username || '-' }}</span>
-        </div>
-        <div class="info-item" @fadeIn>
-          <span class="label">สร้างเมื่อ:</span>
-          <span>{{ student.createdAt | date }}</span>
-        </div>
-        <div class="info-item" @fadeIn>
-          <span class="label">อัปเดตล่าสุด:</span>
-          <span>{{ student.updatedAt | date }}</span>
-        </div>
-        <div class="info-item" @fadeIn>
-          <span class="label">สถานะสมาชิก:</span>
-          <span>{{ student.memberStatus || '-' }}</span>
-        </div>
-        <div class="info-item" @fadeIn>
-          <span class="label">ระดับสมาชิก:</span>
-          <span>{{ student.memberLevel !== undefined ? student.memberLevel : '-' }}</span>
-        </div>
-      </div>
-    </div>
-    
-    <div class="action-buttons">
-      <button class="back-button-bottom" (click)="goBack()">
-        BACK
-      </button>
-    </div>
-  </div>
-  
-  <div class="no-student-message" *ngIf="!isLoading && !student" @fadeIn>
-    <p>ไม่พบข้อมูลนักเรียนหรือคุณไม่มีสิทธิ์ในการดูข้อมูลนี้</p>
-    <button mat-raised-button color="primary" (click)="goBack()">กลับไปยังรายชื่อนักเรียน</button>
   </div>
 </div> 
